@@ -1,0 +1,14 @@
+bundles:
+  frontend:
+    - clubs
+
+
+packages:
+  clubs:
+    depends:
+      - common
+
+    entries:
+      - client/clubs
+      - internal/clubs
+      - server/clubs

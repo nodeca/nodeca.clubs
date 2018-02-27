@@ -1,0 +1,49 @@
+article#content.clubs-index
+  != self.partial('@common.blocks.navbar.logo_apps')
+
+  nav.breadcrumbs-container
+    .layout__container.container-fluid
+      != self.partial('@common.blocks.breadcrumbs')
+
+  .layout__container.container-fluid
+    != self.partial('@users.blocks.announces')
+
+    form.clubs-search-form
+      .input-group
+        input.form-control(type='text', name='query')
+
+        span.input-group-btn
+          button.btn.btn-secondary.icon.icon-search.icon-space-before(type='submit', title=self.t('search'))
+
+    header.page-head.clubs-index__head
+      h1.clubs-index__title.page-head__title(itemprop='name')= self.t('my_clubs')
+
+      .page-actions.clubs-index__toolbar-controls
+        button.btn.btn-secondary(type='button')= self.t('create')
+
+    .clubs-index-sole
+      .clubs-index-sole__aside
+        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
+      .clubs-index-sole__meta
+        .clubs-index-sole__title
+          a(href=self.link_to('clubs.sole', { club_hid: 1 }))= 'Amet optio ipsum esse at cumque ipsa sit'
+        .clubs-index-sole__members= '30 members'
+        .clubs-index-sole__activity= 'Last activity 2 hours ago'
+
+    .clubs-index-sole
+      .clubs-index-sole__aside
+        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
+      .clubs-index-sole__meta
+        .clubs-index-sole__title
+          a(href=self.link_to('clubs.sole', { club_hid: 2 }))= 'Omnis est voluptates sint quia'
+        .clubs-index-sole__members= '33 members'
+        .clubs-index-sole__activity= 'Last activity 17 days ago'
+
+    .clubs-index-sole
+      .clubs-index-sole__aside
+        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
+      .clubs-index-sole__meta
+        .clubs-index-sole__title
+          a(href=self.link_to('clubs.sole', { club_hid: 3 }))= 'Ad alias molestiae possimus'
+        .clubs-index-sole__members= '274 members'
+        .clubs-index-sole__activity= 'Last activity 1 month ago'

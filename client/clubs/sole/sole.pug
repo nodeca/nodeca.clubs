@@ -1,0 +1,29 @@
+article#content.clubs-sole
+  != self.partial('@common.blocks.navbar.logo_apps')
+
+  nav.breadcrumbs-container
+    .layout__container.container-fluid
+      != self.partial('@common.blocks.breadcrumbs')
+
+  .layout__container.container-fluid
+    != self.partial('@users.blocks.announces')
+
+    header.page-head.clubs-sole__head
+      .clubs-sole__aside
+        img.clubs-sole__avatar()&attributes(self.avatar({}, 'sm'))
+
+      .clubs-sole__meta
+        .clubs-sole__meta-top
+          .clubs-sole__meta-title-admins
+            .clubs-sole__title= 'Omnis est voluptates sint quia'
+            .clubs-sole__admins= 'Club administrator: Summer (theodorakessler) Bernhard'
+          .page-actions.clubs-sole__toolbar-controls
+            button.btn.btn-primary(type='button')= self.t('join')
+
+        .clubs-sole__description
+          p= 'Accusantium est saepe amet dolorem sint nulla blanditiis. Et iure eum voluptatem. Accusantium nostrum rem harum quis. Non sed sequi deleniti hic culpa qui.'
+          p= 'Rerum atque esse esse velit doloremque eius. Doloremque eos sint autem consequatur ratione architecto. Ut voluptate voluptatem enim quia est. Laudantium voluptatem ad eaque numquam perspiciatis deleniti quam. Velit sit nihil repellendus consequatur facere.'
+        .clubs-sole__members
+          a(href='#')= '33 members'
+
+    .clubs-sole__postlist!= self.partial('@clubs.blocks.topics_list')

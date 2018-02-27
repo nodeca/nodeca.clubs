@@ -1,0 +1,21 @@
+{
+  "name": "nodeca.clubs",
+  "description": "Nodeca clubs application",
+  "version": "0.0.1",
+  "keywords": [ "nodeca" ],
+  "homepage": "https://github.com/nodeca/nodeca.clubs",
+  "license": "MIT",
+  "repository": "nodeca/nodeca.clubs",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

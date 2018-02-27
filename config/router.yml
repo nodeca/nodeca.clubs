@@ -1,0 +1,10 @@
+router:
+  http.get:
+    clubs.index:
+      "/clubs": ~
+
+    clubs.sole:
+      "/clubs/c{club_hid}":
+        club_hid:
+          match: /\d+/
+          type: integer

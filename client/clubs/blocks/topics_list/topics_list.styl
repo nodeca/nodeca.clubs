@@ -1,0 +1,224 @@
+// Club topics list. Used on clubs `sole` page
+//
+
+@import "nodeca.core/client/common/_variables"
+
+//
+// Topics lines
+//
+
+.clubs-topicline
+  display flex
+  align-items center
+  padding .5rem 0
+
+//
+// First column
+//
+
+.clubs-topicline__summary
+  flex 1 1 0%
+  padding .5rem 0 .5rem 1.25rem
+  position relative
+  width auto
+  // for ellipsis in second line on narrow screens
+  min-width 0
+
+.clubs-topicline__title
+  position relative
+  font-weight normal
+  font-size $font-size-base
+  //font-family $font-family-sans-serif-wide
+  line-height 1.3
+  margin-top 0
+  margin-bottom 0
+
+.clubs-topicline__title-link
+  color $body-color
+
+.clubs-topicline__microstat
+  color $body-color-secondary
+  font-size $font-size-xs
+  shortable()
+
+.clubs-topicline__microstat-replies
+  margin-right .5em
+  &:after
+    content '·'
+    margin-left .5em
+
+.clubs-topicline__microstat-time
+  margin-right .5em
+  color $body-color-secondary
+  &:after
+    content ','
+
+.clubs-topicline__microstat-author
+.clubs-topicline__meta-del-by
+  color $body-color-secondary
+
+
+.clubs-topicline__meta-deleted
+.clubs-topicline__meta-hellbanned
+.clubs-topicline__meta-ignored
+  color $body-color-secondary
+  font-size $font-size-xs
+  shortable()
+
+.clubs-topicline__meta-hellbanned
+.clubs-topicline__meta-ignored
+  display none
+
+
+// Enabled only for small screens
+.clubs-topicline__overlay
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 100%
+  z-index 10
+
+//
+// Second columns
+//
+
+.clubs-topicline__stat
+  flex 0 0 0%
+  min-width 6rem
+  font-size $font-size-sm
+  color $body-color-secondary + 30%
+  text-align right
+  .icon
+    visibility hidden
+
+.clubs-topicline:first-child > .clubs-topicline__stat .icon
+  visibility visible
+
+
+//
+// Moderation column (checkboxes)
+//
+
+.clubs-topicline__select
+  flex 0 0 0%
+  min-width 3rem
+  text-align right
+  margin 0
+  padding .5rem 0
+.clubs-topicline__select-cb
+  position relative
+  top 1px
+
+// Markers
+//
+.clubs-topicline__unread-marker
+  position absolute
+  left 0
+  top 0
+  bottom 0
+  width 0.2rem
+  border-radius 0.125rem
+  background-color $decorator-color
+
+.clubs-topicline__highlight-marker
+  display none
+  position absolute
+  left 0
+  width 0.2rem
+  height 1rem
+  top 50%
+  margin-top -.5rem
+  background-color $brand-success
+
+
+.clubs-topicline__new-marker
+  display none
+  color $brand-success
+  font-size $font-size-xs
+  margin-left .5em
+  vertical-align top
+
+.clubs-topicline__pinned-marker
+.clubs-topicline__closed-marker
+  color $brand-primary
+  display none
+
+.clubs-topicline__bookmarked-marker
+  color $brand-success
+  display none
+
+.clubs-topicline__deleted-marker
+  display none
+
+
+// Marker toggles
+//
+.clubs-topicline__m-unread
+  .clubs-topicline__unread-marker
+    background-color $brand-primary
+
+.clubs-topicline__m-new
+  .clubs-topicline__unread-marker
+    background-color $brand-primary
+  .clubs-topicline__new-marker
+    display inline-block
+
+.clubs-topicline__m-pinned
+  .clubs-topicline__pinned-marker
+    display inline-block
+
+.clubs-topicline__m-bookmarked
+  .clubs-topicline__bookmarked-marker
+    display inline-block
+
+.clubs-topicline__m-closed
+  opacity .8
+  .clubs-topicline__closed-marker
+    display inline-block
+
+
+
+.clubs-topicline__m-ignored
+  background-color $deleted-bg
+  opacity 0.7
+  &:hover
+    opacity 1
+  .clubs-topicline__meta-ignored
+    display block
+
+
+.clubs-topicline__m-hellbanned
+  background-color $deleted-bg
+  opacity 0.7
+  &:hover
+    opacity 1
+  .clubs-topicline__microstat
+    display none !important
+  .clubs-topicline__meta-hellbanned
+    display block
+
+.clubs-topicline__m-deleted
+.clubs-topicline__m-deleted-hard
+  background-color $deleted-bg
+  opacity 0.7
+  &:hover
+    opacity 1
+  .clubs-topicline__deleted-marker
+    display inline-block
+  .clubs-topicline__microstat
+    display none !important
+
+@keyframes clubs-topicline-flash-animation {
+  from  { background: $decorator-color;  }
+  to    { background: none; }
+}
+
+
+.clubs-topicline__m-highlight
+  animation clubs-topicline-flash-animation 1.5s
+  .clubs-topicline__highlight-marker
+    display block
+
+.clubs-topicline__m-selected
+  background-color #ffd

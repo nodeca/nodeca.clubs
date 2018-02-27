@@ -1,0 +1,44 @@
+@import "nodeca.core/client/common/_variables"
+
+$aside-size = '$$ N.config.users.avatars.resize.sm.height $$'px
+
+.clubs-sole__head
+  display flex
+  padding-bottom 1rem
+  margin-bottom 1.5rem
+  border-bottom 1px solid $decorator-color
+  line-height 1.25em
+
+.clubs-sole__meta
+  flex 1 1 0%
+
+.clubs-sole__aside
+  flex 0 0 $aside-size + 10px
+
+.clubs-sole__avatar
+  width $aside-size
+  height $aside-size
+  border-radius 3px
+  box-shadow 0 0 1px $body-color-secondary
+
+.clubs-sole__meta-top
+  display flex
+  align-items center
+
+.clubs-sole__meta-title-admins
+  flex 1 1 0%
+
+.clubs-sole__title
+  color $body-color-secondary
+  font-size $font-size-lg
+
+.clubs-sole__admins
+  color $body-color-secondary
+  font-size $font-size-xs
+
+.clubs-sole__meta-top
+.clubs-sole__description
+  margin-bottom 1rem
+
+.clubs-sole__members
+  font-size $font-size-xs

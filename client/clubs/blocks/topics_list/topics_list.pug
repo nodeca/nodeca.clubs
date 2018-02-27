@@ -1,0 +1,115 @@
+- var topicStatuses = '$$ JSON.stringify(N.models.forum.Topic.statuses) $$'
+- self.users = self.users || {};
+
+//- This template is used for:
+//- - the whole page generation
+//- - appending next page posts via autoload or "more" button
+
+//- show many operations checkbox
+- var many_ops_permitted = self.settings.forum_mod_can_delete_topics || self.settings.forum_mod_can_close_topic;
+
+each topic, idx in self.topics
+  //- skip topics created by ignored users
+  - if (self.ignored_users[topic.cache.first_user] && !self.settings.forum_show_ignored) { continue; }
+
+  - var fp_user = self.users[topic.cache.first_user] || {}
+  - var lp_user = self.users[topic.cache.last_user] || {}
+  - var fp_ts   = topic.cache.first_ts
+  - var lp_ts   = topic.cache.last_ts
+  - var replies = topic.cache.post_count - 1;
+  - var views   = topic.views_count;
+  .clubs-topicline(
+    class=(topic.st === topicStatuses.HB) ? 'clubs-topicline__m-hellbanned' : ''
+    class=([ topic.st, topic.ste ].indexOf(topicStatuses.PINNED) !== -1) ? 'clubs-topicline__m-pinned' : ''
+    class=([ topic.st, topic.ste ].indexOf(topicStatuses.CLOSED) !== -1) ? 'clubs-topicline__m-closed' : ''
+    class=(topic.st === topicStatuses.DELETED) ? 'clubs-topicline__m-deleted' : ''
+    class=(topic.st === topicStatuses.DELETED_HARD) ? 'clubs-topicline__m-deleted-hard' : ''
+    class=(self.own_bookmarks.indexOf(topic.cache.first_post) !== -1) ? 'clubs-topicline__m-bookmarked' : ''
+    class=(self.read_marks[topic._id].next !== -1 && self.subscriptions.indexOf(topic._id) !== -1) ? 'clubs-topicline__m-unread' : ''
+    class=(self.read_marks[topic._id].isNew) ? 'clubs-topicline__m-new' : ''
+    class=(self.ignored_users[topic.cache.first_user] ? 'clubs-topicline__m-ignored' : '')
+    data-topic-hid=topic.hid
+    data-last-post=topic.cache.last_post
+    id='topic' + topic.hid
+  )
+    .clubs-topicline__summary.clubs-topicline__cell
+      - var href;
+
+      if (self.read_marks[topic._id].next !== -1 && self.subscriptions.indexOf(topic._id) !== -1)
+        //- If user subscribed and unread messages in topic - go to first unread
+        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].next });
+
+      else if (self.read_marks[topic._id].position !== -1)
+        //- If we have position info - go to last position
+        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].position });
+
+      else
+        //- Go to first post in topic
+        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid });
+
+      h2.clubs-topicline__title
+        span.clubs-topicline__bookmarked-marker.icon.icon-bookmark.icon-space-after(title=self.t('bookmarked'))
+        span.clubs-topicline__deleted-marker.icon.icon-x.icon-dimmed.icon-space-after(title=self.t('deleted'))
+        span.clubs-topicline__closed-marker.icon.icon-closed.icon-space-after(title=self.t('closed'))
+        span.clubs-topicline__pinned-marker.icon.icon-pin.icon-space-after(title=self.t('pinned'))
+
+        a.clubs-topicline__title-link(href=href)= topic.title
+
+        .clubs-topicline__new-marker= self.t('new')
+
+      .clubs-topicline__meta-ignored.icon.icon-ignore.icon-space-after
+        =self.t('ignored')
+      .clubs-topicline__meta-hellbanned
+        =self.t('hellbanned')
+
+      if topic.del_by
+        - var delUser = self.users[topic.del_by] || {}
+        .clubs-topicline__meta-deleted
+          =self.t('del_by')
+          | 
+          a.clubs-topicline__meta-del-by._ucard-popover(
+            href=self.link_to('users.member', { user_hid: delUser.hid })
+            data-user-id=delUser._id
+          )=delUser.name
+
+          if topic.del_reason
+            | 
+            =self.t('del_reason', { text: topic.del_reason })
+
+      .clubs-topicline__microstat
+        span.clubs-topicline__microstat-replies.d-sm-none
+          = self.t('replies', replies)
+        a.clubs-topicline__microstat-time(
+          href=self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: topic.cache.last_post_hid })
+        )
+          != self.timetag(lp_ts, 'relative')
+        if lp_user.hid
+          a.clubs-topicline__microstat-author._ucard-popover(
+            href=self.link_to('users.member', { user_hid: lp_user.hid })
+            data-user-id=lp_user._id
+          )= lp_user.name
+
+      .clubs-topicline__unread-marker
+      .clubs-topicline__highlight-marker
+
+      //- cover all space with link for small screens
+      a.clubs-topicline__overlay.d-md-none(href=href)
+
+    .clubs-topicline__stat.clubs-topicline__cell.d-none.d-sm-block(
+      title=self.t('replies_tip')
+    )
+      span.icon.icon-replies.icon-space-after
+      = self.number_short(replies)
+
+    .clubs-topicline__stat.clubs-topicline__cell.d-none.d-md-block(
+      title=self.t('views_tip')
+    )
+      span.icon.icon-views.icon-space-after
+      = self.number_short(views)
+
+    if many_ops_permitted
+      label.clubs-topicline__select.clubs-topicline__cell(title=self.t('multiselect_hint'))
+        input.clubs-topicline__select-cb(
+          type='checkbox'
+          data-topic-hid=topic.hid
+          data-on-change='clubs.section:topic_check')

@@ -1,0 +1,10 @@
+menus:
+  common:
+    navbar:
+      clubs:
+        to: clubs.index
+
+  admin:
+    navbar:
+      clubs:
+        to: admin.clubs.index
