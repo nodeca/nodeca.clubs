@@ -1,0 +1,23 @@
+en-US:
+  page_separator: "page #{value}"
+  report: Report to moderator
+  vote_up: Vote up
+  vote_down: Vote down
+  vote_details: Click to see details
+  bookmark_add: Add to bookmarks
+  bookmark_remove: Remove from bookmarks
+  ip_info: IP info
+  add_infraction: Add infraction
+  reply: Reply
+  delete: Delete
+  undelete: Undelete
+  edit: Edit
+  last_edited: "Last edited on #{date}"
+  del_reason: "Deletion reason: #{text}"
+  del_by: "Deleted by:"
+  del_post_text: Post deleted.
+  del_hard_post_text: Post hard deleted.
+  hb_post_text: Hellbanned
+  expand: Expand
+  multiselect_hint: "Click with shift to start range selection"
+  infraction_title: "#{points} ((point|points)):points, added at #{date}"

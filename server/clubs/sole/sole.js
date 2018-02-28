@@ -88,7 +88,7 @@ module.exports = function (N, apiPath) {
     env.res.ignored_users = {};
     env.res.own_bookmarks = [];
     env.res.subscriptions = [];
-    env.res.section = {};
+    env.res.club = { hid: 1 };
     env.res.users = { undefined: { name: 'Bo (demond_fadel) Hagenes', hid: 1 } };
   });
 };

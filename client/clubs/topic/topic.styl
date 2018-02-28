@@ -1,0 +1,121 @@
+@import "nodeca.core/client/common/_variables"
+
+//
+// Responsive popover
+//
+
+.clubs-topic-root .votes-popover
+  max-width 250px
+
+@media (min-width: $grid-breakpoints.sm)
+  .clubs-topic-root .votes-popover
+    max-width 400px
+
+@media (min-width: $grid-breakpoints.md)
+  .clubs-topic-root .votes-popover
+    max-width 600px
+
+.clubs-topic__reply
+  //padding-top 1.5rem
+  //border-top 1px solid $decorator-color
+  margin-bottom 1.5rem
+
+.clubs-topic-title__edit
+  display none
+  font-size 1.25rem
+  line-height 1.1em
+  color $body-color-secondary
+  vertical-align middle
+  padding .125rem .5rem
+
+.clubs-topic__closed-mark
+  display none
+
+.clubs-topic-root__m-open
+  .clubs-topic-title__edit
+    display inline-block
+
+.clubs-topic-root__m-closed
+  .clubs-topic__closed-mark
+    display inline-block
+
+  .clubs-post__reply
+  .clubs-topic__reply
+    display none
+
+.clubs-topic-root__m-deleted
+.clubs-topic-root__m-deleted-hard
+  .clubs-topic-title__text
+    text-decoration line-through
+
+  .clubs-post__reply
+  .clubs-topic__reply
+    display none
+
+  .clubs-post__votes
+  .clubs-post__vote-up
+  .clubs-post__vote-down
+  .clubs-post__bookmark
+    display none
+
+
+// Only show this paginator when javascript is disabled
+.clubs-topic__footer-pagination
+  .pagination
+    justify-content center
+
+.clubs-topic__loading-prev
+.clubs-topic__loading-next
+  padding 2rem
+  font-size 4rem
+  line-height 1.1em
+  text-align center
+  background-color $body-bg-secondary + 50%
+  color $body-color-secondary + 50%
+  border-radius 4px
+  margin-bottom 2rem
+
+//
+// Similar topics
+//
+
+.similar_topics
+  margin-bottom 2rem
+  margin-top 5rem
+  padding 1.75rem 1.75rem 1rem
+  background-color $body-bg-secondary + 30%
+  border-radius 4px
+
+.similar_topics__header
+  color $body-color-secondary
+  font-size 1.5rem
+  line-height 1.75rem
+  margin-bottom 1.5rem
+
+.similar_topics__item
+  display flex
+  align-items center
+  position relative
+  margin-bottom .875rem
+  line-height 1.25rem
+
+.similar_topics__item-title
+  flex 1 1 0
+  color $body-color
+
+.similar_topics__item-link
+  color inherit
+
+.similar_topics__item-stat
+  font-size .75rem
+  width 170px
+  text-align right
+  color $body-color-secondary
+
+
+@media (max-width: $grid-breakpoints.sm - 1)
+  .similar_topics__item
+    flex-direction column
+    align-items left
+  .similar_topics__item-stat
+    text-align left

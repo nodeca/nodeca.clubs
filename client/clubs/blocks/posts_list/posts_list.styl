@@ -1,0 +1,324 @@
+// Club posts list. Used in clubs `topic` page
+//
+
+@import "nodeca.core/client/common/_variables"
+
+
+// Post styles
+
+.clubs-post
+  margin-bottom 2rem
+
+.clubs-post__m-deleted
+.clubs-post__m-hb
+.clubs-post__m-deleted-hard
+.clubs-post__m-ignored
+  background-color $deleted-bg
+
+//
+// header
+//
+
+.clubs-post__meta
+  display flex
+  align-items flex-end
+  margin-bottom 1rem
+  color $body-color-secondary
+  font-size $font-size-xs
+  line-height 1.25em
+  background-color white
+
+.clubs-post__meta-flex
+  flex 1 1 0%
+  display flex
+  min-width 0
+  border-bottom 1px solid $decorator-color
+  padding-bottom .375rem
+
+.clubs-post__meta-avatar
+  flex 0 0 0%
+  display none
+  min-width 45px
+  vertical-align bottom
+
+.clubs-post__userpic-img-sm
+  display inline-block
+  width 36px
+  height 36px
+  border-radius 3px
+  box-shadow 0 0 1px $body-color-secondary
+
+.clubs-post__meta-author
+  flex 1 1 0%
+  font-size $font-size-base
+  line-height 1.25em
+  color $body-color-secondary - 10%
+  shortable()
+
+.clubs-post__meta-info
+  white-space nowrap
+  align-self flex-end
+  padding-left 1rem
+
+.clubs-post__author
+  color inherit
+
+.clubs-post__reply-to-link
+  color inherit
+  margin-right 1em
+
+.clubs-post__reply-to-avatar
+  width 16px
+  height 16px
+  margin 0px 3px
+  border-radius 2px
+  box-shadow 0 0 1px $body-color-secondary
+
+.clubs-post__history
+  color inherit
+  margin-right 1em
+
+.clubs-post__link
+  color inherit
+
+.clubs-post__select
+  flex 0 0 0%
+  border-bottom 1px solid $decorator-color
+  min-width 2rem
+  text-align center
+  margin-bottom 0
+  padding-bottom .5rem
+.clubs-post__select-cb
+  position relative
+  vertical-align text-bottom
+
+//
+// left / right columns
+//
+
+//$aside-size = '$$ N.config.users.avatars.resize.md.height $$'px
+$aside-size = 100px
+$aside-size-md = 80px
+
+.clubs-post__aside
+  float left
+  margin-top .125rem
+
+.clubs-post__userpic-img
+  display inline-block
+  width $aside-size
+  height $aside-size
+  border-radius 3px
+  box-shadow 0 0 1px $body-color-secondary
+
+.clubs-post__content
+  margin-right 0px
+  margin-left $aside-size + 16px
+  min-height $aside-size - 40 // Dont allow post controls to be above avatar bottom
+
+@media (max-width: $grid-breakpoints.md - 1)
+  .clubs-post__userpic-img
+    width $aside-size-md
+    height $aside-size-md
+
+  .clubs-post__content
+    margin-left $aside-size-md + 16px
+    min-height $aside-size-md - 40 // Dont allow post controls to be above avatar bottom
+
+
+.clubs-post__message
+  & > p:first-child
+    margin-top -.25rem // Compensate line-height 1.5 rem
+
+
+.clubs-post__content-collapsed
+  margin 0 1rem
+  font-size $font-size-sm
+  color $body-color-secondary
+
+@media (max-width: $grid-breakpoints.sm - 1)
+  .clubs-post__aside
+    display none
+  .clubs-post__content
+    min-height unset
+  .clubs-post__meta-avatar
+    display block
+  .clubs-post__meta-flex
+    padding-bottom .125rem
+  .clubs-post__select
+    padding-bottom .8rem
+  .clubs-post__content
+    margin 0
+  .clubs-post__meta-flex
+    flex-direction column
+  .clubs-post__meta-author
+    font-size $font-size-sm
+  .clubs-post__meta-info
+    padding-left 0
+    font-size $font-size-xs
+    margin-bottom .125rem
+    color $body-color-secondary + 20%
+    align-self stretch
+
+  .clubs-post__reply-to-avatar
+    width 12px
+    height 12px
+
+//
+// content column
+//
+
+.clubs-post__controls
+  text-align right
+  margin-left $aside-size + 16px
+
+@media (max-width: $grid-breakpoints.md - 1)
+  .clubs-post__controls
+    margin-left $aside-size-md + 16px
+
+
+@media (max-width: $grid-breakpoints.sm - 1)
+  .clubs-post__controls
+    margin-left 0
+
+.clubs-post__controls-blk
+  margin 0
+  padding 0
+  list-style none
+
+.clubs-post__control-item
+  display inline-block
+  margin-right: 0px
+  &:last-child
+    margin-right: 0
+
+.clubs-post__infraction .icon
+  color $brand-danger
+.clubs-post__infraction-m-warning .icon
+  color $brand-warning
+
+.clubs-post__action
+  background-color transparent
+  color $body-color-secondary - 20%
+
+  &:hover
+  &:focus
+  &:active
+    background-color $body-bg-secondary
+
+.clubs-post__reply
+  .clubs-post__action
+    color $brand-primary
+
+  .short
+    display none
+
+@media (max-width: $grid-breakpoints.md - 1)
+  .clubs-post__reply
+    .full
+      display none
+    .short
+      display inline-block
+
+//
+// Hovering magick
+//
+
+.clubs-post
+  .clubs-post__action
+    transition opacity .3s ease
+    opacity .3
+  &:hover
+    .clubs-post__action
+      opacity 1
+
+.clubs-post__votes
+.clubs-post__infraction
+  .clubs-post__action
+    opacity 1
+
+//
+// Actions states
+//
+.clubs-post__bookmark-remove
+  display none
+
+.clubs-post__m-selected
+  background-color #ffd
+
+.clubs-post__m-bookmarked
+  .clubs-post__bookmark-remove
+    display inline-block
+    opacity 1
+    .icon
+      color $brand-success
+  .clubs-post__bookmark-add
+    display none
+
+.clubs-post__undelete
+  display none
+
+.clubs-post__m-deleted
+.clubs-post__m-deleted-hard
+
+  .clubs-post__undelete
+    display block
+
+  .clubs-post__votes
+  .clubs-post__vote-up
+  .clubs-post__vote-down
+  .clubs-post__bookmark
+  .clubs-post__edit
+  .clubs-post__delete
+  .clubs-post__reply
+    display none
+
+.clubs-post__ignored-mark
+  display none
+.clubs-post__m-ignored
+  .clubs-post__ignored-mark
+    display inline-block
+
+.clubs-post__m-voted-up
+  .clubs-post__vote-up
+    .clubs-post__action
+      opacity 1
+    .icon
+      color $brand-success
+
+.clubs-post__m-voted-down
+  .clubs-post__vote-down
+    .clubs-post__action
+      opacity 1
+    .icon
+      color $brand-danger
+
+
+.clubs-post__bookmarks-count
+  font-size $font-size-xs
+  color $body-color-secondary
+
+.clubs-post__bookmarks-count:after
+  content attr(data-bm-count)
+  margin-left .3em
+
+.clubs-post__bookmarks-count[data-bm-count="0"]:after
+  display none
+
+.clubs-post__votes
+  .clubs-post__action:after
+    content attr(data-votes-count)
+  .clubs-post__action[data-votes-count="0"]
+    display none
+  .clubs-post__action[data-votes-count^="+"]
+    color $brand-success
+    font-weight bold
+
+
+@keyframes clubs-post-flash-animation {
+  from  { background: $decorator-color;  }
+  to    { background: none; }
+}
+
+.clubs-post__m-flash
+  animation clubs-post-flash-animation 1.5s ease-in

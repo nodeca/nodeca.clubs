@@ -1,0 +1,401 @@
+- var postStatuses = '$$ JSON.stringify(N.models.forum.Post.statuses) $$'
+- self.users = self.users || {};
+- self.infractions = self.infractions || {};
+- self.own_votes = self.own_votes || {};
+- self.own_bookmarks = self.own_bookmarks || [];
+
+//- `self.pagination` may absent if post loaded via `topic.list.by_range`
+- var post_counter = self.pagination ? self.pagination.chunk_offset : 0;
+
+//- show many operations checkbox
+- var many_ops_permitted = self.settings.forum_mod_can_delete_topics;
+
+each post, post_idx in self.posts
+  - var user = self.users[post.user];
+  - var visible = [ postStatuses.DELETED, postStatuses.DELETED_HARD, postStatuses.HB ].indexOf(post.st) === -1;
+  - var collapsed = !self.expand && !visible;
+
+  each block in self.posts_list_before_post || []
+    != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })
+
+  if (self.ignored_users[post.user] && !self.settings.forum_show_ignored && self.current_post_hid !== post.hid)
+    //- skip posts created by ignored users (current post is always visible)
+
+  else if !collapsed
+
+    article.clubs-post.clearfix(
+      id='post' + post._id
+      class=(post.st === postStatuses.DELETED) ? 'clubs-post__m-deleted' : ''
+      class=(post.st === postStatuses.DELETED_HARD) ? 'clubs-post__m-deleted-hard' : ''
+      class=(post.st === postStatuses.HB) ? 'clubs-post__m-hb' : ''
+      class=(self.own_bookmarks.indexOf(post._id) !== -1) ? 'clubs-post__m-bookmarked' : ''
+      class=(self.own_votes[post._id] === -1) ? 'clubs-post__m-voted-down' : ''
+      class=(self.own_votes[post._id] === +1) ? 'clubs-post__m-voted-up' : ''
+      class=(self.ignored_users[post.user]) ? 'clubs-post__m-ignored' : ''
+      data-post-hid=post.hid
+      data-post-id=post._id
+      data-user-hid=user ? user.hid : ''
+      itemscope
+      itemtype='http://schema.org/WebPageElement'
+    )
+
+      footer.clubs-post__meta
+
+        //- avatar copy for small screens
+        .clubs-post__meta-avatar
+          if user
+            a.clubs-post__userpic(href=self.link_to('users.member', { user_hid: user.hid }))
+              img.clubs-post__userpic-img-sm(alt=user.name)&attributes(self.avatar(user, 'md'))
+          else if post.legacy_nick
+            span.clubs-post__userpic
+              img.clubs-post__userpic-img-sm(alt=post.legacy_nick)&attributes(self.avatar(post.legacy_nick, 'md'))
+          else
+            .clubs-post__userpic-img-sm.av-anon
+
+        .clubs-post__meta-flex
+          .clubs-post__meta-author
+            span.clubs-post__ignored-mark.icon.icon-ignore.icon-space-after
+            if user
+              a.clubs-post__author._ucard-popover(
+                href=self.link_to('users.member', { user_hid: user.hid })
+                data-user-id=post.user
+                data-user-ref='fp:'+post._id
+                class=user.css
+              ) #{user.name}
+            else if post.legacy_nick
+              span.clubs-post__author=post.legacy_nick
+
+          .clubs-post__meta-info
+            if post.to && post.to_user && self.users[post.to_user]
+              if !post_idx || self.posts[post_idx - 1]._id !== post.to
+                - var _reply_to_params = {};
+                - _reply_to_params.club_hid  = post.to_fhid || self.club.hid;
+                - _reply_to_params.topic_hid = post.to_thid || self.topic.hid;
+                - _reply_to_params.post_hid  = post.to_phid;
+
+                - var _reply_to_anchor = self.link_to('clubs.topic', _reply_to_params);
+                - var _reply_to_user = self.users[post.to_user]
+
+                a.clubs-post__reply-to-link(href=_reply_to_anchor)
+                  span.icon.icon-reply-for.icon-space-after
+                  img.clubs-post__reply-to-avatar(alt=_reply_to_user.name)&attributes(self.avatar(_reply_to_user, 'sm'))
+                  = _reply_to_user.nick
+
+            if post.edit_count
+              a.clubs-post__history.icon.icon-history.icon-space-after(
+                href='#'
+                title=self.t('last_edited', { date: self.date(post.last_edit_ts, 'datetime') })
+                data-on-click='clubs.topic:post_history'
+                data-post-id=post._id
+                data-post-hid=post.hid
+              )= post.edit_count
+
+            - var _post_anchor = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: post.hid });
+            a.clubs-post__link(href=_post_anchor)
+              != self.timetag(post.ts, 'relative')
+
+        if many_ops_permitted
+          label.clubs-post__select(title=self.t('multiselect_hint'))
+            input.clubs-post__select-cb(
+              type='checkbox'
+              data-post-id=post._id
+              data-on-change='clubs.topic:post_check')
+      .clubs-post__aside
+        if user
+          a.clubs-post__userpic(href=self.link_to('users.member', { user_hid: user.hid }))
+            img.clubs-post__userpic-img(alt=user.name)&attributes(self.avatar(user, 'md'))
+        else if post.legacy_nick
+          span.clubs-post__userpic
+            img.clubs-post__userpic-img(alt=post.legacy_nick)&attributes(self.avatar(post.legacy_nick, 'md'))
+        else
+          .clubs-post__userpic-img.av-anon
+      .clubs-post__content
+        .clubs-post__message.markup !{post.html}
+
+        if post.tail && post.tail.length
+          .clubs-post__tail.markup-tail
+            != self.partial('@users.blocks.attachments', { message: post })
+
+      footer.clubs-post__controls
+        ul.clubs-post__controls-blk
+
+          -var infraction = self.infractions[post._id];
+          if infraction
+            li.clubs-post__control-item.clubs-post__infraction(
+              class=infraction.points === 0 ? 'clubs-post__infraction-m-warning' : ''
+            )
+              a.btn.clubs-post__action(
+                title=self.t('infraction_title', { points: infraction.points, date: self.date(infraction.ts, 'datetime') })
+                href=self.link_to('users.member', { user_hid: user && user.hid }) + '#infraction' + infraction._id
+              )
+                span.icon.icon-infraction
+
+          - var showDropdown = false
+          - showDropdown = showDropdown || self.settings.forum_mod_can_edit_posts
+          - showDropdown = showDropdown || self.settings.forum_mod_can_delete_topics
+          - showDropdown = showDropdown || self.settings.can_see_ip
+
+          if self.runtime.is_member && self.runtime.user_id !== post.user
+
+            if self.club.is_writable && self.club.is_votable && self.settings.can_vote && (self.settings.votes_add_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.votes_add_max_time * 60 * 60 * 1000)
+              li.clubs-post__control-item.clubs-post__vote-up
+                button.btn.clubs-post__action(
+                  title=self.t('vote_up')
+                  data-on-click='clubs.topic.post_vote'
+                  data-post-id=post._id
+                  data-value=self.own_votes[post._id] === 1 ? '0' : '1'
+                )
+                  span.icon.icon-vote-up
+
+              li.clubs-post__control-item.clubs-post__vote-down
+                button.btn.clubs-post__action(
+                  title=self.t('vote_down')
+                  data-on-click='clubs.topic.post_vote'
+                  data-post-id=post._id
+                  data-value=self.own_votes[post._id] === -1 ? '0' : '-1'
+                )
+                  span.icon.icon-vote-down
+
+          if self.settings.can_report_abuse
+            li.clubs-post__control-item.clubs-post__report
+              button.btn.clubs-post__action(title=self.t('report')
+                data-post-id=post._id
+                data-on-click='clubs.topic:report'
+              )
+                span.icon.icon-report
+
+          if self.runtime.is_member
+
+            li.clubs-post__control-item.clubs-post__bookmark
+              button.btn.clubs-post__action.clubs-post__bookmark-add(
+                data-on-click='clubs.topic.post_bookmark'
+                data-post-id=post._id
+                title=self.t('bookmark_add')
+              )
+                span.icon.icon-bookmark
+                span.clubs-post__bookmarks-count(data-bm-count=post.bookmarks)
+
+              button.btn.clubs-post__action.clubs-post__bookmark-remove(
+                data-on-click='clubs.topic.post_bookmark'
+                data-post-id=post._id
+                data-remove='true'
+                title=self.t('bookmark_remove')
+              )
+                span.icon.icon-bookmark
+                span.clubs-post__bookmarks-count(data-bm-count=post.bookmarks)
+
+
+          if (user && user._id === self.runtime.user_id && (self.settings.forum_edit_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.forum_edit_max_time * 60 * 1000))
+            li.clubs-post__control-item.clubs-post__edit
+              button.btn.clubs-post__action(
+                data-on-click='clubs.topic:post_edit'
+                data-post-id=post._id
+                data-post-hid=post.hid
+              )
+                span.icon.icon-edit
+
+            li.clubs-post__delete.clubs-post__control-item
+              button.btn.clubs-post__action(
+                data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_delete' : 'clubs.topic.post_delete'
+                data-post-id=post._id
+                data-topic-hid=self.topic.hid
+                title=self.t('delete')
+              )
+                span.icon.icon-x
+
+          if self.settings.forum_can_reply
+            li.clubs-post__control-item.clubs-post__reply
+              //- for wide screen
+              button.full.btn.clubs-post__action(
+                data-on-click='clubs.topic:reply'
+                data-post-id=post._id
+                data-post-hid=post.hid
+                data-post-ts=post.ts
+              )
+                span.icon.icon-reply.icon-space-after= self.t('reply')
+              //- for narrow screen
+              button.short.btn.clubs-post__action(
+                data-on-click='clubs.topic:reply'
+                data-post-id=post._id
+                data-post-hid=post.hid
+                data-post-ts=post.ts
+                title=self.t('reply')
+              )
+                span.icon.icon-reply
+
+          li.clubs-post__control-item.clubs-post__votes
+            button.btn.clubs-post__action(
+              data-on-click='common.votes_popover'
+              data-votes-popover-placement='left'
+              data-votes-popover-for=post._id
+              title=self.t('vote_details')
+              data-votes-count=(post.votes > 0 ? '+' : '') + post.votes
+            )
+
+          if showDropdown
+              //- no aria parts - visible to moderators only
+              li.clubs-post__control-item.clubs-post__mod-menu.dropdown.dropup
+                button.btn.btn-square.clubs-post__action.dropdown-toggle(
+                  data-toggle='dropdown'
+                  role='button'
+                )
+                .dropdown-menu.dropdown-menu-right(role='menu')
+
+                  if self.settings.forum_mod_can_add_infractions && !self.infractions[post._id]
+                    button.dropdown-item(
+                      data-post-id=post._id
+                      data-on-click='clubs.topic:add_infraction'
+                    )= self.t('add_infraction')
+
+                  if self.settings.can_see_ip
+                    button.dropdown-item(
+                      data-post-id=post._id
+                      data-on-click='clubs.topic.post_show_ip'
+                    )= self.t('ip_info')
+
+                  if self.settings.forum_mod_can_edit_posts
+                    button.dropdown-item(
+                      data-on-click='clubs.topic:post_edit'
+                      data-post-id=post._id
+                      data-post-hid=post.hid
+                      data-as-moderator='true'
+                    )= self.t('edit')
+
+                  if self.settings.forum_mod_can_delete_topics
+                    button.dropdown-item.clubs-post__delete(
+                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_delete' : 'clubs.topic.post_delete'
+                      data-post-id=post._id
+                      data-topic-hid=self.topic.hid
+                      data-as-moderator='true'
+                    )= self.t('delete')
+
+                    button.dropdown-item.clubs-post__undelete(
+                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_undelete' : 'clubs.topic.post_undelete'
+                      data-post-id=post._id
+                      data-topic-hid=self.topic.hid
+                    )= self.t('undelete')
+
+
+  else
+
+    article.clubs-post.clubs-post__m-collapsed.clearfix(
+      id='post' + post._id
+      class=(post.st === postStatuses.DELETED) ? 'clubs-post__m-deleted' : ''
+      class=(post.st === postStatuses.DELETED_HARD) ? 'clubs-post__m-deleted-hard' : ''
+      class=(post.st === postStatuses.HB) ? 'clubs-post__m-hb' : ''
+      class=(self.ignored_users[post.user]) ? 'clubs-post__m-ignored' : ''
+      data-post-id=post._id
+      data-post-hid=post.hid
+      data-user-hid=user ? user.hid : ''
+      itemscope
+      itemtype='http://schema.org/WebPageElement'
+    )
+      footer.clubs-post__meta
+
+        //- avatar copy for small screens
+        .clubs-post__meta-avatar
+          if user
+            a.clubs-post__userpic(href=self.link_to('users.member', { user_hid: user.hid }))
+              img.clubs-post__userpic-img-sm(alt=user.name)&attributes(self.avatar(user, 'md'))
+          else if post.legacy_nick
+            span.clubs-post__userpic
+              img.clubs-post__userpic-img-sm(alt=post.legacy_nick)&attributes(self.avatar(post.legacy_nick, 'md'))
+          else
+            .clubs-post__userpic-img-sm
+
+        .clubs-post__meta-flex
+          .clubs-post__meta-author
+            span.clubs-post__ignored-mark.icon.icon-ignore.icon-space-after
+            if user
+              a.clubs-post__author._ucard-popover(
+                href=self.link_to('users.member', { user_hid: user.hid })
+                data-user-id=post.user
+                data-user-ref='fp:'+post._id
+                class=user.css
+              ) #{user.name}
+            else if post.legacy_nick
+              span.clubs-post__author=post.legacy_nick
+
+          .clubs-post__meta-info
+            if post.to && post.to_user && self.users[post.to_user]
+              if !post_idx || self.posts[post_idx - 1]._id !== post.to
+                - var _reply_to_params = {};
+                - _reply_to_params.club_hid  = post.to_fhid || self.club.hid;
+                - _reply_to_params.topic_hid = post.to_thid || self.topic.hid;
+                - _reply_to_params.post_hid  = post.to_phid;
+
+                - var _reply_to_anchor = self.link_to('clubs.topic', _reply_to_params);
+                - var _reply_to_user = self.users[post.to_user]
+
+                a.clubs-post__reply-to-link(href=_reply_to_anchor)
+                  span.icon.icon-reply-for.icon-space-after
+                  img.clubs-post__reply-to-avatar(alt=_reply_to_user.name)&attributes(self.avatar(_reply_to_user, 'sm'))
+                  = _reply_to_user.nick
+
+            if post.edit_count
+              a.clubs-post__history.icon.icon-history.icon-space-after(
+                href='#'
+                title=self.t('last_edited', { date: self.date(post.last_edit_ts, 'datetime') })
+                data-on-click='clubs.topic:post_history'
+                data-post-id=post._id
+                data-post-hid=post.hid
+              )= post.edit_count
+
+            - var _post_anchor = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: post.hid });
+            a.clubs-post__link(href=_post_anchor)
+              != self.timetag(post.ts, 'relative')
+
+        if many_ops_permitted
+          label.clubs-post__select(title=self.t('multiselect_hint'))
+            input.clubs-post__select-cb(
+              type='checkbox'
+              data-post-id=post._id
+              data-on-change='clubs.topic:post_check')
+
+      .clubs-post__content-collapsed
+        case post.st
+          when postStatuses.DELETED
+           =self.t('del_post_text')
+          when postStatuses.DELETED_HARD
+           =self.t('del_hard_post_text')
+          when postStatuses.HB
+           =self.t('hb_post_text')
+
+        if post.del_reason
+          .clubs-post__del-reason=self.t('del_reason', { text: post.del_reason })
+        if post.del_by
+          .clubs-post__del-by
+            =self.t('del_by')
+            | 
+            - var delUser = self.users[post.del_by]
+            a.clubs-post__author._ucard-popover(
+              href=self.link_to('users.member', { user_hid: delUser.hid })
+              data-user-id=post.del_by
+            ) #{delUser.name}
+
+      footer.clubs-post__controls
+        ul.clubs-post__controls-blk
+
+          -var infraction = self.infractions[post._id];
+          if infraction
+            li.clubs-post__control-item.clubs-post__infraction(
+              class=infraction.points === 0 ? 'clubs-post__infraction-m-warning' : ''
+            )
+              a.btn.clubs-post__action(
+                title=self.t('infraction_title', { points: infraction.points, date: self.date(infraction.ts, 'datetime') })
+                href=self.link_to('users.member', { user_hid: user && user.hid }) + '#infraction' + infraction._id
+              )
+                span.icon.icon-infraction
+
+          li.clubs-post__control-item
+            button.btn.clubs-post__action(
+              data-on-click='clubs.topic.post_expand'
+              title=self.t('expand')
+              data-post-id=post._id
+            )
+              span.icon.icon-expand
+
+  each block in self.posts_list_after_post || []
+    != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })
+
+  - if (visible) { post_counter++; }

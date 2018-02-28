@@ -8,3 +8,16 @@ router:
         club_hid:
           match: /\d+/
           type: integer
+
+    clubs.topic:
+      "/clubs/c{club_hid}/topic{topic_hid}(/{post_hid})":
+        club_hid:
+          match: /\d+/
+          type: integer
+        topic_hid:
+          match: /\d+/
+          type: integer
+        post_hid:
+          match: /\d+/
+          type: integer
+          default: 1

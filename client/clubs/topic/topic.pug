@@ -1,0 +1,22 @@
+article#content.clubs-topic-root
+  != self.partial('@common.blocks.navbar.logo_apps')
+
+  nav.breadcrumbs-container
+    .layout__container.container-fluid
+      != self.partial('@common.blocks.breadcrumbs')
+
+  .layout__container.container-fluid
+    != self.partial('@users.blocks.announces')
+
+    header.page-head
+      h1.clubs-topic-title.page-head__title(itemprop='name')
+        .float-right
+          .page-actions.clubs-topic__toolbar-controls
+            button.btn.btn-primary.btn-square.icon.icon-plus(
+              type='button'
+              data-on-click='clubs.topic:reply'
+            )
+
+        span.clubs-topic-title__text= self.topic.title
+
+    .clubs-postlist!= self.partial('@clubs.blocks.posts_list')

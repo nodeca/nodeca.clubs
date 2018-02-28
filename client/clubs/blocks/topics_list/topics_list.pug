@@ -37,15 +37,15 @@ each topic, idx in self.topics
 
       if (self.read_marks[topic._id].next !== -1 && self.subscriptions.indexOf(topic._id) !== -1)
         //- If user subscribed and unread messages in topic - go to first unread
-        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].next });
+        - href = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].next });
 
       else if (self.read_marks[topic._id].position !== -1)
         //- If we have position info - go to last position
-        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].position });
+        - href = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].position });
 
       else
         //- Go to first post in topic
-        - href = self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid });
+        - href = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: topic.hid });
 
       h2.clubs-topicline__title
         span.clubs-topicline__bookmarked-marker.icon.icon-bookmark.icon-space-after(title=self.t('bookmarked'))
@@ -80,7 +80,7 @@ each topic, idx in self.topics
         span.clubs-topicline__microstat-replies.d-sm-none
           = self.t('replies', replies)
         a.clubs-topicline__microstat-time(
-          href=self.link_to('clubs.topic', { section_hid: self.section.hid, topic_hid: topic.hid, post_hid: topic.cache.last_post_hid })
+          href=self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: topic.hid, post_hid: topic.cache.last_post_hid })
         )
           != self.timetag(lp_ts, 'relative')
         if lp_user.hid
@@ -112,4 +112,4 @@ each topic, idx in self.topics
         input.clubs-topicline__select-cb(
           type='checkbox'
           data-topic-hid=topic.hid
-          data-on-change='clubs.section:topic_check')
+          data-on-change='clubs.sole:topic_check')
