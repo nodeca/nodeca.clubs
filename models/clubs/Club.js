@@ -37,6 +37,8 @@ module.exports = function (N, collectionName) {
     members:      Number,
     members_hb:   Number,
 
+    avatar_id:    Schema.Types.ObjectId,
+
     // cache
     cache,
     cache_hb:     cache
