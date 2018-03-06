@@ -1,2 +1,4 @@
 en-US:
   join: Join club
+  administrators: 'Club administrators:'
+  members: "#{count} ((member|members))"

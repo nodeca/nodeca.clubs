@@ -10,20 +10,26 @@ article#content.clubs-sole
 
     header.page-head.clubs-sole__head
       .clubs-sole__aside
-        img.clubs-sole__avatar()&attributes(self.avatar({}, 'sm'))
+        img.clubs-sole__avatar(alt=self.club.title)&attributes(self.avatar(self.club, 'sm'))
 
       .clubs-sole__meta
         .clubs-sole__meta-top
           .clubs-sole__meta-title-admins
-            .clubs-sole__title= 'Omnis est voluptates sint quia'
-            .clubs-sole__admins= 'Club administrator: Summer (theodorakessler) Bernhard'
+            .clubs-sole__title= self.club.title
+            .clubs-sole__admins
+              = self.t('administrators')
+              ul.clubs-sole__admin-list
+                each userid in self.club_admin_ids
+                  - var user = self.users && self.users[userid];
+                  if user
+                    li.clubs-sole__admin-list-item
+                      a.clubs-sole__admin-list-link(href=self.link_to('users.member', { user_hid: user.hid }))= user.name
+
           .page-actions.clubs-sole__toolbar-controls
             button.btn.btn-primary(type='button')= self.t('join')
 
-        .clubs-sole__description
-          p= 'Accusantium est saepe amet dolorem sint nulla blanditiis. Et iure eum voluptatem. Accusantium nostrum rem harum quis. Non sed sequi deleniti hic culpa qui.'
-          p= 'Rerum atque esse esse velit doloremque eius. Doloremque eos sint autem consequatur ratione architecto. Ut voluptate voluptatem enim quia est. Laudantium voluptatem ad eaque numquam perspiciatis deleniti quam. Velit sit nihil repellendus consequatur facere.'
+        .clubs-sole__description= self.club.description
         .clubs-sole__members
-          a(href='#')= '33 members'
+          a(href='#')= self.t('members', self.club.members)
 
     .clubs-sole__postlist!= self.partial('@clubs.blocks.topics_list')

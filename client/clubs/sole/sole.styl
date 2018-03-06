@@ -36,6 +36,23 @@ $aside-size = '$$ N.config.users.avatars.resize.sm.height $$'px
   color $body-color-secondary
   font-size $font-size-xs
 
+.clubs-sole__admin-list
+  margin 0
+  padding 0
+  list-style none
+  margin-left 0.2rem
+  display inline
+
+.clubs-sole__admin-list-item
+  display inline
+
+.clubs-sole__admin-list-item + .clubs-sole__admin-list-item
+  &:before
+    content ', '
+
+.clubs-sole__admin-list-link
+  color $body-color-secondary
+
 .clubs-sole__meta-top
 .clubs-sole__description
   margin-bottom 1rem

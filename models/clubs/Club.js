@@ -31,8 +31,6 @@ module.exports = function (N, collectionName) {
     // user-friendly id (autoincremented)
     hid:          { type: Number, index: true },
 
-    admin_ids:    [ Schema.ObjectId ],
-
     // member count
     members:      Number,
     members_hb:   Number,

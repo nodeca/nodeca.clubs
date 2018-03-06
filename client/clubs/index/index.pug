@@ -21,29 +21,23 @@ article#content.clubs-index
       .page-actions.clubs-index__toolbar-controls
         button.btn.btn-secondary(type='button')= self.t('create')
 
-    .clubs-index-sole
-      .clubs-index-sole__aside
-        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
-      .clubs-index-sole__meta
-        .clubs-index-sole__title
-          a(href=self.link_to('clubs.sole', { club_hid: 1 }))= 'Amet optio ipsum esse at cumque ipsa sit'
-        .clubs-index-sole__members= '30 members'
-        .clubs-index-sole__activity= 'Last activity 2 hours ago'
+    .clubs-index__club-list
+      each club in self.clubs
+        .clubs-index-sole
+          .clubs-index-sole__aside
+            a(href=self.link_to('clubs.sole', { club_hid: club.hid }))
+              img.clubs-index-sole__avatar(alt=club.title)&attributes(self.avatar(club, 'md'))
 
-    .clubs-index-sole
-      .clubs-index-sole__aside
-        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
-      .clubs-index-sole__meta
-        .clubs-index-sole__title
-          a(href=self.link_to('clubs.sole', { club_hid: 2 }))= 'Omnis est voluptates sint quia'
-        .clubs-index-sole__members= '33 members'
-        .clubs-index-sole__activity= 'Last activity 17 days ago'
+          .clubs-index-sole__meta
+            .clubs-index-sole__title
+              a(href=self.link_to('clubs.sole', { club_hid: club.hid }))= club.title
 
-    .clubs-index-sole
-      .clubs-index-sole__aside
-        img.clubs-index-sole__avatar()&attributes(self.avatar({}, 'md'))
-      .clubs-index-sole__meta
-        .clubs-index-sole__title
-          a(href=self.link_to('clubs.sole', { club_hid: 3 }))= 'Ad alias molestiae possimus'
-        .clubs-index-sole__members= '274 members'
-        .clubs-index-sole__activity= 'Last activity 1 month ago'
+            .clubs-index-sole__members
+              = self.t('members', club.members)
+
+            .clubs-index-sole__activity
+              = self.t('last_activity')
+              = ' '
+              != self.timetag(club.cache.last_ts, 'relative_full')
+      else
+        p.clubs-index__no-clubs= self.t('no_clubs')
