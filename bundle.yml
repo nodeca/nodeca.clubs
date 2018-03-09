@@ -12,3 +12,8 @@ packages:
       - client/clubs
       - internal/clubs
       - server/clubs
+
+  users:
+    entries:
+      - client/users
+      - server/users

@@ -1,0 +1,19 @@
+.member-block
+
+  .member-block__header
+    - var clubsLink = self.link_to('clubs.index')
+    .member-block__header-title
+      a.member-block__header-collapser(href='#member-clubs-info', data-toggle='collapse')
+        .icon.icon-collapse
+        .icon.icon-expand
+
+      a.member-block__header-link(href=clubsLink)
+        = self.t('title')
+        span.member-block__header-arrow.icon.icon-right-open
+        small.member-block__header-counter= self.blocks.clubs.count
+
+  #member-clubs-info.member-block__inner.collapse.show
+    ul.member-block__clubs-info
+      each club in self.blocks.clubs.list
+        li.member-block__clubs-info-item
+          a.member-block__clubs-info-item-title(href=self.link_to('clubs.sole', { club_hid: club.hid }))= club.title
