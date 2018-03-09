@@ -24,8 +24,9 @@ module.exports = function (N, collectionName) {
   // - get list of admins
   ClubMember.index({ club: 1, is_owner: 1 });
 
-  // "my clubs"
-  ClubMember.index({ user: 1 });
+  // - get "my clubs" list
+  // - get club membership settings for current user
+  ClubMember.index({ user: 1, club: 1 });
 
 
   N.wire.on('init:models', function emit_init_ClubMember() {

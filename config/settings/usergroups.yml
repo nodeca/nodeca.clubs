@@ -1,0 +1,26 @@
+setting_schemas:
+  usergroup:
+
+    clubs_mod_can_delete_topics:
+      priority: 1020
+      category_key: perm_clubs_moderate
+      type: boolean
+      default: false
+
+    clubs_mod_can_hard_delete_topics:
+      priority: 1030
+      category_key: perm_clubs_moderate
+      type: boolean
+      default: false
+
+    clubs_mod_can_see_hard_deleted_topics:
+      priority: 1040
+      category_key: perm_clubs_moderate
+      type: boolean
+      default: false
+
+    clubs_mod_can_add_infractions:
+      priority: 2120
+      category_key: perm_infractions
+      type: boolean
+      default: false

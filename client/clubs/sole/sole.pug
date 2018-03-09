@@ -1,5 +1,41 @@
-article#content.clubs-sole
-  != self.partial('@common.blocks.navbar.logo_apps')
+- self.add_raw_data('settings',     self.settings)
+- self.add_raw_data('club',         self.club)
+- self.add_raw_data('subscription', self.subscription)
+- self.add_raw_data('pagination',   self.pagination)
+
+article#content.clubs-sole-root(
+  data-keymap= {
+    'home': 'clubs.sole:nav_to_start',
+    'end':  'clubs.sole:nav_to_end'
+  }
+  class=(self.pagination.chunk_offset > 0 ? '' : 'clubs-sole-root__m-first-page')
+  data-last-topic-hid= self.last_topic_hid
+  data-top-marker=     self.topics && self.topics.length > 0 ? self.topics[0].cache.last_post : null
+  data-bottom-marker=  self.topics && self.topics.length > 0 ? self.topics[self.topics.length - 1].cache.last_post : null
+)
+
+  -
+    var navbar_args = {
+      title:    self.club.title,
+      level_up: self.link_to('clubs.index'),
+      toolbar:  'clubs.sole.blocks.toolbar_controls',
+      progress: {
+        link_top:    self.link_to('clubs.sole', { club_hid: self.club.hid }),
+        link_bottom: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.last_topic_hid }),
+        current:     self.pagination.chunk_offset,
+        total:       self.pagination.total
+      },
+      search_areas: [
+        {
+          title: self.t('search_club'),
+          method: 'search.clubs_sole',
+          params: { hid: String(self.club.hid) }
+        }
+      ]
+    };
+
+  != self.partial('@common.blocks.navbar.levelup_progress_apps', navbar_args)
+  != self.partial('@common.blocks.navbar.alt_levelup_progress_title_toolbar', navbar_args)
 
   nav.breadcrumbs-container
     .layout__container.container-fluid
@@ -25,11 +61,42 @@ article#content.clubs-sole
                     li.clubs-sole__admin-list-item
                       a.clubs-sole__admin-list-link(href=self.link_to('users.member', { user_hid: user.hid }))= user.name
 
-          .page-actions.clubs-sole__toolbar-controls
-            button.btn.btn-primary(type='button')= self.t('join')
+          != self.partial('@clubs.sole.blocks.toolbar_controls')
 
         .clubs-sole__description= self.club.description
         .clubs-sole__members
           a(href='#')= self.t('members', self.club.members)
 
-    .clubs-sole__postlist!= self.partial('@clubs.blocks.topics_list')
+    if self.topics && self.topics.length
+      .clubs-sole__loading-prev.nojs-hide(
+        class=(self.pagination.chunk_offset === 0 ? 'd-none' : '')
+      )
+        span.icon.icon-loading-placeholder
+
+      .clubs-topiclist._affix(
+        data-affix-top={
+          offset:     500,
+          wire_above: 'clubs.sole:load_prev',
+          throttle:   100
+        }
+        data-affix-bottom={
+          offset:     500,
+          wire_below: 'clubs.sole:load_next',
+          throttle:   100
+        }
+      )!= self.partial('@clubs.blocks.topics_list')
+
+      .clubs-sole__loading-next.nojs-hide(
+        class=(self.topics && self.topics.length > 0 && self.topics[self.topics.length - 1].hid === self.last_topic_hid ? 'd-none' : '')
+      )
+        span.icon.icon-loading-placeholder
+
+      nav.pager.js-hide
+        if self.head.prev
+          a.btn.btn-secondary(href=self.head.prev)= self.t('prev_page')
+
+        if self.head.next
+          a.btn.btn-secondary(href=self.head.next)= self.t('next_page')
+    else
+      p.clubs-sole__notopics
+        != self.t('no_topics')

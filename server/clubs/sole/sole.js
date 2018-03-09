@@ -4,34 +4,89 @@
 'use strict';
 
 
-const _             = require('lodash');
-const sanitize_club = require('nodeca.clubs/lib/sanitizers/club');
+const _  = require('lodash');
 
 
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
-    club_hid: { type: 'integer', minimum: 1, required: true }
+    club_hid:  { type: 'integer', required: true },
+    topic_hid: { type: 'integer', required: false },
+    $query:    {
+      type: 'object',
+      properties: {
+        prev: { 'enum': [ '' ] },
+        next: { 'enum': [ '' ] }
+      },
+      required: false,
+      additionalProperties: false
+    }
   });
 
+  let buildTopicIdsBefore = require('./list/_build_topic_ids_before.js')(N);
+  let buildTopicIdsAfter  = require('./list/_build_topic_ids_after.js')(N);
 
-  // Fetch club
+
+  async function buildTopicsIdsAndGetOffset(env) {
+    let prev = false, next = false;
+
+    if (env.params.$query) {
+      let query = env.params.$query;
+
+      prev = typeof query.prev !== 'undefined';
+      next = typeof query.next !== 'undefined';
+    }
+
+    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
+    let limit_direction = prev || next;
+    let current_topic;
+
+    env.data.select_topics_start  = null;
+
+    let results = [];
+
+    if (env.params.topic_hid) {
+      current_topic = await N.models.clubs.Topic.findOne({
+        club: env.data.club._id,
+        hid:  env.params.topic_hid,
+        st:   { $in: statuses }
+      });
+
+      if (current_topic) {
+        env.data.select_topics_start = current_topic[env.user_info.hb ? 'cache_hb' : 'cache'].last_post;
+        results.push(current_topic._id);
+      }
+    }
+
+    if (!limit_direction || prev) {
+      env.data.select_topics_before = env.data.topics_per_page;
+      await buildTopicIdsBefore(env);
+      results = env.data.topics_ids.slice(0).concat(results);
+    }
+
+    if (!limit_direction || next) {
+      env.data.select_topics_after = env.data.topics_per_page;
+      await buildTopicIdsAfter(env);
+      results = results.concat(env.data.topics_ids);
+    }
+
+    env.data.topics_ids = results;
+  }
+
+  // Subcall clubs.topic_list
   //
-  N.wire.before(apiPath, async function fetch_club(env) {
-    let club = await N.models.clubs.Club.findOne()
-                         .where('hid').equals(env.params.club_hid)
-                         .lean(true);
+  N.wire.on(apiPath, async function subcall_topic_list(env) {
+    env.data.club_hid          = env.params.club_hid;
+    env.data.build_topics_ids  = buildTopicsIdsAndGetOffset;
+    env.data.topics_per_page   = await env.extras.settings.fetch('topics_per_page');
 
-    if (!club) throw N.io.NOT_FOUND;
-
-    env.data.club = club;
-    env.res.club = await sanitize_club(N, club, env.user_info);
+    return N.wire.emit('internal:clubs.topic_list', env);
   });
 
 
   // Fetch club administrators
   //
-  N.wire.before(apiPath, async function fetch_club_admins(env) {
+  N.wire.after(apiPath, async function fetch_club_admins(env) {
     let membership = await N.models.clubs.ClubMember.find()
                                .where('club').equals(env.data.club._id)
                                .where('is_owner').equals(true)
@@ -44,10 +99,82 @@ module.exports = function (N, apiPath) {
   });
 
 
-  N.wire.on(apiPath, function clubs_sole(env) {
-    env.res.head = env.res.head || {};
-    env.res.head.title = env.data.club.title;
+  // Fetch pagination
+  //
+  N.wire.after(apiPath, async function fetch_pagination(env) {
+    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
 
+    //
+    // Count total amount of visible topics in the club
+    //
+    let counters_by_status = await Promise.all(
+      statuses.map(st =>
+        N.models.clubs.Topic
+            .where('club').equals(env.data.club._id)
+            .where('st').equals(st)
+            .count()
+      )
+    );
+
+    let pinned_count = env.data.topics_visible_statuses.indexOf(N.models.clubs.Topic.statuses.PINNED) === -1 ?
+                       0 :
+                       await N.models.clubs.Topic
+                               .where('club').equals(env.data.club._id)
+                               .where('st').equals(N.models.clubs.Topic.statuses.PINNED)
+                               .count();
+
+    let topic_count = _.sum(counters_by_status) + pinned_count;
+
+    //
+    // Count an amount of visible topics before the first one
+    //
+    let topic_offset = 0;
+
+    // if first topic is pinned, it's a first page and topic_offset is zero
+    if (env.data.topics.length && env.data.topics[0].st !== N.models.clubs.Topic.statuses.PINNED) {
+      let cache        = env.user_info.hb ? 'cache_hb' : 'cache';
+      let last_post_id = env.data.topics[0][cache].last_post;
+
+      let counters_by_status = await Promise.all(
+        statuses.map(st =>
+          N.models.clubs.Topic
+              .where(`${cache}.last_post`).gt(last_post_id)
+              .where('club').equals(env.data.club._id)
+              .where('st').equals(st)
+              .count()
+        )
+      );
+
+      topic_offset = _.sum(counters_by_status) + pinned_count;
+    }
+
+    env.res.pagination = {
+      total:        topic_count,
+      per_page:     env.data.topics_per_page,
+      chunk_offset: topic_offset
+    };
+  });
+
+
+  // Fill subscription type
+  //
+  N.wire.after(apiPath, async function fill_subscription(env) {
+    if (!env.user_info.is_member) {
+      env.res.subscription = null;
+      return;
+    }
+
+    let subscription = await N.models.users.Subscription
+                                .findOne({ user: env.user_info.user_id, to: env.data.club._id })
+                                .lean(true);
+
+    env.res.subscription = subscription ? subscription.type : null;
+  });
+
+
+  // Fill breadcrumbs info
+  //
+  N.wire.after(apiPath, async function fill_topic_breadcrumbs(env) {
     env.data.breadcrumbs = [];
 
     env.data.breadcrumbs.push({
@@ -62,65 +189,90 @@ module.exports = function (N, apiPath) {
     });
 
     env.res.breadcrumbs = env.data.breadcrumbs;
+  });
 
-    env.res.topics = [
-      {
-        hid: 1,
-        title: 'Facilis dolores quam perferendis tempora blanditiis maxime',
-        cache: {
-          first_ts: new Date('2014-01-01'),
-          last_ts: new Date('2014-01-01'),
-          post_count: 10
-        },
-        views_count: 0
-      },
-      {
-        hid: 2,
-        title: 'Culpa magni dolor sit magnam dolores laborum ut',
-        cache: {
-          first_ts: new Date('2013-01-01'),
-          last_ts: new Date('2013-01-01'),
-          post_count: 1
-        },
-        views_count: 0
-      },
-      {
-        hid: 3,
-        title: 'In autem suscipit magni unde aspernatur repellat dolor',
-        cache: {
-          first_ts: new Date('2012-01-01'),
-          last_ts: new Date('2012-01-01'),
-          post_count: 162
-        },
-        views_count: 0
-      },
-      {
-        hid: 4,
-        title: 'Sit illo ratione consequuntur quisquam eaque sapiente',
-        cache: {
-          first_ts: new Date('2011-01-01'),
-          last_ts: new Date('2011-01-01'),
-          post_count: 89
-        },
-        views_count: 0
-      },
-      {
-        hid: 5,
-        title: 'Repellendus suscipit id ut delectus exercitationem',
-        cache: {
-          first_ts: new Date('2010-01-01'),
-          last_ts: new Date('2010-01-01'),
-          post_count: 68
-        },
-        views_count: 0
+
+  // Fill head meta
+  //
+  N.wire.after(apiPath, function fill_head(env) {
+    env.res.head = env.res.head || {};
+    env.res.head.title = env.data.club.title;
+
+    if (env.params.topic_hid) {
+      env.res.head.robots = 'noindex,follow';
+    }
+  });
+
+
+  // Fill 'prev' and 'next' links and meta tags
+  //
+  N.wire.after(apiPath, async function fill_prev_next(env) {
+    env.res.head = env.res.head || {};
+
+    let cache    = env.user_info.hb ? 'cache_hb' : 'cache';
+    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
+
+    //
+    // Fetch topic after last one, turn it into a link to the next page
+    //
+    if (env.data.topics.length > 0) {
+      let last_post_id = env.data.topics[env.data.topics.length - 1][cache].last_post;
+
+      let topic_data = await N.models.clubs.Topic.findOne()
+                                 .where(`${cache}.last_post`).lt(last_post_id)
+                                 .where('club').equals(env.data.club._id)
+                                 .where('st').in(statuses)
+                                 .select('hid -_id')
+                                 .sort(`-${cache}.last_post`)
+                                 .lean(true);
+
+      if (topic_data) {
+        env.res.head.next = N.router.linkTo('clubs.sole', {
+          club_hid:  env.params.club_hid,
+          topic_hid: topic_data.hid
+        }) + '?next';
       }
-    ];
+    }
 
-    env.res.settings = {};
-    env.res.read_marks = { undefined: {} };
-    env.res.ignored_users = {};
-    env.res.own_bookmarks = [];
-    env.res.subscriptions = [];
-    env.res.users = { undefined: { name: 'Bo (demond_fadel) Hagenes', hid: 1 } };
+    //
+    // Fetch topic before first one, turn it into a link to the previous page;
+    // (there is no previous page if the first topic is pinned)
+    //
+    if (env.data.topics.length > 0 &&
+        env.data.topics[0].st !== N.models.clubs.Topic.statuses.PINNED) {
+
+      let last_post_id = env.data.topics[0][cache].last_post;
+
+      let topic_data = await N.models.clubs.Topic.findOne()
+                                 .where(`${cache}.last_post`).gt(last_post_id)
+                                 .where('club').equals(env.data.club._id)
+                                 .where('st').in(statuses)
+                                 .select('hid')
+                                 .sort(`${cache}.last_post`)
+                                 .lean(true);
+
+      if (topic_data) {
+        env.res.head.prev = N.router.linkTo('clubs.sole', {
+          club_hid:  env.params.club_hid,
+          topic_hid: topic_data.hid
+        }) + '?prev';
+      }
+    }
+
+    //
+    // Fetch last topic for the "move to bottom" button
+    //
+    if (env.data.topics.length > 0) {
+      let topic_data = await N.models.clubs.Topic.findOne()
+                                 .where('club').equals(env.data.club._id)
+                                 .where('st').in(statuses)
+                                 .select('hid')
+                                 .sort(`${cache}.last_post`)
+                                 .lean(true);
+
+      if (topic_data) {
+        env.res.last_topic_hid = topic_data.hid;
+      }
+    }
   });
 };

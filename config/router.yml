@@ -4,12 +4,27 @@ router:
       "/clubs": ~
 
     clubs.sole:
-      "/clubs/c{club_hid}":
+      "/clubs/c{club_hid}(/{topic_hid})":
         club_hid:
+          match: /\d+/
+          type: integer
+        topic_hid:
           match: /\d+/
           type: integer
 
     clubs.topic:
+      "/clubs/c{club_hid}/topic{topic_hid}(/page{page})":
+        club_hid:
+          match: /\d+/
+          type: integer
+        topic_hid:
+          match: /\d+/
+          type: integer
+        page:
+          match: /[1-9]\d*/
+          type: integer
+          default: 1
+
       "/clubs/c{club_hid}/topic{topic_hid}(/{post_hid})":
         club_hid:
           match: /\d+/

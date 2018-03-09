@@ -1,0 +1,13 @@
+i18n:
+  en-US:
+    admin:
+      core:
+        category_names:
+          perm_clubs: Clubs
+          perm_clubs_moderate: Clubs moderation
+
+        setting_names:
+          clubs_mod_can_delete_topics: Delete topics
+          clubs_mod_can_hard_delete_topics: Hard delete topics
+          clubs_mod_can_see_hard_deleted_topics: See hard deleted topics
+          clubs_mod_can_add_infractions: Can give infractions in clubs
