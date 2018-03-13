@@ -1,6 +1,30 @@
 setting_schemas:
   usergroup:
 
+    clubs_can_reply:
+      priority: 20
+      category_key: clubs
+      type: boolean
+      default: false
+
+    clubs_can_start_topics:
+      priority: 30
+      category_key: clubs
+      type: boolean
+      default: false
+
+    clubs_edit_max_time:
+      priority: 40
+      category_key: clubs
+      type: number
+      default: 30
+
+    clubs_show_ignored:
+      priority: 70
+      category_key: clubs
+      type: boolean
+      default: false
+
     clubs_mod_can_delete_topics:
       priority: 1020
       category_key: perm_clubs_moderate

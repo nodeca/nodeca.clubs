@@ -3,15 +3,19 @@
 
 - var items = []
 
+if self.runtime.is_member && !self.is_club_member
+  - items.push('club_join')
+
 if self.runtime.is_member
   if self.is_club_member && self.settings.clubs_can_start_topics
     - items.push('topic_create')
-  else if !self.is_club_member
-    - items.push('join')
 
 if self.runtime.is_member
   - items.push('mark_read')
   - items.push('subscription')
+
+if self.runtime.is_member && self.is_club_member
+  - items.push('club_leave')
 
 
 if self.selected_cnt
@@ -32,6 +36,18 @@ if items.length > 0 && items[items.length - 1] === 'header'
 
 
 .page-actions.clubs-sole__toolbar-controls
+  if self.runtime.is_member && !self.is_club_member
+    button.hidden-nav-alt.btn.btn-primary.d-none.d-sm-inline-block(
+      type='button'
+      data-on-click='clubs.sole:join'
+      data-club-hid=self.club.hid
+    )= self.t('club_join')
+    button.hidden-page-head.btn.btn-secondary.d-none.d-sm-inline-block(
+      type='button'
+      data-on-click='clubs.sole:create'
+      data-club-hid=self.club.hid
+    )= self.t('club_join')
+
   if self.runtime.is_member
     if self.is_club_member && self.settings.clubs_can_start_topics
       button.hidden-nav-alt.btn.btn-primary.btn-square.d-none.d-sm-inline-block.icon.icon-plus(
@@ -48,18 +64,6 @@ if items.length > 0 && items[items.length - 1] === 'header'
         data-club-title=self.club.title
         title=self.t('topic_create')
       )
-
-    else if !self.is_club_member
-      button.hidden-nav-alt.btn.btn-primary.d-none.d-sm-inline-block(
-        type='button'
-        data-on-click='clubs.sole:join'
-        data-club-hid=self.club.hid
-      )= self.t('join')
-      button.hidden-page-head.btn.btn-secondary.d-none.d-sm-inline-block(
-        type='button'
-        data-on-click='clubs.sole:create'
-        data-club-hid=self.club.hid
-      )= self.t('join')
 
   - var subscriptionIcon = 'icon-track-normal'
   - var subscriptionTitle = self.t('subs_normal')
@@ -99,6 +103,21 @@ if items.length > 0 && items[items.length - 1] === 'header'
 
         each item in items
           case item
+
+            when 'club_join'
+              button.dropdown-item.d-sm-none(
+                type='button'
+                data-on-click='clubs.sole:join'
+                data-club-hid=self.club.hid
+              )= self.t('club_join')
+
+            when 'club_leave'
+              button.dropdown-item(
+                type='button'
+                data-on-click='clubs.sole:join'
+                data-club-hid=self.club.hid
+                data-leave='true'
+              )= self.t('club_leave')
 
             when 'topic_create'
               button.dropdown-item.d-sm-none(

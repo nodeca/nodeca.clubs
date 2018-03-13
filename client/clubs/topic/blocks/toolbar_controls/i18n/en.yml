@@ -1,0 +1,19 @@
+en-US:
+  mod_actions: Moderation
+  close: Close
+  open: Open
+  pin: Pin
+  unpin: Unpin
+  history: History
+  delete: Delete
+  undelete: Undelete
+  post_add: Add reply
+  subscription: Subscription
+  subs_muted: Muted. You will never be notified of anything about this topic.
+  subs_normal: Normal. You will be notified if someone mentions your @name or replies to your message.
+  subs_tracking: Tracking. You will see topic updates in your subscriptions list.
+  subs_watching: Watching. You will be notified immediately on every new message.
+  many_header: "With #{count} ((post|posts)):"
+  many_unselect: Clear selection
+  many_delete: Delete
+  many_undelete: Undelete

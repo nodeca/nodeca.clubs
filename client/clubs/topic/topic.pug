@@ -1,5 +1,57 @@
-article#content.clubs-topic-root
-  != self.partial('@common.blocks.navbar.logo_apps')
+- var topicStatuses = '$$ JSON.stringify(N.models.clubs.Topic.statuses) $$'
+
+- self.add_raw_data('settings', self.settings)
+- self.add_raw_data('club', self.club)
+- self.add_raw_data('topic', self.topic)
+- self.add_raw_data('subscription', self.subscription)
+- self.add_raw_data('pagination', self.pagination)
+- self.add_raw_data('posts_list_before_post', self.posts_list_before_post)
+- self.add_raw_data('posts_list_after_post', self.posts_list_after_post)
+
+- var isOpen = (self.topic.st === topicStatuses.OPEN || self.topic.ste === topicStatuses.OPEN);
+- var isClosed = (self.topic.st === topicStatuses.CLOSED || self.topic.ste === topicStatuses.CLOSED);
+
+article#content.clubs-topic-root(
+  data-keymap= {
+    'home':   'clubs.topic:nav_to_start',
+    'end':    'clubs.topic:nav_to_end'
+  }
+  class=isOpen ? 'clubs-topic-root__m-open' : ''
+  class=isClosed ? 'clubs-topic-root__m-closed' : ''
+  class=(self.topic.st === topicStatuses.DELETED) ? 'clubs-topic-root__m-deleted' : ''
+  class=(self.topic.st === topicStatuses.DELETED_HARD) ? 'clubs-topic-root__m-deleted-hard' : ''
+  class=(self.topic.st === topicStatuses.PINNED) ? 'clubs-topic-root__m-pinned' : ''
+  data-top-marker= self.posts && self.posts.length > 0 ? self.posts[0].hid : null
+  data-bottom-marker= self.posts && self.posts.length > 0 ? self.posts[self.posts.length - 1].hid : null
+)
+  -
+    var navbar_args = {
+      title:    self.topic.title,
+      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.topic.hid }),
+      toolbar:  'clubs.topic.blocks.toolbar_controls',
+      on_jump:  'clubs.topic:nav_to_post',
+      progress: {
+        link_top:    self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: 1 }),
+        link_bottom: self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: self.topic.cache.last_post_hid }),
+        current:     self.current_post_hid || 0,
+        total:       self.topic.cache.last_post_hid
+      },
+      search_areas: [
+        {
+          title: self.t('search_club'),
+          method: 'search.clubs_sole',
+          params: { hid: String(self.club.hid) }
+        },
+        {
+          title: self.t('search_topic'),
+          method: 'search.clubs_topic',
+          params: { hid: String(self.topic.hid) }
+        }
+      ]
+    };
+
+  != self.partial('@common.blocks.navbar.levelup_progress_apps', navbar_args)
+  != self.partial('@common.blocks.navbar.alt_levelup_progress_title_toolbar', navbar_args)
 
   nav.breadcrumbs-container
     .layout__container.container-fluid
@@ -9,14 +61,80 @@ article#content.clubs-topic-root
     != self.partial('@users.blocks.announces')
 
     header.page-head
+      -
+        var canEdit =
+          (self.runtime.is_member && self.topic.cache.first_user === self.runtime.user_id) &&
+          (self.settings.clubs_edit_max_time === 0 ||
+            (new Date(self.topic.cache.first_ts).getTime() > Date.now() - self.settings.clubs_edit_max_time * 60 * 1000)
+          );
+
       h1.clubs-topic-title.page-head__title(itemprop='name')
         .float-right
-          .page-actions.clubs-topic__toolbar-controls
-            button.btn.btn-primary.btn-square.icon.icon-plus(
-              type='button'
-              data-on-click='clubs.topic:reply'
-            )
+          != self.partial('@clubs.topic.blocks.toolbar_controls')
+
+        span.clubs-topic__closed-mark.icon.icon-closed.icon-space-after(title=self.t('closed'))
 
         span.clubs-topic-title__text= self.topic.title
 
-    .clubs-postlist!= self.partial('@clubs.blocks.posts_list')
+        if canEdit
+          a.clubs-topic-title__edit.icon.icon-edit(
+            href='#'
+            title=self.t('edit_title')
+            data-on-click='clubs.topic.edit_title'
+            data-topic-hid=self.topic.hid
+            data-as-moderator=String(!canEdit)
+          )
+
+      if self.topic._seo_desc
+        p.page-head__descr(itemprop='description')
+          | #{self.topic._seo_desc}
+
+      if self.topic.del_by
+        - var delUser = self.users[self.topic.del_by] || {}
+        p.page-head__descr.clubs-topic-title__meta-deleted
+          =self.t('del_by')
+          | 
+          a(href=self.link_to('users.member', { user_hid: delUser.hid }))=delUser.name
+          if self.topic.del_reason
+            | 
+            =self.t('del_reason', { text: self.topic.del_reason })
+
+    .clubs-topic__loading-prev.nojs-hide(
+      class=(!(self.posts && self.posts.length > 0) || self.posts[0].hid <= 1 ? 'd-none' : '')
+    )
+      span.icon.icon-loading-placeholder
+
+    .clubs-postlist._affix(
+      data-affix-top={
+        offset:     500,
+        wire_above: 'clubs.topic:load_prev',
+        throttle:   100
+      }
+      data-affix-bottom={
+        offset:     500,
+        wire_below: 'clubs.topic:load_next',
+        throttle:   100
+      }
+    )!= self.partial('@clubs.blocks.posts_list')
+
+    .clubs-topic__loading-next.nojs-hide(
+      class=(!(self.posts && self.posts.length > 0) || self.posts[self.posts.length - 1].hid >= self.topic.cache.last_post_hid ? 'd-none' : '')
+    )
+      span.icon.icon-loading-placeholder
+
+    //- Topic Open/Close/... status clarified via CSS modifiers
+    if self.is_club_member && self.settings.clubs_can_reply
+      .clubs-topic__reply
+        button.btn.btn-block.btn-link.icon.icon-plus.icon-space-after(
+          type='button'
+          data-on-click='clubs.topic:reply'
+          title=self.t('post_add')
+        )
+          = self.t('post_add')
+
+    nav.clubs-topic__footer-pagination.js-hide
+      - var link_params  = { club_hid: self.club.hid, topic_hid: self.topic.hid }
+      - var page_current = Math.floor(self.pagination.chunk_offset / self.pagination.per_page) + 1;
+      - var page_max     = Math.ceil(self.pagination.total / self.pagination.per_page) || 1;
+      - var pgn_params   = { route: 'clubs.topic', params: link_params, current: page_current, max: page_max }
+      != self.partial('@common.blocks.pagination', pgn_params)

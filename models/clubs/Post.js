@@ -48,8 +48,7 @@ module.exports = function (N, collectionName) {
     to_user:      Schema.ObjectId,
     to_phid:      Number,
 
-    // those are rarely used (only if it's a reply to a different topic)
-    to_fhid:      Number,
+    // for "reply in a new topic" feature; to_fhid does not make sense in clubs
     to_thid:      Number,
 
     html:         String,  // displayed HTML

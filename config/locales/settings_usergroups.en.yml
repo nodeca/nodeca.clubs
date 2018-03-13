@@ -7,7 +7,11 @@ i18n:
           perm_clubs_moderate: Clubs moderation
 
         setting_names:
+          clubs_can_reply: Reply to topics
+          clubs_can_start_topics: Start topics
+          clubs_edit_max_time: Max time to edit post after create (minutes)
+          clubs_show_ignored: Show ignored posts
+          clubs_mod_can_add_infractions: Can give infractions in clubs
           clubs_mod_can_delete_topics: Delete topics
           clubs_mod_can_hard_delete_topics: Hard delete topics
           clubs_mod_can_see_hard_deleted_topics: See hard deleted topics
-          clubs_mod_can_add_infractions: Can give infractions in clubs

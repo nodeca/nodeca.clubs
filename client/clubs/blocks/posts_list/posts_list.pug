@@ -1,4 +1,4 @@
-- var postStatuses = '$$ JSON.stringify(N.models.forum.Post.statuses) $$'
+- var postStatuses = '$$ JSON.stringify(N.models.clubs.Post.statuses) $$'
 - self.users = self.users || {};
 - self.infractions = self.infractions || {};
 - self.own_votes = self.own_votes || {};
@@ -8,7 +8,8 @@
 - var post_counter = self.pagination ? self.pagination.chunk_offset : 0;
 
 //- show many operations checkbox
-- var many_ops_permitted = self.settings.forum_mod_can_delete_topics;
+//- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
+- var many_ops_permitted = false; // disable until implemented, so it doesn't clog up UI
 
 each post, post_idx in self.posts
   - var user = self.users[post.user];
@@ -18,7 +19,7 @@ each post, post_idx in self.posts
   each block in self.posts_list_before_post || []
     != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })
 
-  if (self.ignored_users[post.user] && !self.settings.forum_show_ignored && self.current_post_hid !== post.hid)
+  if (self.ignored_users[post.user] && !self.settings.clubs_show_ignored && self.current_post_hid !== post.hid)
     //- skip posts created by ignored users (current post is always visible)
 
   else if !collapsed
@@ -69,7 +70,7 @@ each post, post_idx in self.posts
             if post.to && post.to_user && self.users[post.to_user]
               if !post_idx || self.posts[post_idx - 1]._id !== post.to
                 - var _reply_to_params = {};
-                - _reply_to_params.club_hid  = post.to_fhid || self.club.hid;
+                - _reply_to_params.club_hid  = self.club.hid;
                 - _reply_to_params.topic_hid = post.to_thid || self.topic.hid;
                 - _reply_to_params.post_hid  = post.to_phid;
 
@@ -131,13 +132,12 @@ each post, post_idx in self.posts
                 span.icon.icon-infraction
 
           - var showDropdown = false
-          - showDropdown = showDropdown || self.settings.forum_mod_can_edit_posts
-          - showDropdown = showDropdown || self.settings.forum_mod_can_delete_topics
+          - showDropdown = showDropdown || self.settings.clubs_mod_can_delete_topics || self.is_club_owner
           - showDropdown = showDropdown || self.settings.can_see_ip
 
           if self.runtime.is_member && self.runtime.user_id !== post.user
 
-            if self.club.is_writable && self.club.is_votable && self.settings.can_vote && (self.settings.votes_add_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.votes_add_max_time * 60 * 60 * 1000)
+            if self.settings.can_vote && (self.settings.votes_add_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.votes_add_max_time * 60 * 60 * 1000)
               li.clubs-post__control-item.clubs-post__vote-up
                 button.btn.clubs-post__action(
                   title=self.t('vote_up')
@@ -185,7 +185,7 @@ each post, post_idx in self.posts
                 span.clubs-post__bookmarks-count(data-bm-count=post.bookmarks)
 
 
-          if (user && user._id === self.runtime.user_id && (self.settings.forum_edit_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.forum_edit_max_time * 60 * 1000))
+          if (user && user._id === self.runtime.user_id && (self.settings.clubs_edit_max_time === 0 || new Date(post.ts).getTime() > Date.now() - self.settings.clubs_edit_max_time * 60 * 1000))
             li.clubs-post__control-item.clubs-post__edit
               button.btn.clubs-post__action(
                 data-on-click='clubs.topic:post_edit'
@@ -203,7 +203,7 @@ each post, post_idx in self.posts
               )
                 span.icon.icon-x
 
-          if self.settings.forum_can_reply
+          if self.is_club_member && self.settings.clubs_can_reply
             li.clubs-post__control-item.clubs-post__reply
               //- for wide screen
               button.full.btn.clubs-post__action(
@@ -241,7 +241,7 @@ each post, post_idx in self.posts
                 )
                 .dropdown-menu.dropdown-menu-right(role='menu')
 
-                  if self.settings.forum_mod_can_add_infractions && !self.infractions[post._id]
+                  if self.settings.clubs_mod_can_add_infractions && !self.infractions[post._id]
                     button.dropdown-item(
                       data-post-id=post._id
                       data-on-click='clubs.topic:add_infraction'
@@ -253,15 +253,7 @@ each post, post_idx in self.posts
                       data-on-click='clubs.topic.post_show_ip'
                     )= self.t('ip_info')
 
-                  if self.settings.forum_mod_can_edit_posts
-                    button.dropdown-item(
-                      data-on-click='clubs.topic:post_edit'
-                      data-post-id=post._id
-                      data-post-hid=post.hid
-                      data-as-moderator='true'
-                    )= self.t('edit')
-
-                  if self.settings.forum_mod_can_delete_topics
+                  if self.settings.clubs_mod_can_delete_topics || self.is_club_owner
                     button.dropdown-item.clubs-post__delete(
                       data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_delete' : 'clubs.topic.post_delete'
                       data-post-id=post._id
@@ -320,7 +312,7 @@ each post, post_idx in self.posts
             if post.to && post.to_user && self.users[post.to_user]
               if !post_idx || self.posts[post_idx - 1]._id !== post.to
                 - var _reply_to_params = {};
-                - _reply_to_params.club_hid  = post.to_fhid || self.club.hid;
+                - _reply_to_params.club_hid  = self.club.hid;
                 - _reply_to_params.topic_hid = post.to_thid || self.topic.hid;
                 - _reply_to_params.post_hid  = post.to_phid;
 

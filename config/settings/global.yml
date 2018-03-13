@@ -1,0 +1,53 @@
+setting_groups:
+  clubs: ~
+
+  clubs_editor:
+    parent: clubs
+
+
+setting_schemas:
+  global:
+    clubs_topic_title_min_length:
+      type: number
+      group_key: clubs_editor
+      category_key: topic
+      default: 10
+
+    clubs_post_min_length:
+      type: number
+      group_key: clubs_editor
+      category_key: post
+      default: 10
+
+    clubs_post_max_images:
+      type: number
+      group_key: clubs_editor
+      category_key: post
+      default: 100
+
+    clubs_post_max_emojis:
+      type: number
+      group_key: clubs_editor
+      category_key: post
+      default: 20
+
+    clubs_edit_max_time:
+      priority: 40
+      group_key: clubs_editor
+      category_key: topic
+      type: number
+      default: 30
+
+    clubs_reply_old_post_threshold:
+      priority: 50
+      group_key: clubs_editor
+      category_key: topic
+      type: number
+      default: 30
+
+    clubs_show_post_interval:
+      priority: 60
+      group_key: clubs_editor
+      category_key: topic
+      type: number
+      default: 7

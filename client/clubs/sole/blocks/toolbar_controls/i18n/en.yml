@@ -1,5 +1,6 @@
 en-US:
-  join: Join club
+  club_join: Join club
+  club_leave: Leave club
   mark_read: Mark all read
   topic_create: New topic
   subscription: Subscription

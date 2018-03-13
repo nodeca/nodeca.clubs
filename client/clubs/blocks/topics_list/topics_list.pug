@@ -1,4 +1,4 @@
-- var topicStatuses = '$$ JSON.stringify(N.models.forum.Topic.statuses) $$'
+- var topicStatuses = '$$ JSON.stringify(N.models.clubs.Topic.statuses) $$'
 - self.users = self.users || {};
 
 //- This template is used for:
@@ -6,11 +6,12 @@
 //- - appending next page posts via autoload or "more" button
 
 //- show many operations checkbox
-- var many_ops_permitted = self.settings.forum_mod_can_delete_topics || self.settings.forum_mod_can_close_topic;
+//- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
+- var many_ops_permitted = false; // disable until implemented, so it doesn't clog up UI
 
 each topic, idx in self.topics
   //- skip topics created by ignored users
-  - if (self.ignored_users[topic.cache.first_user] && !self.settings.forum_show_ignored) { continue; }
+  - if (self.ignored_users[topic.cache.first_user] && !self.settings.clubs_show_ignored) { continue; }
 
   - var fp_user = self.users[topic.cache.first_user] || {}
   - var lp_user = self.users[topic.cache.last_user] || {}
