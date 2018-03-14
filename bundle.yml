@@ -4,6 +4,11 @@ bundles:
 
 
 packages:
+  admin:
+    entries:
+      - client/admin
+      - server/admin
+
   clubs:
     depends:
       - common
