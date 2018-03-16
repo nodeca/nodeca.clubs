@@ -60,7 +60,7 @@ each post, post_idx in self.posts
               a.clubs-post__author._ucard-popover(
                 href=self.link_to('users.member', { user_hid: user.hid })
                 data-user-id=post.user
-                data-user-ref='fp:'+post._id
+                data-user-ref='club_post:'+post._id
                 class=user.css
               ) #{user.name}
             else if post.legacy_nick
@@ -168,7 +168,7 @@ each post, post_idx in self.posts
 
             li.clubs-post__control-item.clubs-post__bookmark
               button.btn.clubs-post__action.clubs-post__bookmark-add(
-                data-on-click='clubs.topic.post_bookmark'
+                data-on-click='clubs.topic:post_bookmark'
                 data-post-id=post._id
                 title=self.t('bookmark_add')
               )
@@ -176,7 +176,7 @@ each post, post_idx in self.posts
                 span.clubs-post__bookmarks-count(data-bm-count=post.bookmarks)
 
               button.btn.clubs-post__action.clubs-post__bookmark-remove(
-                data-on-click='clubs.topic.post_bookmark'
+                data-on-click='clubs.topic:post_bookmark'
                 data-post-id=post._id
                 data-remove='true'
                 title=self.t('bookmark_remove')
@@ -250,7 +250,7 @@ each post, post_idx in self.posts
                   if self.settings.can_see_ip
                     button.dropdown-item(
                       data-post-id=post._id
-                      data-on-click='clubs.topic.post_show_ip'
+                      data-on-click='clubs.topic:post_show_ip'
                     )= self.t('ip_info')
 
                   if self.settings.clubs_mod_can_delete_topics || self.is_club_owner
@@ -302,7 +302,7 @@ each post, post_idx in self.posts
               a.clubs-post__author._ucard-popover(
                 href=self.link_to('users.member', { user_hid: user.hid })
                 data-user-id=post.user
-                data-user-ref='fp:'+post._id
+                data-user-ref='club_post:'+post._id
                 class=user.css
               ) #{user.name}
             else if post.legacy_nick

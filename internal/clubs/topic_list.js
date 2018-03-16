@@ -31,10 +31,13 @@ const sanitize_club  = require('nodeca.clubs/lib/sanitizers/club');
 const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 
 let setting_names = [
+  'can_see_hellbanned',
+  'clubs_show_ignored',
   'clubs_mod_can_delete_topics',
   'clubs_mod_can_hard_delete_topics',
   'clubs_mod_can_see_hard_deleted_topics',
-  'can_see_hellbanned'
+  'clubs_can_start_topics',
+  'posts_per_page'
 ];
 
 

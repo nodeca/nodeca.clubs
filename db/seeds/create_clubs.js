@@ -334,8 +334,6 @@ module.exports = async function (N) {
                       .select('_id')
                       .lean(true);
 
-  if (!users.length) return;
-
   await createUsers();
   let club_ids = await createClubs(users);
   await createTopics(club_ids.slice(1));

@@ -18,6 +18,10 @@ packages:
       - internal/clubs
       - server/clubs
 
+  common:
+    entries:
+      - internal/common
+
   users:
     entries:
       - client/users

@@ -35,10 +35,21 @@ const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 const sanitize_post  = require('nodeca.clubs/lib/sanitizers/post');
 
 let setting_names = [
+  'can_see_ip',
+  'can_report_abuse',
+  'can_see_hellbanned',
+  'clubs_topic_title_min_length',
+  'clubs_can_reply',
+  'clubs_edit_max_time',
+  'clubs_reply_old_post_threshold',
+  'clubs_show_ignored',
   'clubs_mod_can_delete_topics',
   'clubs_mod_can_hard_delete_topics',
   'clubs_mod_can_see_hard_deleted_topics',
-  'can_see_hellbanned'
+  'can_vote',
+  'clubs_mod_can_add_infractions',
+  'votes_add_max_time',
+  'clubs_show_post_interval'
 ];
 
 

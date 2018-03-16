@@ -397,8 +397,8 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Show post IP
   //
-  N.wire.on(module.apiPath + '.post_show_ip', function post_show_ip(data) {
-    return N.wire.emit('clubs.topic.ip_info_dlg', { postId: data.$this.data('post-id') });
+  N.wire.on(module.apiPath + ':post_show_ip', function post_show_ip(data) {
+    return N.wire.emit('clubs.topic.ip_info_dlg', { post_id: data.$this.data('post-id') });
   });
 
 
@@ -677,12 +677,12 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Add/remove bookmark
   //
-  N.wire.on(module.apiPath + '.post_bookmark', function post_bookmark(data) {
-    let postId = data.$this.data('post-id');
-    let remove = data.$this.data('remove') || false;
-    let $post = $('#post' + postId);
+  N.wire.on(module.apiPath + ':post_bookmark', function post_bookmark(data) {
+    let post_id = data.$this.data('post-id');
+    let remove  = data.$this.data('remove') || false;
+    let $post   = $('#post' + post_id);
 
-    return N.io.rpc('clubs.topic.post.bookmark', { post_id: postId, remove }).then(res => {
+    return N.io.rpc('clubs.topic.post.bookmark', { post_id, remove }).then(res => {
       if (remove) {
         $post.removeClass('clubs-post__m-bookmarked');
       } else {
@@ -1587,7 +1587,7 @@ N.wire.once('navigate.done:' + module.apiPath, function topic_post_selection_ini
   N.wire.before('users.dialog.create:begin', function dialog_create_extend(params) {
     if (!topicParams) return; // not at this page
     if (!params.ref) return;  // no data to extend
-    if (!/^fp:/.test(params.ref)) return; // not our data
+    if (!/^club_post:/.test(params.ref)) return; // not our data
 
     let post_id = params.ref.split(':')[1];
     let title   = $('.clubs-topic-title__text').text();
