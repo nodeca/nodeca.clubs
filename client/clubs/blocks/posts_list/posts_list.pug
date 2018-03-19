@@ -141,7 +141,7 @@ each post, post_idx in self.posts
               li.clubs-post__control-item.clubs-post__vote-up
                 button.btn.clubs-post__action(
                   title=self.t('vote_up')
-                  data-on-click='clubs.topic.post_vote'
+                  data-on-click='clubs.topic:post_vote'
                   data-post-id=post._id
                   data-value=self.own_votes[post._id] === 1 ? '0' : '1'
                 )
@@ -150,7 +150,7 @@ each post, post_idx in self.posts
               li.clubs-post__control-item.clubs-post__vote-down
                 button.btn.clubs-post__action(
                   title=self.t('vote_down')
-                  data-on-click='clubs.topic.post_vote'
+                  data-on-click='clubs.topic:post_vote'
                   data-post-id=post._id
                   data-value=self.own_votes[post._id] === -1 ? '0' : '-1'
                 )

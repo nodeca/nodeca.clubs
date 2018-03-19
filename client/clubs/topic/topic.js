@@ -548,7 +548,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Vote post
   //
-  N.wire.on(module.apiPath + '.post_vote', function post_vote(data) {
+  N.wire.on(module.apiPath + ':post_vote', function post_vote(data) {
     let postId = data.$this.data('post-id');
     let value = +data.$this.data('value');
     let topicHid = topicState.topic_hid;
