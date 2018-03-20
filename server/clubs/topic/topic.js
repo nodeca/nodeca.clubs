@@ -278,7 +278,7 @@ module.exports = function (N, apiPath) {
       env.user_info.user_id,
       env.data.topic._id,
       env.data.club._id,
-      'clubs_topic').catch(err => N.logger.error(`Marker cannot mark topic as read: ${err}`));
+      'club_topic').catch(err => N.logger.error(`Marker cannot mark topic as read: ${err}`));
   });
 
 

@@ -229,12 +229,12 @@ async function createClubs(global_admins) {
     // Create club
     //
     let club = new models.clubs.Club({
+      _id:         new ObjectId(Math.round(new Date(2009, 0, 1) / 1000)),
       title:       charlatan.Lorem.sentence(charlatan.Helpers.rand(5, 3)).slice(0, -1),
+      created_ts:  new Date(2009, 0, 1),
       description: charlatan.Lorem.paragraphs(charlatan.Helpers.rand(3, 1)).join('\n\n'),
       members:     members.length + admins.length,
-      members_hb:  members.length + admins.length,
-      cache:       { last_ts: new Date() },
-      cache_hb:    { last_ts: new Date() }
+      members_hb:  members.length + admins.length
     });
 
     await club.save();
@@ -267,18 +267,7 @@ async function createClubs(global_admins) {
 
 
 async function updateClubStat(club) {
-  let last_topic = await models.clubs.Topic.findOne()
-                           .where('club').equals(club._id)
-                           .sort('-cache.last_post')
-                           .lean(true);
-
-  await models.clubs.Club.update(
-    { _id: club._id },
-    { $set: {
-      'cache.last_ts':    last_topic.cache.last_ts,
-      'cache_hb.last_ts': last_topic.cache_hb.last_ts
-    } }
-  );
+  await models.clubs.Club.updateCache(club._id);
 }
 
 

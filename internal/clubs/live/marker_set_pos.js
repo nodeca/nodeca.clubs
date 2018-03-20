@@ -34,7 +34,7 @@ module.exports = function (N) {
       data.message.data.position,
       data.message.data.max,
       data.message.data.category_id,
-      'clubs_topic'
+      'club_topic'
     );
   });
 };

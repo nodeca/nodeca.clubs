@@ -27,6 +27,7 @@ module.exports = function (N, collectionName) {
   let Club = new Schema({
     title:        String,
     description:  String,
+    created_ts:   { type: Date, 'default': Date.now },
 
     // user-friendly id (autoincremented)
     hid:          { type: Number, index: true },
@@ -78,6 +79,55 @@ module.exports = function (N, collectionName) {
     });
   });
 
+
+  // Update `last_ts` in the cache.
+  //
+  Club.statics.updateCache = async function (club_id) {
+    let Topic = N.models.clubs.Topic;
+    let Club = N.models.clubs.Club;
+
+    let updateData = {};
+    let visible_st_hb = [ Topic.statuses.HB ].concat(Topic.statuses.LIST_VISIBLE);
+    let topic = await Topic.findOne({ club: club_id, st: { $in: visible_st_hb } })
+      .sort('-cache_hb.last_post');
+
+    // all topics in this club are deleted
+    if (!topic) {
+      let club = await Club.findById(club_id).lean(true);
+      updateData['cache.last_ts'] = club.created_ts;
+      updateData['cache_hb.last_ts'] = club.created_ts;
+    } else {
+      // Last post in this club is considered hellbanned if
+      //  (whole topic has HB status) OR (last post has HB status)
+      //
+      // Last post in the topic is hellbanned if topic.cache differs from topic.cache_hb
+      //
+      let last_post_hb = (topic.st === Topic.statuses.HB) ||
+        (String(topic.cache.last_post) !== String(topic.cache_hb.last_post));
+
+      updateData['cache_hb.last_ts'] = topic.cache_hb.last_ts;
+
+      if (!last_post_hb) {
+        // If the last post in this section is not hellbanned, it is seen as
+        // such for both hb and non-hb users. Thus, cache is the same for both.
+        //
+        updateData['cache.last_ts'] = updateData['cache_hb.last_ts'];
+      } else {
+        topic = await Topic.findOne({ club: club_id, st: { $in: Topic.statuses.LIST_VISIBLE } })
+          .sort('-cache.last_post');
+
+        // all visible topics in this club are deleted
+        if (!topic) {
+          let club = await Club.findById(club_id).lean(true);
+          updateData['cache.last_ts'] = club.created_ts;
+        } else {
+          updateData['cache.last_ts'] = topic.cache.last_ts;
+        }
+      }
+    }
+
+    await Club.update({ _id: club_id }, updateData);
+  };
 
   N.wire.on('init:models', function emit_init_Club() {
     return N.wire.emit('init:models.' + collectionName, Club);
