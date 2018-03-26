@@ -1,0 +1,8 @@
+en-US:
+  create_topic: "New topic in club &quot;<a href='#{club_url}'>#{club_title}</a>&quot;"
+
+  options_btn:
+    options: Options
+
+  title_input:
+    topic_title: Topic title

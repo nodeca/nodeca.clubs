@@ -108,7 +108,7 @@ module.exports = function (N, collectionName) {
       updateData['cache_hb.last_ts'] = topic.cache_hb.last_ts;
 
       if (!last_post_hb) {
-        // If the last post in this section is not hellbanned, it is seen as
+        // If the last post in this club is not hellbanned, it is seen as
         // such for both hb and non-hb users. Thus, cache is the same for both.
         //
         updateData['cache.last_ts'] = updateData['cache_hb.last_ts'];

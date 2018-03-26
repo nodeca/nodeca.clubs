@@ -4,7 +4,7 @@
 const _ = require('lodash');
 
 
-// Section state
+// Club state
 //
 // - hid:                current club hid
 // - first_offset:       offset of the first topic in the DOM

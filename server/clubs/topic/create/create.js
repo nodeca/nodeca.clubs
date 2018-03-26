@@ -1,17 +1,18 @@
-// Save new reply
+// Create new topic
 //
 'use strict';
 
 
-const _ = require('lodash');
-const $ = require('nodeca.core/lib/parser/cheequery');
+const _         = require('lodash');
+const $         = require('nodeca.core/lib/parser/cheequery');
+const charcount = require('charcount');
 
 
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
-    topic_hid:                { type: 'integer', required: true },
-    parent_post_id:           { format: 'mongo' },
+    club_hid:                 { type: 'integer', required: true },
+    title:                    { type: 'string', required: true },
     txt:                      { type: 'string', required: true },
     attach:                   {
       type: 'array',
@@ -25,28 +26,32 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Check user permission
+  // Check auth
   //
-  N.wire.before(apiPath, function check_permissions(env) {
-    if (!env.user_info.is_member) throw N.io.NOT_FOUND;
+  N.wire.before(apiPath, function check_user_auth(env) {
+    if (!env.user_info.is_member) throw N.io.FORBIDDEN;
   });
 
 
-  // Fetch topic info
+  // Check title length
   //
-  N.wire.before(apiPath, async function fetch_topic(env) {
-    let topic = await N.models.clubs.Topic.findOne({ hid: env.params.topic_hid }).lean(true);
+  N.wire.before(apiPath, async function check_title_length(env) {
+    let min_length = await env.extras.settings.fetch('clubs_topic_title_min_length');
 
-    if (!topic) throw N.io.NOT_FOUND;
-
-    env.data.topic = topic;
+    if (charcount(env.params.title.trim()) < min_length) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('err_title_too_short', min_length)
+      };
+    }
   });
 
 
   // Fetch club info and membership
   //
   N.wire.before(apiPath, async function fetch_club_info(env) {
-    let club = await N.models.clubs.Club.findById(env.data.topic.club)
+    let club = await N.models.clubs.Club.findOne()
+                         .where('hid').equals(env.params.club_hid)
                          .lean(true);
 
     if (!club) throw N.io.NOT_FOUND;
@@ -68,9 +73,9 @@ module.exports = function (N, apiPath) {
   N.wire.before(apiPath, async function check_can_reply(env) {
     if (!env.data.is_club_member) throw N.io.BAD_REQUEST;
 
-    let can_reply = await env.extras.settings.fetch('clubs_can_reply');
+    let can_start_topics = await env.extras.settings.fetch('clubs_can_start_topics');
 
-    if (!can_reply) throw N.io.FORBIDDEN;
+    if (!can_start_topics) throw N.io.FORBIDDEN;
   });
 
 
@@ -78,50 +83,6 @@ module.exports = function (N, apiPath) {
   //
   N.wire.before(apiPath, function attachments_check_owner(env) {
     return N.wire.emit('internal:users.attachments_check_owner', env);
-  });
-
-
-  // Check if user can see this topic
-  //
-  N.wire.before(apiPath, async function check_access(env) {
-    let access_env = { params: { topics: env.data.topic, user_info: env.user_info } };
-
-    await N.wire.emit('internal:clubs.access.topic', access_env);
-
-    if (!access_env.data.access_read) throw N.io.NOT_FOUND;
-  });
-
-
-  // Fetch parent post
-  //
-  N.wire.before(apiPath, async function fetch_parent_post(env) {
-    if (!env.params.parent_post_id) return;
-
-    let post = await N.models.clubs.Post.findOne({ _id: env.params.parent_post_id }).lean(true);
-
-    if (!post) {
-      throw {
-        code: N.io.CLIENT_ERROR,
-        message: env.t('error_invalid_parent_post')
-      };
-    }
-
-    env.data.post = post;
-
-    let access_env = { params: {
-      posts: env.data.post,
-      user_info: env.user_info,
-      preload: [ env.data.topic ]
-    } };
-
-    await N.wire.emit('internal:clubs.access.post', access_env);
-
-    if (!access_env.data.access_read) {
-      throw {
-        code: N.io.CLIENT_ERROR,
-        message: env.t('error_invalid_parent_post')
-      };
-    }
   });
 
 
@@ -213,41 +174,69 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Save new post
+  // Create new topic
   //
-  N.wire.after(apiPath, async function save_new_post(env) {
-    let statuses = N.models.clubs.Post.statuses;
-    let post = new N.models.clubs.Post();
+  N.wire.after(apiPath, async function create_topic(env) {
+    let topic = new N.models.clubs.Topic();
+    let post  = new N.models.clubs.Post();
 
-    post.tail = env.data.parse_result.tail;
-    post.imports = env.data.parse_result.imports;
+    env.data.new_topic = topic;
+    env.data.new_post  = post;
+
+    // Fill post data
+    post.user         = env.user_info.user_id;
+    post.ts           = Date.now();
+    post.attach       = env.params.attach;
+    post.tail         = env.data.parse_result.tail;
+    post.html         = env.data.parse_result.html;
+    post.md           = env.params.txt;
+    post.ip           = env.req.ip;
+    post.params       = env.data.parse_options;
+    post.imports      = env.data.parse_result.imports;
     post.import_users = env.data.parse_result.import_users;
-    post.attach = env.params.attach;
-    post.html = env.data.parse_result.html;
-    post.md = env.params.txt;
-    post.ip = env.req.ip;
-    post.params = env.data.parse_options;
 
     if (env.user_info.hb) {
-      post.st  = statuses.HB;
-      post.ste = statuses.VISIBLE;
+      post.st  = N.models.clubs.Post.statuses.HB;
+      post.ste = N.models.clubs.Post.statuses.VISIBLE;
     } else {
-      post.st  = statuses.VISIBLE;
+      post.st  = N.models.clubs.Post.statuses.VISIBLE;
     }
 
-    if (env.data.post) {
-      post.to = env.data.post._id;
-      post.to_user = env.data.post.user;
-      post.to_phid = env.data.post.hid;
+    // Fill topic data
+    topic.title = env.params.title.trim();
+    topic.club  = env.data.club._id;
+
+    if (env.user_info.hb) {
+      topic.st  = N.models.clubs.Topic.statuses.HB;
+      topic.ste = N.models.clubs.Topic.statuses.OPEN;
+    } else {
+      topic.st  = N.models.clubs.Topic.statuses.OPEN;
     }
 
-    post.topic = env.data.topic._id;
-    post.club  = env.data.topic.club;
-    post.user  = env.user_info.user_id;
+    topic.cache = {};
+
+    topic.cache.post_count = 1;
+
+    topic.cache.first_post = post._id;
+    topic.cache.first_ts   = post.ts;
+    topic.cache.first_user = post.user;
+
+    topic.cache.last_post     = post._id;
+    topic.cache.last_ts       = post.ts;
+    topic.cache.last_post_hid = 1;
+    topic.cache.last_user     = post.user;
+
+    _.assign(topic.cache_hb, topic.cache);
+
+    await topic.save();
+
+    post.topic = topic._id;
+    post.club  = topic.club;
 
     await post.save();
 
-    env.data.new_post = post;
+    env.res.topic_hid = topic.hid;
+    env.res.post_hid  = post.hid;
   });
 
 
@@ -261,72 +250,18 @@ module.exports = function (N, apiPath) {
   // TODO: schedule search index update
 
 
-  // Update topic counters
-  //
-  N.wire.after(apiPath, async function update_topic(env) {
-    await N.models.clubs.Topic.updateCache(env.data.topic._id);
-  });
-
-
   // Update club counters
   //
   N.wire.after(apiPath, async function update_club(env) {
-    await N.models.clubs.Club.updateCache(env.data.topic.club);
+    await N.models.clubs.Club.updateCache(env.data.new_topic.club);
   });
 
 
-  // Set marker position
-  //
-  N.wire.after(apiPath, async function set_marker_pos(env) {
-    // TODO: set max position only if added post just after last read
-    await N.models.users.Marker.setPos(
-      env.user_info.user_id,
-      env.data.topic._id,
-      env.data.new_post.hid,
-      env.data.new_post.hid,
-      env.data.topic.club,
-      'club_topic'
-    );
-  });
-
-
-  // Fill url of new post
-  //
-  N.wire.after(apiPath, function process_response(env) {
-    env.res.redirect_url = N.router.linkTo('clubs.topic', {
-      club_hid: env.data.club.hid,
-      topic_hid: env.data.topic.hid,
-      post_hid: env.data.new_post.hid
-    });
-  });
-
-
-  // Add reply notification for parent post owner
-  //
-  N.wire.after(apiPath, async function add_reply_notification(env) {
-    if (!env.data.new_post.to) return;
-
-    let ignore_data = await N.models.users.Ignore.findOne()
-                               .where('from').equals(env.data.new_post.to_user)
-                               .where('to').equals(env.user_info.user_id)
-                               .select('from to -_id')
-                               .lean(true);
-
-    if (ignore_data) return;
-
-    await N.wire.emit('internal:users.notify', {
-      src: env.data.new_post._id,
-      to: env.data.new_post.to_user,
-      type: 'CLUBS_REPLY'
-    });
-  });
-
-
-  // Add new post notification for subscribers
+  // Add new topic notification for subscribers
   //
   N.wire.after(apiPath, async function add_new_post_notification(env) {
     let subscriptions = await N.models.users.Subscription.find()
-      .where('to').equals(env.data.topic._id)
+      .where('to').equals(env.data.club._id)
       .where('type').equals(N.models.users.Subscription.types.WATCHING)
       .lean(true);
 
@@ -348,9 +283,9 @@ module.exports = function (N, apiPath) {
     if (!subscribed_users.length) return;
 
     await N.wire.emit('internal:users.notify', {
-      src: env.data.new_post._id,
+      src: env.data.new_topic._id,
       to: subscribed_users,
-      type: 'CLUBS_NEW_POST'
+      type: 'CLUBS_NEW_TOPIC'
     });
   });
 
