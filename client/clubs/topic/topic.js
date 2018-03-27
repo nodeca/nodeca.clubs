@@ -389,8 +389,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
       topic_title: N.runtime.page_data.topic.title,
       club_hid: topicState.club.hid,
       post_id: data.$this.data('post-id'),
-      post_hid: data.$this.data('post-hid'),
-      as_moderator: data.$this.data('as-moderator') || false
+      post_hid: data.$this.data('post-hid')
     });
   });
 
@@ -495,7 +494,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Edit title handler
   //
-  N.wire.on(module.apiPath + '.edit_title', function title_edit(data) {
+  N.wire.on(module.apiPath + ':edit_title', function title_edit(data) {
     let clubs_topic_title_min_length = N.runtime.page_data.settings.clubs_topic_title_min_length;
     let $title = $('.clubs-topic-title__text');
     let params = {
@@ -514,7 +513,6 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
         }
 
         return N.io.rpc('clubs.topic.title_update', {
-          as_moderator: data.$this.data('as-moderator') || false,
           topic_hid: data.$this.data('topic-hid'),
           title: value
         }).then(() => {

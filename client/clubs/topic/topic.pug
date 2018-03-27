@@ -80,9 +80,8 @@ article#content.clubs-topic-root(
           a.clubs-topic-title__edit.icon.icon-edit(
             href='#'
             title=self.t('edit_title')
-            data-on-click='clubs.topic.edit_title'
+            data-on-click='clubs.topic:edit_title'
             data-topic-hid=self.topic.hid
-            data-as-moderator=String(!canEdit)
           )
 
       if self.topic._seo_desc
