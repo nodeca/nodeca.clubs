@@ -1,0 +1,3 @@
+en-US:
+  subject: '#{project_name}: new reply in topic "#{topic_title}"'
+  reply: Reply

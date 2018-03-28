@@ -1,0 +1,3 @@
+en-US:
+  subject: '#{project_name}: new topic in "#{club_title}"'
+  reply: Reply

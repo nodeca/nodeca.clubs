@@ -97,10 +97,12 @@ function updateClubState() {
   // Need to re-render reply button and dropdown here
   $('.clubs-sole__toolbar-controls')
     .replaceWith(N.runtime.render(module.apiPath + '.blocks.toolbar_controls', {
-      club:         N.runtime.page_data.club,
-      settings:     N.runtime.page_data.settings,
-      subscription: N.runtime.page_data.subscription,
-      selected_cnt: pageState.selected_topics.length
+      club:           N.runtime.page_data.club,
+      settings:       N.runtime.page_data.settings,
+      is_club_owner:  N.runtime.page_data.is_club_owner,
+      is_club_member: N.runtime.page_data.is_club_member,
+      subscription:   N.runtime.page_data.subscription,
+      selected_cnt:   pageState.selected_topics.length
     }));
 }
 

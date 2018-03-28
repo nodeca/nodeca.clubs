@@ -242,11 +242,13 @@ function updateTopicState() {
   // Need to re-render reply button and dropdown here
   $('.clubs-topic__toolbar-controls')
     .replaceWith(N.runtime.render(module.apiPath + '.blocks.toolbar_controls', {
-      topic:        N.runtime.page_data.topic,
-      club:         N.runtime.page_data.club,
-      settings:     N.runtime.page_data.settings,
-      subscription: N.runtime.page_data.subscription,
-      selected_cnt: topicState.selected_posts.length
+      topic:          N.runtime.page_data.topic,
+      club:           N.runtime.page_data.club,
+      settings:       N.runtime.page_data.settings,
+      is_club_owner:  N.runtime.page_data.is_club_owner,
+      is_club_member: N.runtime.page_data.is_club_member,
+      subscription:   N.runtime.page_data.subscription,
+      selected_cnt:   topicState.selected_posts.length
     }));
 
   let modifiers = {
