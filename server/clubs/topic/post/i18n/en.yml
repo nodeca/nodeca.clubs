@@ -1,11 +1,12 @@
 en-US:
+  destroy:
+    err_perm_expired: You can't delete this post anymore
   vote:
-    err_perm_expired: You can not vote for this post anymore
+    err_perm_expired: You can't vote for this post anymore
     auto_abuse_report_text: This post received too many downvotes.
-
   ip_info:
     err_no_ip: IP address for this post is not specified
-
-  add_infraction:
-    err_perm_receive: You can't add infractions to this user
-    err_infraction_exists: Can't give infraction twice
+  destroy_many:
+    err_no_posts: None of selected posts can be deleted
+  undelete_many:
+    err_no_posts: None of selected posts can be undeleted

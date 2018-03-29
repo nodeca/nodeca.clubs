@@ -8,8 +8,7 @@
 - var post_counter = self.pagination ? self.pagination.chunk_offset : 0;
 
 //- show many operations checkbox
-//- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
-- var many_ops_permitted = false; // disable until implemented, so it doesn't clog up UI
+- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
 
 each post, post_idx in self.posts
   - var user = self.users[post.user];
@@ -196,7 +195,7 @@ each post, post_idx in self.posts
 
             li.clubs-post__delete.clubs-post__control-item
               button.btn.clubs-post__action(
-                data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_delete' : 'clubs.topic.post_delete'
+                data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic:topic_delete' : 'clubs.topic:post_delete'
                 data-post-id=post._id
                 data-topic-hid=self.topic.hid
                 title=self.t('delete')
@@ -255,14 +254,14 @@ each post, post_idx in self.posts
 
                   if self.settings.clubs_mod_can_delete_topics || self.is_club_owner
                     button.dropdown-item.clubs-post__delete(
-                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_delete' : 'clubs.topic.post_delete'
+                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic:topic_delete' : 'clubs.topic:post_delete'
                       data-post-id=post._id
                       data-topic-hid=self.topic.hid
                       data-as-moderator='true'
                     )= self.t('delete')
 
                     button.dropdown-item.clubs-post__undelete(
-                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic.topic_undelete' : 'clubs.topic.post_undelete'
+                      data-on-click=self.topic.cache.first_post === post._id ? 'clubs.topic:topic_undelete' : 'clubs.topic:post_undelete'
                       data-post-id=post._id
                       data-topic-hid=self.topic.hid
                     )= self.t('undelete')
@@ -381,7 +380,7 @@ each post, post_idx in self.posts
 
           li.clubs-post__control-item
             button.btn.clubs-post__action(
-              data-on-click='clubs.topic.post_expand'
+              data-on-click='clubs.topic:post_expand'
               title=self.t('expand')
               data-post-id=post._id
             )

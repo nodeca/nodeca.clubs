@@ -6,8 +6,7 @@
 //- - appending next page posts via autoload or "more" button
 
 //- show many operations checkbox
-//- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
-- var many_ops_permitted = false; // disable until implemented, so it doesn't clog up UI
+- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
 
 each topic, idx in self.topics
   //- skip topics created by ignored users

@@ -25,6 +25,8 @@ if self.selected_cnt
   - items.push('many_unselect')
   if self.is_club_owner || self.settings.clubs_mod_can_delete_topics
     - items.push('many_delete')
+  if self.settings.clubs_mod_can_delete_topics
+    //- club owner can't see deleted topics, so don't show "undelete"
     - items.push('many_undelete')
   if self.is_club_owner
     - items.push('many_open')

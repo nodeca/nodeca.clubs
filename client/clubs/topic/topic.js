@@ -428,7 +428,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Expand deleted or hellbanned post
   //
-  N.wire.on(module.apiPath + '.post_expand', function post_expand(data) {
+  N.wire.on(module.apiPath + ':post_expand', function post_expand(data) {
     let postId = data.$this.data('post-id');
 
     return Promise.resolve()
@@ -453,7 +453,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Pin/unpin topic
   //
-  N.wire.on(module.apiPath + '.pin', function topic_pin(data) {
+  N.wire.on(module.apiPath + ':pin', function topic_pin(data) {
     let topicHid = data.$this.data('topic-hid');
     let unpin = data.$this.data('unpin') || false;
 
@@ -473,7 +473,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Close/open topic handler
   //
-  N.wire.on(module.apiPath + '.close', function topic_close(data) {
+  N.wire.on(module.apiPath + ':close', function topic_close(data) {
     let params = {
       topic_hid: data.$this.data('topic-hid'),
       reopen: data.$this.data('reopen') || false,
@@ -532,7 +532,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Undelete topic handler
   //
-  N.wire.on(module.apiPath + '.topic_undelete', function topic_undelete(data) {
+  N.wire.on(module.apiPath + ':topic_undelete', function topic_undelete(data) {
     let topicHid = data.$this.data('topic-hid');
 
     return Promise.resolve()
@@ -570,7 +570,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Undelete post handler
   //
-  N.wire.on(module.apiPath + '.post_undelete', function post_undelete(data) {
+  N.wire.on(module.apiPath + ':post_undelete', function post_undelete(data) {
     let postId = data.$this.data('post-id');
 
     return N.io.rpc('clubs.topic.post.undelete', { post_id: postId })
@@ -615,14 +615,14 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
   // Delete topic handler
   //
-  N.wire.on(module.apiPath + '.topic_delete', function topic_delete(data) {
+  N.wire.on(module.apiPath + ':topic_delete', function topic_delete(data) {
     return delete_topic(data.$this.data('as-moderator'));
   });
 
 
   // Delete post handler
   //
-  N.wire.on(module.apiPath + '.post_delete', function post_delete(data) {
+  N.wire.on(module.apiPath + ':post_delete', function post_delete(data) {
     let postId = data.$this.data('post-id');
     let $post = $('#post' + postId);
     let request = {

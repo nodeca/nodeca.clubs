@@ -40,7 +40,7 @@ module.exports = function (N, apiPath) {
   N.wire.before(apiPath, async function fetch_subscription(env) {
     env.data.subscription = await N.models.users.Subscription.findOne()
                                       .where('user').equals(env.user_info.user_id)
-                                      .where('to').equals(env.data.topic._id)
+                                      .where('to').equals(env.data.club._id)
                                       .lean(true);
   });
 
