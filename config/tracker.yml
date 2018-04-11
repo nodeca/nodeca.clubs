@@ -1,0 +1,13 @@
+users:
+  tracker:
+    menu:
+      club_topic:
+        priority: 10
+
+  subscriptions:
+    club_topic:
+      to_type: CLUB_TOPIC
+      priority: 50
+    club_sole:
+      to_type: CLUB_SOLE
+      priority: 60

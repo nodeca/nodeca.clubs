@@ -1,0 +1,10 @@
+i18n:
+  en-US:
+    users:
+      tracker:
+        menu:
+          club_topic: Clubs
+
+      subscriptions:
+        club_topic: Club topics
+        club_sole: Clubs

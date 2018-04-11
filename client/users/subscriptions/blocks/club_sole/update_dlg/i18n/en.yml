@@ -1,0 +1,9 @@
+en-US:
+  muted: Muted
+  muted_desc: You will never be notified of anything about this club.
+  normal: Normal
+  normal_desc: You will be notified if someone mentions your @name in new thread.
+  tracking: Tracking
+  tracking_desc: You will see club updates in your subscriptions list.
+  watching: Watching
+  watching_desc: You will be notified immediately on every new topic.
