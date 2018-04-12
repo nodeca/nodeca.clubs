@@ -128,7 +128,11 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // TODO: schedule search index update
+  // Schedule search index update
+  //
+  N.wire.after(apiPath, async function update_search_index(env) {
+    await N.queue.club_topics_search_update_with_posts(env.data.topics.map(t => t._id)).postpone();
+  });
 
   // TODO: log moderator actions
 };

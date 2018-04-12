@@ -1,0 +1,12 @@
+i18n:
+  en-US:
+    search:
+      general:
+        menu:
+          club_topics: 'Club topics'
+          club_posts: 'Club posts'
+
+      club_sole:
+        menu:
+          club_topics: 'Club topics'
+          club_posts: 'Club posts'

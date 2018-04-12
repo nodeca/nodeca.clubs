@@ -41,12 +41,12 @@ article#content.clubs-topic-root(
       search_areas: [
         {
           title: self.t('search_club'),
-          method: 'search.clubs_sole',
+          method: 'search.club_sole',
           params: { hid: String(self.club.hid) }
         },
         {
           title: self.t('search_topic'),
-          method: 'search.clubs_topic',
+          method: 'search.club_topic',
           params: { hid: String(self.topic.hid) }
         }
       ]

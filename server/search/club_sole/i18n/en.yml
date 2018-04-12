@@ -1,0 +1,5 @@
+en-US:
+  title: Search in club
+
+  results:
+    err_query_too_short: Query is too short

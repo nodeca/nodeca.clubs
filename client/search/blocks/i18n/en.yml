@@ -1,0 +1,6 @@
+en-US:
+  club_topics:
+    replies: "#{count} ((reply|replies))"
+    not_found: No topics found.
+  club_posts:
+    not_found: No posts found.

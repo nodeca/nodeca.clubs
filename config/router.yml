@@ -51,3 +51,9 @@ router:
         topic_hid:
           match: /\d+/
           type: integer
+
+    search.club_sole:
+      "/search_club": ~
+
+    search.club_topic:
+      "/search_club_topic": ~

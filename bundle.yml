@@ -23,6 +23,12 @@ packages:
       - client/common
       - internal/common
 
+  search:
+    entries:
+      - client/search
+      - internal/search
+      - server/search
+
   users:
     entries:
       - client/users

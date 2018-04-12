@@ -1,0 +1,32 @@
+search:
+  general:
+    menu:
+      club_topics:
+        priority: 50
+
+      club_posts:
+        priority: 60
+
+  club_sole:
+    menu:
+      club_topics:
+        priority: 10
+
+      club_posts:
+        priority: 20
+
+  indexes:
+    'club_posts : _default_content':
+      rt_field: [ content ]
+      rt_attr_timestamp: [ ts ]
+      rt_attr_string: [ object_id ]
+      rt_attr_bigint: [ topic_uid, club_uid ]
+      rt_attr_bool: [ public, visible ]
+
+    'club_topics : _default_topic':
+      rt_field: [ content ]
+      rt_attr_timestamp: [ ts ]
+      rt_attr_string: [ object_id ]
+      rt_attr_bigint: [ club_uid ]
+      rt_attr_uint: [ post_count ]
+      rt_attr_bool: [ public, visible ]
