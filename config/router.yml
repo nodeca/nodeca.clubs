@@ -12,6 +12,12 @@ router:
           match: /\d+/
           type: integer
 
+    clubs.sole.members:
+      "/clubs/c{club_hid}/members":
+        club_hid:
+          match: /\d+/
+          type: integer
+
     clubs.sole.unsubscribe:
       "/unsubscribe/clubs/c{club_hid}":
         club_hid:
