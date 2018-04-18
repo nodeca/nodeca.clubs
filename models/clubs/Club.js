@@ -129,6 +129,33 @@ module.exports = function (N, collectionName) {
     await Club.update({ _id: club_id }, updateData);
   };
 
+
+  // Update member count
+  //
+  Club.statics.updateMembers = async function (club_id) {
+    let counts = await N.models.clubs.ClubMember.aggregate([
+      { $match: { club: club_id } },
+      {
+        $project: {
+          visible: { $cond: { 'if': { $eq: [ '$hb', true ] }, then: 0, 'else': 1 } }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          members: { $sum: '$visible' },
+          members_hb: { $sum: 1 }
+        }
+      }
+    ]);
+
+    await N.models.clubs.Club.update(
+      { _id: club_id },
+      { $set: { members: counts[0].members, members_hb: counts[0].members_hb } }
+    );
+  };
+
+
   N.wire.on('init:models', function emit_init_Club() {
     return N.wire.emit('init:models.' + collectionName, Club);
   });

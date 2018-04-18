@@ -125,6 +125,28 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   });
 
 
+  // Join the club
+  //
+  N.wire.on(module.apiPath + ':join', function join(data) {
+    let hid = data.$this.data('club-hid');
+
+    return Promise.resolve()
+      .then(() => N.io.rpc('clubs.sole.join', { club_hid: hid }))
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+
+
+  // Leave the club
+  //
+  N.wire.on(module.apiPath + ':leave', function leave(data) {
+    let hid = data.$this.data('club-hid');
+
+    return Promise.resolve()
+      .then(() => N.io.rpc('clubs.sole.leave', { club_hid: hid }))
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+
+
   // Click topic create
   //
   N.wire.on(module.apiPath + ':create', function reply(data) {

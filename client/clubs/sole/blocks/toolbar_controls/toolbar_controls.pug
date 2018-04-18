@@ -39,14 +39,9 @@ if items.length > 0 && items[items.length - 1] === 'header'
 
 .page-actions.clubs-sole__toolbar-controls
   if self.runtime.is_member && !self.is_club_member
-    button.hidden-nav-alt.btn.btn-primary.d-none.d-sm-inline-block(
+    button.btn.btn-secondary.d-none.d-sm-inline-block(
       type='button'
       data-on-click='clubs.sole:join'
-      data-club-hid=self.club.hid
-    )= self.t('club_join')
-    button.hidden-page-head.btn.btn-secondary.d-none.d-sm-inline-block(
-      type='button'
-      data-on-click='clubs.sole:create'
       data-club-hid=self.club.hid
     )= self.t('club_join')
 
@@ -116,9 +111,8 @@ if items.length > 0 && items[items.length - 1] === 'header'
             when 'club_leave'
               button.dropdown-item(
                 type='button'
-                data-on-click='clubs.sole:join'
+                data-on-click='clubs.sole:leave'
                 data-club-hid=self.club.hid
-                data-leave='true'
               )= self.t('club_leave')
 
             when 'topic_create'

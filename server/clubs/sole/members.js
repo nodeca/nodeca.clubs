@@ -38,9 +38,15 @@ module.exports = function (N, apiPath) {
   N.wire.on(apiPath, async function fetch_club_members(env) {
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
 
-    let membership = await N.models.clubs.ClubMember.find()
-                               .where('club').equals(env.data.club._id)
-                               .lean(true);
+    let can_see_hellbanned = await env.extras.settings.fetch('can_see_hellbanned');
+
+    let query = N.models.clubs.ClubMember.find().where('club').equals(env.data.club._id);
+
+    if (!(can_see_hellbanned || env.user_info.hb)) {
+      query = query.where('hb').ne(true);
+    }
+
+    let membership = await query.lean(true);
 
     env.res.club_member_ids = _.map(membership, 'user');
     env.res.club_admin_ids  = _.map(membership.filter(user => user.is_owner), 'user');
