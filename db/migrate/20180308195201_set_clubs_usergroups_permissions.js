@@ -9,6 +9,7 @@ module.exports.up = async function (N) {
   let adminGroupId = await N.models.users.UserGroup.findIdByName('administrators');
 
   await usergroupStore.set({
+    clubs_can_create_clubs: { value: true },
     clubs_can_reply: { value: true },
     clubs_can_start_topics: { value: true },
     clubs_show_ignored: { value: true },
@@ -23,6 +24,7 @@ module.exports.up = async function (N) {
   let memberGroupId = await N.models.users.UserGroup.findIdByName('members');
 
   await usergroupStore.set({
+    clubs_can_create_clubs: { value: true },
     clubs_can_reply: { value: true },
     clubs_can_start_topics: { value: true }
   }, { usergroup_id: memberGroupId });
@@ -35,6 +37,7 @@ module.exports.up = async function (N) {
   let violatorsGroupId = await N.models.users.UserGroup.findIdByName('violators');
 
   await usergroupStore.set({
+    clubs_can_create_clubs: { value: false, force: true },
     clubs_can_reply: { value: false, force: true },
     clubs_can_start_topics: { value: false, force: true },
     clubs_edit_max_time: { value: 0, force: true }

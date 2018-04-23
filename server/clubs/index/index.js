@@ -57,4 +57,14 @@ module.exports = function (N, apiPath) {
 
     env.res.breadcrumbs = env.data.breadcrumbs;
   });
+
+
+  // Fetch and fill permissions
+  //
+  N.wire.before(apiPath, async function fetch_and_fill_permissions(env) {
+    env.res.settings = await env.extras.settings.fetch([
+      'clubs_can_create_clubs',
+      'clubs_club_title_max_length'
+    ]);
+  });
 };

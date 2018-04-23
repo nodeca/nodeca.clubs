@@ -8,11 +8,13 @@ i18n:
 
         category_names:
           clubs: Clubs
+          club: Club
           topic: Topic
           post: Post
           clubs_posts_markup: Club posts markup
 
         setting_names:
+          clubs_club_title_max_length: Max title length
           clubs_topic_title_min_length: Min title length
           clubs_post_min_length: Min post text length
           clubs_post_max_images: Max number of images in a post

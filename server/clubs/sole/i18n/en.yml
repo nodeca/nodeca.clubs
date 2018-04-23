@@ -1,0 +1,3 @@
+en-US:
+  leave:
+    err_last_owner: "You can't leave this club if you're the last leader, transfer leadership first"

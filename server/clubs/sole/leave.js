@@ -47,7 +47,19 @@ module.exports = function (N, apiPath) {
     // not a member - nothing to do
     if (!env.data.is_club_member) return;
 
-    // TODO: prevent leaving if user is the last owner
+    // prevent leaving if user is the last owner
+    if (env.data.is_club_owner) {
+      let owner_count = await N.models.clubs.ClubMember.count()
+                                  .where('club').equals(env.data.club._id)
+                                  .where('is_owner').equals(true);
+
+      if (owner_count <= 1) {
+        throw {
+          code: N.io.CLIENT_ERROR,
+          message: env.t('err_last_owner')
+        };
+      }
+    }
 
     // remove membership record
     await N.models.clubs.ClubMember.remove(

@@ -1,3 +1,5 @@
+- self.add_raw_data('settings', self.settings)
+
 article#content.clubs-index
   != self.partial('@common.blocks.navbar.logo_apps')
 
@@ -19,7 +21,11 @@ article#content.clubs-index
       h1.clubs-index__title.page-head__title(itemprop='name')= self.t('my_clubs')
 
       .page-actions.clubs-index__toolbar-controls
-        button.btn.btn-secondary(type='button')= self.t('create')
+        if self.settings.clubs_can_create_clubs
+          button.btn.btn-secondary(
+            data-on-click='clubs.index:create_club'
+            type='button'
+          )= self.t('create')
 
     .clubs-index__club-list
       each club in self.clubs

@@ -7,6 +7,12 @@ setting_groups:
 
 setting_schemas:
   global:
+    clubs_club_title_max_length:
+      type: number
+      group_key: clubs_editor
+      category_key: club
+      default: 60
+
     clubs_topic_title_min_length:
       type: number
       group_key: clubs_editor

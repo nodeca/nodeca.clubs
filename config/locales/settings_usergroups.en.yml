@@ -7,6 +7,7 @@ i18n:
           perm_clubs_moderate: Clubs moderation
 
         setting_names:
+          clubs_can_create_clubs: Create clubs
           clubs_can_reply: Reply to topics
           clubs_can_start_topics: Start topics
           clubs_edit_max_time: Max time to edit post after create (minutes)
