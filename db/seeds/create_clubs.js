@@ -232,9 +232,7 @@ async function createClubs(global_admins) {
       _id:         new ObjectId(Math.round(new Date(2009, 0, 1) / 1000)),
       title:       charlatan.Lorem.sentence(charlatan.Helpers.rand(5, 3)).slice(0, -1),
       created_ts:  new Date(2009, 0, 1),
-      description: charlatan.Lorem.paragraphs(charlatan.Helpers.rand(3, 1)).join('\n\n'),
-      members:     members.length + admins.length,
-      members_hb:  members.length + admins.length
+      description: charlatan.Lorem.paragraphs(charlatan.Helpers.rand(3, 1)).join('\n\n')
     });
 
     await club.save();
@@ -245,21 +243,23 @@ async function createClubs(global_admins) {
     // Save membership info
     //
     /*eslint-disable no-loop-func*/
-    await admins.map(user =>
+    await Promise.all(admins.map(user =>
       models.clubs.ClubMember.create({
         club:     club._id,
         user:     user._id,
         is_owner: true
       })
-    );
+    ));
 
-    await members.map(user =>
+    await Promise.all(members.map(user =>
       models.clubs.ClubMember.create({
         club:     club._id,
         user:     user._id,
         is_owner: false
       })
-    );
+    ));
+
+    await models.clubs.Club.updateMembers(club._id);
   }
 
   return club_ids;

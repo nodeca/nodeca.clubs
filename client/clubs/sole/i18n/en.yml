@@ -1,5 +1,5 @@
 en-US:
-  owners: 'Club owners:'
+  owners: '((Leader|Leaders)):'
   members: "#{count} ((member|members))"
 
   no_topics: No topics yet.

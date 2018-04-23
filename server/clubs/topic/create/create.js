@@ -71,7 +71,12 @@ module.exports = function (N, apiPath) {
   // Check permission to reply in this club
   //
   N.wire.before(apiPath, async function check_can_reply(env) {
-    if (!env.data.is_club_member) throw N.io.BAD_REQUEST;
+    if (!env.data.is_club_member) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('err_members_only')
+      };
+    }
 
     let can_start_topics = await env.extras.settings.fetch('clubs_can_start_topics');
 

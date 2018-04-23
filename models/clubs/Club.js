@@ -149,9 +149,20 @@ module.exports = function (N, collectionName) {
       }
     ]);
 
+    let members, members_hb;
+
+    if (counts && counts[0]) {
+      members    = counts[0].members;
+      members_hb = counts[0].members_hb;
+    } else {
+      // no members in the club - this shouldn't normally happen
+      members    = 0;
+      members_hb = 0;
+    }
+
     await N.models.clubs.Club.update(
       { _id: club_id },
-      { $set: { members: counts[0].members, members_hb: counts[0].members_hb } }
+      { $set: { members, members_hb } }
     );
   };
 

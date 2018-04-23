@@ -55,7 +55,7 @@ article#content.clubs-sole-root(
           .clubs-sole__meta-title-admins
             .clubs-sole__title= self.club.title
             .clubs-sole__admins
-              = self.t('owners')
+              = self.t('owners', self.club_admin_ids.length)
               ul.clubs-sole__admin-list
                 each userid in self.club_admin_ids
                   - var user = self.users && self.users[userid];

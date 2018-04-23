@@ -15,5 +15,7 @@
   #member-clubs-info.member-block__inner.collapse.show
     ul.member-block__clubs-info
       each club in self.blocks.clubs.list
-        li.member-block__clubs-info-item
+        li.member-block__clubs-info-item(
+          class=self.blocks.clubs.is_owner[club._id] ? 'member-block__clubs-is-owner' : ''
+        )
           a.member-block__clubs-info-item-title(href=self.link_to('clubs.sole', { club_hid: club.hid }))= club.title

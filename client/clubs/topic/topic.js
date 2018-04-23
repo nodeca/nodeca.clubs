@@ -357,6 +357,18 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
     }
   });
 
+  // Join the club if not a member (after confirmation)
+  //
+  N.wire.before(module.apiPath + ':reply', function suggest_join() {
+    if (N.runtime.page_data.is_club_member) return;
+
+    return N.wire.emit('clubs.sole.suggest_join_dlg', { club_hid: topicState.club.hid })
+               .then(() => {
+                 N.runtime.page_data.is_club_member = true;
+               })
+               .then(updateTopicState);
+  });
+
   // Click on post reply link or toolbar reply button
   //
   N.wire.on(module.apiPath + ':reply', function reply(data) {
