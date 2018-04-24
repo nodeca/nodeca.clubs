@@ -34,7 +34,6 @@ module.exports = function (N, collectionName) {
 
     // member count
     members:      Number,
-    members_hb:   Number,
 
     avatar_id:    Schema.Types.ObjectId,
 
@@ -133,36 +132,11 @@ module.exports = function (N, collectionName) {
   // Update member count
   //
   Club.statics.updateMembers = async function (club_id) {
-    let counts = await N.models.clubs.ClubMember.aggregate([
-      { $match: { club: club_id } },
-      {
-        $project: {
-          visible: { $cond: { 'if': { $eq: [ '$hb', true ] }, then: 0, 'else': 1 } }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          members: { $sum: '$visible' },
-          members_hb: { $sum: 1 }
-        }
-      }
-    ]);
-
-    let members, members_hb;
-
-    if (counts && counts[0]) {
-      members    = counts[0].members;
-      members_hb = counts[0].members_hb;
-    } else {
-      // no members in the club - this shouldn't normally happen
-      members    = 0;
-      members_hb = 0;
-    }
+    let members = await N.models.clubs.ClubMember.count({ club: club_id });
 
     await N.models.clubs.Club.update(
       { _id: club_id },
-      { $set: { members, members_hb } }
+      { $set: { members } }
     );
   };
 

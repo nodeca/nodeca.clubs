@@ -11,8 +11,7 @@ module.exports = function (N, collectionName) {
     club:      Schema.Types.ObjectId,
     user:      Schema.Types.ObjectId,
     is_owner:  { type: Boolean, 'default': false },
-    joined_ts: { type: Date, 'default': Date.now },
-    hb:        { type: Boolean, 'default': false }
+    joined_ts: { type: Date, 'default': Date.now }
   }, {
     versionKey: false
   });

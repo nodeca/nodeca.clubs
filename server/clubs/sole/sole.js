@@ -87,18 +87,11 @@ module.exports = function (N, apiPath) {
   // Fetch club administrators
   //
   N.wire.after(apiPath, async function fetch_club_admins(env) {
-    let can_see_hellbanned = await env.extras.settings.fetch('can_see_hellbanned');
-
-    let query = N.models.clubs.ClubMember.find()
-                    .where('club').equals(env.data.club._id)
-                    .where('is_owner').equals(true)
-                    .sort('joined_ts');
-
-    if (!(can_see_hellbanned || env.user_info.hb)) {
-      query = query.where('hb').ne(true);
-    }
-
-    let membership = await query.lean(true);
+    let membership = await N.models.clubs.ClubMember.find()
+                               .where('club').equals(env.data.club._id)
+                               .where('is_owner').equals(true)
+                               .sort('joined_ts')
+                               .lean(true);
 
     env.res.club_admin_ids = _.map(membership, 'user');
 

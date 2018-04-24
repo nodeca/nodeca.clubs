@@ -50,7 +50,7 @@ module.exports = function (N, apiPath) {
     // create membership record, use upsert to avoid race condition duplicates
     await N.models.clubs.ClubMember.update(
       { club: env.data.club._id, user: env.user_info.user_id },
-      { $set: { is_owner: false, joined_ts: new Date(), hb: env.user_info.hb } },
+      { $set: { is_owner: false, joined_ts: new Date() } },
       { upsert: true }
     );
 

@@ -39,7 +39,7 @@ module.exports = function (N, apiPath) {
     if (title_length === 0) {
       throw {
         code: N.io.CLIENT_ERROR,
-        message: env.t('err_title_empty', max_length)
+        message: env.t('err_title_empty')
       };
     }
 
@@ -62,8 +62,7 @@ module.exports = function (N, apiPath) {
     await N.models.clubs.ClubMember.create({
       club: club._id,
       user: env.user_info.user_id,
-      is_owner: true,
-      hb: false // always show club owners regardless of hb flag
+      is_owner: true
     });
 
     await N.models.clubs.Club.updateMembers(club._id);
