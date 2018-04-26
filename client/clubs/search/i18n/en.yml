@@ -1,0 +1,9 @@
+en-US:
+  search: Search clubs
+  results: Search results
+  create: Create club
+
+  list:
+    members: "#{count} ((member|members))"
+    last_activity: Last activity
+    no_results: "No matching clubs found."

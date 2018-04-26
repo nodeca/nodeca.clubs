@@ -26,7 +26,7 @@ module.exports = function (N, collectionName) {
 
   let Club = new Schema({
     title:        String,
-    description:  String,
+    description:  { type: String, 'default': '' },
     created_ts:   { type: Date, 'default': Date.now },
 
     // user-friendly id (autoincremented)

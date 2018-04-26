@@ -3,6 +3,9 @@ router:
     clubs.index:
       "/clubs": ~
 
+    clubs.search:
+      "/clubs/search": ~
+
     clubs.sole:
       "/clubs/c{club_hid}(/{topic_hid})":
         club_hid:

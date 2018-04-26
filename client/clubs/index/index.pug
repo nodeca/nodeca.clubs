@@ -10,9 +10,9 @@ article#content.clubs-index
   .layout__container.container-fluid
     != self.partial('@users.blocks.announces')
 
-    form.clubs-search-form
+    form.clubs-search-form(action=self.link_to('clubs.search'))
       .input-group
-        input.form-control(type='text', name='query')
+        input.form-control(type='text', name='query', minlength=2, required)
 
         span.input-group-btn
           button.btn.btn-secondary.icon.icon-search.icon-space-before(type='submit', title=self.t('search'))
