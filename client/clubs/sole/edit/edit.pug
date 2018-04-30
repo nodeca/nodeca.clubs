@@ -1,0 +1,64 @@
+#content
+  -
+    var navbar_args = {
+      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid }),
+      search_areas: [
+        {
+          title: self.t('@clubs.sole.search_club'),
+          method: 'search.club_sole',
+          params: { hid: String(self.club.hid) }
+        }
+      ]
+    };
+  != self.partial('@common.blocks.navbar.levelup_apps', navbar_args)
+
+  nav.breadcrumbs-container
+    .layout__container.container-fluid
+      != self.partial('@common.blocks.breadcrumbs')
+
+  .layout__container.container-fluid
+    != self.partial('@users.blocks.announces')
+
+    .row
+      .col-sm-8.m-auto
+        .card
+
+          h1.card-header.h3= self.head.title
+
+          form.card-body(novalidate, data-on-submit='clubs.sole.edit:save')
+            input(
+              type='hidden'
+              value=self.club._id
+              name='club_id'
+            )
+
+            .form-group
+              label= self.t('title_input_name')
+              input.form-control(
+                name='title'
+                id='club-edit__title'
+                placeholder=self.t('title_input_desc')
+                value=self.club.title
+                pattern='.*\\S.*'
+                maxlength=self.title_max_length
+                required
+              )
+
+            .form-group
+              label= self.t('description_input_name')
+              textarea.form-control(
+                name='description'
+                placeholder=self.t('description_input_desc')
+              )= self.club.description
+
+            .form-group
+              label= self.t('avatar_input_name')
+
+              //- TODO: member-avatar__xxx -> club-avatar__xxx
+              .club-avatar.member-avatar
+                a.member-avatar__delete.btn.btn-sm.btn-square.btn-secondary(href='#' data-on-click='').icon.icon-x
+                a.member-avatar__link(href='#', data-on-click='')
+                  img.member-avatar__image()&attributes(self.avatar(self.club))
+                  .member-avatar__caption= self.t('change_avatar')
+
+            button.btn.btn-primary(type='submit')= self.t('save')

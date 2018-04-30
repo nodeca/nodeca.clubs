@@ -1,0 +1,8 @@
+en-US:
+  title_input_name: Club name
+  title_input_desc: Enter club name here
+  description_input_name: Club description
+  description_input_desc: Description for this club (optional)
+  avatar_input_name: Club picture
+  change_avatar: click to change
+  save: Save

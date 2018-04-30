@@ -1,6 +1,7 @@
 en-US:
   owners: '((Leader|Leaders)):'
   members: "#{count} ((member|members))"
+  edit_club: 'Edit club settings'
 
   no_topics: No topics yet.
 

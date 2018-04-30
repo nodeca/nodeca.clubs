@@ -1,0 +1,7 @@
+en-US:
+  title: Edit club
+  breadcrumbs_title: Edit
+
+  update:
+    err_title_empty: "Club title should not be empty"
+    err_title_too_long: "Club title should have no more than #{count} ((character|characters))"

@@ -53,7 +53,15 @@ article#content.clubs-sole-root(
       .clubs-sole__meta
         .clubs-sole__meta-top
           .clubs-sole__meta-title-admins
-            .clubs-sole__title= self.club.title
+            .clubs-sole__title
+              span.clubs-sole__title-text= self.club.title
+
+              if self.is_club_owner
+                a.clubs-sole__edit.icon.icon-edit(
+                  href=self.link_to('clubs.sole.edit', { club_hid: self.club.hid })
+                  title=self.t('edit_club')
+                )
+
             .clubs-sole__admins
               = self.t('owners', self.club_admin_ids.length)
               ul.clubs-sole__admin-list
