@@ -28,8 +28,14 @@
           form.card-body(novalidate, data-on-submit='clubs.sole.edit:save')
             input(
               type='hidden'
-              value=self.club._id
               name='club_id'
+              value=self.club._id
+            )
+
+            input(
+              type='hidden'
+              name='remove_avatar'
+              value=false
             )
 
             .form-group
@@ -54,11 +60,26 @@
             .form-group
               label= self.t('avatar_input_name')
 
-              //- TODO: member-avatar__xxx -> club-avatar__xxx
-              .club-avatar.member-avatar
-                a.member-avatar__delete.btn.btn-sm.btn-square.btn-secondary(href='#' data-on-click='').icon.icon-x
-                a.member-avatar__link(href='#', data-on-click='')
-                  img.member-avatar__image()&attributes(self.avatar(self.club))
-                  .member-avatar__caption= self.t('change_avatar')
+              .club-avatar(
+                class=self.club.avatar_id ? 'club-avatar__m-exists' : ''
+              )
+                input#club-avatar-upload__file(
+                  name='avatar'
+                  type='file'
+                  style='position: absolute; left: -2000px'
+                  data-on-change='clubs.sole.edit:avatar_change'
+                )
+
+                a.club-avatar__link(
+                  href='#',
+                  onClick='document.getElementById("club-avatar-upload__file").click()'
+                )
+                  img.club-avatar__image.club-avatar__image()&attributes(self.avatar(self.club))
+                  .club-avatar__caption= self.t('change_avatar')
+
+                a.club-avatar__delete.btn.btn-sm.btn-square.btn-secondary.icon.icon-x(
+                  href='#'
+                  data-on-click='clubs.sole.edit:avatar_remove'
+                )
 
             button.btn.btn-primary(type='submit')= self.t('save')

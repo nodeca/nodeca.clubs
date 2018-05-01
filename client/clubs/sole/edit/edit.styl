@@ -1,4 +1,49 @@
+@import "nodeca.core/client/common/_variables"
+
 .club-avatar
   width '$$ N.config.users.avatars.resize.orig.width $$'px
   height '$$ N.config.users.avatars.resize.orig.height $$'px
+  overflow hidden
   border-radius 2px
+  position relative
+
+.club-avatar__image
+  position relative
+  width 100%
+  border-radius 0.1875rem
+  box-shadow 0 0 0.125rem $decorator-color
+
+.club-avatar__m-exists
+  .club-avatar__delete
+    display block
+
+.club-avatar__link
+  display block
+
+.club-avatar__caption
+  display block
+  position absolute
+  bottom 0
+  width 100%
+  text-align center
+  background-color rgba($body-color, 0.6)
+  color $body-color-secondary
+  font-size $font-size-xs
+  transition background-color .2s ease
+  border-radius 0 0 0.1875rem 0.1875rem
+  padding 0 .5em
+  shortable()
+
+.club-avatar__delete
+  display none
+  position absolute
+  top .25rem
+  right .25rem
+  opacity .4
+  transition opacity .2s ease
+
+.club-avatar:hover
+  .club-avatar__caption
+    background-color $body-color
+  .club-avatar__delete
+    opacity 1
