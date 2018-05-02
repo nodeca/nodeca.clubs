@@ -32,12 +32,6 @@
               value=self.club._id
             )
 
-            input(
-              type='hidden'
-              name='remove_avatar'
-              value=false
-            )
-
             .form-group
               label= self.t('title_input_name')
               input.form-control(
@@ -74,7 +68,7 @@
                   href='#',
                   onClick='document.getElementById("club-avatar-upload__file").click()'
                 )
-                  img.club-avatar__image.club-avatar__image()&attributes(self.avatar(self.club))
+                  img.club-avatar__image()&attributes(self.avatar(self.club))
                   .club-avatar__caption= self.t('change_avatar')
 
                 a.club-avatar__delete.btn.btn-sm.btn-square.btn-secondary.icon.icon-x(

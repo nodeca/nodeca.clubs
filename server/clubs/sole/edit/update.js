@@ -6,6 +6,7 @@
 
 const charcount   = require('charcount');
 const crypto      = require('crypto');
+const mime        = require('mime-types');
 const fs          = require('mz/fs');
 const sharp       = require('sharp');
 const resizeParse = require('nodeca.users/server/_lib/resize_parse');
@@ -18,7 +19,7 @@ module.exports = function (N, apiPath) {
     club_id:       { format: 'mongo', required: true },
     title:         { type: 'string',  required: true },
     description:   { type: 'string',  required: true },
-    remove_avatar: { type: 'boolean', required: true },
+    remove_avatar: { type: 'boolean' },
     avatar:        { type: 'string' }
   });
 
@@ -79,7 +80,8 @@ module.exports = function (N, apiPath) {
     if (!fileInfo) return;
 
     let config = resizeParse(N.config.users.avatars);
-    let ext = (fileInfo.headers['content-type'] || '').split('/').pop();
+    let contentType = env.req.files.avatar[0].headers['content-type'];
+    let ext = mime.extensions[contentType] && mime.extensions[contentType][0];
     let typeConfig = config.types[ext];
 
     if (!typeConfig) {
@@ -89,7 +91,7 @@ module.exports = function (N, apiPath) {
       };
     }
 
-    let tmpfile = '/tmp/club-avatar-' + crypto.pseudoRandomBytes(8).toString('hex') + '.jpg';
+    let tmpfile = '/tmp/club-avatar-' + crypto.pseudoRandomBytes(8).toString('hex') + '.' + ext;
 
     let sharpInstance = sharp(fileInfo.path);
 

@@ -5,4 +5,5 @@ en-US:
   description_input_desc: Description for this club (optional)
   avatar_input_name: Club picture
   change_avatar: click to change
+  err_bad_image: File should be an image
   save: Save
