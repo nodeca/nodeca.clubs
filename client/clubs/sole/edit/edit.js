@@ -1,8 +1,20 @@
 'use strict';
 
 const identicon    = require('nodeca.users/lib/identicon');
-const avatarWidth  = '$$ JSON.stringify(N.config.users.avatars.resize.orig.width) $$';
-const avatarHeight = '$$ JSON.stringify(N.config.users.avatars.resize.orig.width) $$';
+const filter_jpeg  = require('nodeca.users/lib/filter_jpeg');
+
+// Pica instance
+let pica;
+
+// Promise that waits for pica dependency to load
+let waitForPica;
+
+// Original image
+let image;
+
+// Avatar size config
+const avatarWidth = '$$ N.config.users.avatars.resize.orig.width $$';
+const avatarHeight = '$$ N.config.users.avatars.resize.orig.height $$';
 
 let pageParams;
 let addFields = {};
@@ -13,6 +25,8 @@ N.wire.on('navigate.done:' + module.apiPath, function setup_page(data) {
   addFields = {};
 
   $('#club-edit__title').focus();
+
+  waitForPica = N.loader.loadAssets('vendor.pica');
 });
 
 
@@ -20,6 +34,179 @@ N.wire.on('navigate.exit:' + module.apiPath, function exit_page() {
   pageParams = null;
   addFields = null;
 });
+
+
+// Apply JPEG orientation to canvas. Define flip/rotate transformation
+// on context and swap canvas width/height if needed
+//
+function orientationApply(canvas, ctx, orientation) {
+  let width = canvas.width;
+  let height = canvas.height;
+
+  if (!orientation || orientation > 8) return;
+
+  if (orientation > 4) {
+    ctx.canvas.width = height;
+    ctx.canvas.height = width;
+  }
+
+  switch (orientation) {
+
+    case 2:
+      // Horizontal flip
+      ctx.translate(width, 0);
+      ctx.scale(-1, 1);
+      break;
+
+    case 3:
+      // rotate 180 degrees left
+      ctx.translate(width, height);
+      ctx.rotate(Math.PI);
+      break;
+
+    case 4:
+      // Vertical flip
+      ctx.translate(0, height);
+      ctx.scale(1, -1);
+      break;
+
+    case 5:
+      // Vertical flip + rotate right
+      ctx.rotate(0.5 * Math.PI);
+      ctx.scale(1, -1);
+      break;
+
+    case 6:
+      // Rotate right
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(0, -height);
+      break;
+
+    case 7:
+      // Horizontal flip + rotate right
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(width, -height);
+      ctx.scale(-1, 1);
+      break;
+
+    case 8:
+      // Rotate left
+      ctx.rotate(-0.5 * Math.PI);
+      ctx.translate(-width, 0);
+      break;
+
+    default:
+  }
+}
+
+
+// Load image from user's file
+//
+function loadImage(file) {
+  let canvas = document.createElement('canvas');
+  let ctx = canvas.getContext('2d');
+  let orientation;
+
+  image = new Image();
+
+  image.onerror = () => { N.wire.emit('notify', t('err_image_invalid')); };
+
+  image.onload = () => {
+
+    if (image.width < avatarWidth || image.height < avatarHeight) {
+      N.wire.emit('notify', t('err_invalid_size', { w: avatarWidth, h: avatarHeight }));
+      return;
+    }
+
+    canvas.width  = image.width;
+    canvas.height = image.height;
+
+    orientationApply(canvas, ctx, orientation);
+
+    ctx.drawImage(image, 0, 0, image.width, image.height);
+
+    let width = canvas.width, height = canvas.height;
+
+    let avatarRatio = avatarWidth / avatarHeight;
+
+    let toWidth, toHeight;
+
+    if (width / height > avatarRatio) {
+      toWidth = height * avatarRatio;
+      toHeight = height;
+    } else {
+      toWidth = width;
+      toHeight = width / avatarRatio;
+    }
+
+    let leftOffset = (width - toWidth) / 2;
+    let topOffset = (height - toHeight) / 2;
+
+    // Create offscreen cropped canvas
+    let canvasCropped = document.createElement('canvas');
+
+    canvasCropped.width  = toWidth;
+    canvasCropped.height = toHeight;
+
+    let ctxCropped = canvasCropped.getContext('2d');
+
+    ctxCropped.drawImage(canvas, leftOffset, topOffset, toWidth, toHeight, 0, 0, width, height);
+
+    //
+    // Resize image
+    //
+    pica = pica || require('pica')();
+
+    // Create "final" avatar canvas
+    let avatarCanvas = document.createElement('canvas');
+
+    avatarCanvas.width = avatarWidth;
+    avatarCanvas.height = avatarHeight;
+
+    return pica.resize(canvasCropped, avatarCanvas, {
+      unsharpAmount: 80,
+      unsharpRadius: 0.6,
+      unsharpThreshold: 2
+    })
+    .then(() => pica.toBlob(avatarCanvas, 'image/jpeg', 90))
+    .then(function (blob) {
+      let img = $('<img class="club-avatar__image">');
+      img.attr('src', window.URL.createObjectURL(blob));
+      $('.club-avatar__image').replaceWith(img);
+      $('.club-avatar').addClass('club-avatar__m-exists');
+      addFields = { avatar: blob };
+    })
+    .catch(() => {
+      N.wire.emit('notify', t('err_image_invalid'));
+      throw 'CANCELED';
+    });
+  };
+
+  let reader = new FileReader();
+
+  reader.onloadend = e => {
+    // only keep comments and exif in header
+    let filter = filter_jpeg({
+      onIFDEntry: function readOrientation(ifd, entry) {
+        if (ifd === 0 && entry.tag === 0x112 && entry.type === 3) {
+          orientation = this.readUInt16(entry.value, 0);
+        }
+      }
+    });
+
+    try {
+      filter.push(new Uint8Array(e.target.result));
+      filter.end();
+    } catch (err) {
+      N.wire.emit('notify', t('err_image_invalid'));
+      return;
+    }
+
+    image.src = window.URL.createObjectURL(file);
+  };
+
+  reader.readAsArrayBuffer(file);
+}
 
 
 // Init handlers
@@ -42,50 +229,12 @@ N.wire.once('navigate.done:' + module.apiPath, function club_edit_init_handlers(
   // User selects new avatar
   //
   N.wire.on(module.apiPath + ':avatar_change', function avatar_change(data) {
-    let reader = new FileReader();
-
-    reader.onload = function (e) {
-      let img = $('<img class="club-avatar__image">');
-
-      img.attr('src', e.target.result);
-
-      // adjust image offset and size so user will only see the center part,
-      // which image will be cropped into on the server
-      img[0].onload = () => {
-        $('.club-avatar').addClass('club-avatar__m-exists');
-
-        let width = img[0].width;
-        let height = img[0].height;
-
-        let toWidth = avatarWidth;
-        let toHeight = avatarHeight;
-
-        let scaleX, scaleY;
-
-        if (width / height > toWidth / toHeight) {
-          scaleX = width * toHeight / height;
-          scaleY = toHeight;
-        } else {
-          scaleX = toWidth;
-          scaleY = height * toWidth / width;
-        }
-
-        $('.club-avatar__image').replaceWith(img);
-
-        img.css('width', Math.floor(scaleX));
-        img.css('height', Math.floor(scaleY));
-        img.css('left', Math.floor((scaleX - toWidth) / -2));
-        img.css('top', Math.floor((scaleY - toHeight) / -2));
-
-        addFields = { avatar: $('.club-avatar').closest('form')[0].avatar.files[0] };
-      };
-
-      img[0].onerror = () => {
-        N.wire.emit('notify', t('err_bad_image'));
-      };
-    };
-
-    reader.readAsDataURL(data.$this[0].files[0]);
+    let files = data.$this[0].files;
+    if (files.length > 0) {
+      waitForPica
+        .then(() => loadImage(files[0]))
+        .catch(err => N.wire.emit('error', err));
+    }
   });
 
 
