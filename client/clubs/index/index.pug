@@ -34,8 +34,8 @@ article#content.clubs-index
               = ' '
               != self.timetag(club.cache.last_ts, 'relative_full')
       else
-        p.clubs-index__no-clubs
+        .alert.alert-warning.clubs-index__no-clubs
           if self.runtime.is_member
-            = self.t('member_no_clubs')
+            != self.t('member_no_clubs')
           else
-            = self.t('guest_no_clubs')
+            != self.t('guest_no_clubs', { search_link: self.link_to('clubs.search') })

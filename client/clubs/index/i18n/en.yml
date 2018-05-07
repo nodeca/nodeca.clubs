@@ -3,5 +3,8 @@ en-US:
   my_clubs: My clubs
   last_activity: Last activity
   members: "#{count} ((member|members))"
-  member_no_clubs: "You haven't joined any clubs yet."
-  guest_no_clubs: "You're not logged in."
+  member_no_clubs: |
+    md: You haven't joined any clubs yet. You can use [search](/clubs/search) to find clubs you like.
+
+  guest_no_clubs: |
+    md: You need to log in to see your clubs. You can also use [search](/clubs/search) to find clubs you like.

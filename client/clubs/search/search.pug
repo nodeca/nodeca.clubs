@@ -11,11 +11,14 @@ article#content.clubs-search
   .layout__container.container-fluid
     != self.partial('@users.blocks.announces')
 
-    form.clubs-search-form(action=self.link_to('clubs.search'))
+    header.page-head.clubs-search__head
+      h1.clubs-search__title.page-head__title(itemprop='name')= self.t('title')
+
+    form.clubs-search__form(action=self.link_to('clubs.search'))
       .input-group
         input.form-control(type='text', name='query', value=self.query, minlength=2, required)
 
-        span.input-group-btn
-          button.btn.btn-secondary.icon.icon-search.icon-space-before(type='submit', title=self.t('search'))
+        span.input-group-append
+          button.btn.btn-secondary.icon.icon-search(type='submit', title=self.t('search'))
 
     .clubs-search__results
