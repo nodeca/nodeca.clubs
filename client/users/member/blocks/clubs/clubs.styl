@@ -2,10 +2,10 @@
 
 
 .member-block__clubs-info
-  display inline
   list-style none
   margin 0
   padding 0
+  font-size $font-size-sm
 
 .member-block__clubs-info-item
   display inline
@@ -13,6 +13,9 @@
 .member-block__clubs-info-item + .member-block__clubs-info-item
   &:before
     content ', '
+
+.member-block__clubs-info-item-title
+  color lighten($body-color, 30%)
 
 .member-block__clubs-is-owner
   font-style italic
