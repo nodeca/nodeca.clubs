@@ -6,11 +6,13 @@
 N.wire.on('navigate.done:' + module.apiPath, function page_init() {
   let query = N.runtime.page_data.query;
 
+  if (!query.trim()) return;
+
   N.io.rpc('clubs.search.list.results', { query }).then(function (res) {
     return N.wire.emit('navigate.update', {
       $: $(N.runtime.render(module.apiPath + '.list', res)),
       locals: res,
-      $replace: $('.clubs-search__club-list')
+      $replace: $('.clubs-search__results')
     });
   }).catch(err => {
     if (err.code === N.io.CLIENT_ERROR) {
@@ -19,7 +21,7 @@ N.wire.on('navigate.done:' + module.apiPath, function page_init() {
       return N.wire.emit('navigate.update', {
         $: $(N.runtime.render(module.apiPath + '.list', res)),
         locals: res,
-        $replace: $('.clubs-search__club-list')
+        $replace: $('.clubs-search__results')
       });
     }
 

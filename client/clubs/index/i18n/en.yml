@@ -1,8 +1,7 @@
 en-US:
   title: Clubs
-  search: Search clubs
   my_clubs: My clubs
-  create: Create club
   last_activity: Last activity
   members: "#{count} ((member|members))"
-  no_clubs: "You haven't joined any clubs yet."
+  member_no_clubs: "You haven't joined any clubs yet."
+  guest_no_clubs: "You're not logged in."

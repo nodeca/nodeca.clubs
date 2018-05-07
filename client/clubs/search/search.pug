@@ -18,14 +18,4 @@ article#content.clubs-search
         span.input-group-btn
           button.btn.btn-secondary.icon.icon-search.icon-space-before(type='submit', title=self.t('search'))
 
-    header.page-head.clubs-search__head
-      h1.clubs-search__title.page-head__title(itemprop='name')= self.t('results')
-
-      .page-actions.clubs-search__toolbar-controls
-        if self.settings.clubs_can_create_clubs
-          button.btn.btn-secondary(
-            data-on-click='clubs.search:create_club'
-            type='button'
-          )= self.t('create')
-
-    .clubs-search__club-list
+    .clubs-search__results

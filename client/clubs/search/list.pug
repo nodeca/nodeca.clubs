@@ -1,22 +1,26 @@
-each club in self.clubs || []
-  .clubs-search-sole
-    .clubs-search-sole__aside
-      a(href=self.link_to('clubs.sole', { club_hid: club.hid }))
-        img.clubs-search-sole__avatar(alt=club.title)&attributes(self.avatar(club, 'md'))
+header.page-head.clubs-search__head
+  h1.clubs-search__title.page-head__title(itemprop='name')= self.t('results')
 
-    .clubs-search-sole__meta
-      .clubs-search-sole__title
-        a(href=self.link_to('clubs.sole', { club_hid: club.hid }))= club.title
+.clubs-search__club-list
+  each club in self.clubs || []
+    .clubs-search-sole
+      .clubs-search-sole__aside
+        a(href=self.link_to('clubs.sole', { club_hid: club.hid }))
+          img.clubs-search-sole__avatar(alt=club.title)&attributes(self.avatar(club, 'md'))
 
-      .clubs-search-sole__members
-        = self.t('members', club.members)
+      .clubs-search-sole__meta
+        .clubs-search-sole__title
+          a(href=self.link_to('clubs.sole', { club_hid: club.hid }))= club.title
 
-      .clubs-search-sole__activity
-        = self.t('last_activity')
-        = ' '
-        != self.timetag(club.cache.last_ts, 'relative_full')
-else
-  if self.error
-    p.clubs-search__no-clubs= self.error
+        .clubs-search-sole__members
+          = self.t('members', club.members)
+
+        .clubs-search-sole__activity
+          = self.t('last_activity')
+          = ' '
+          != self.timetag(club.cache.last_ts, 'relative_full')
   else
-    p.clubs-search__no-clubs= self.t('no_results')
+    if self.error
+      p.clubs-search__no-clubs= self.error
+    else
+      p.clubs-search__no-clubs= self.t('no_results')

@@ -10,22 +10,10 @@ article#content.clubs-index
   .layout__container.container-fluid
     != self.partial('@users.blocks.announces')
 
-    form.clubs-search-form(action=self.link_to('clubs.search'))
-      .input-group
-        input.form-control(type='text', name='query', minlength=2, required)
-
-        span.input-group-btn
-          button.btn.btn-secondary.icon.icon-search.icon-space-before(type='submit', title=self.t('search'))
-
     header.page-head.clubs-index__head
       h1.clubs-index__title.page-head__title(itemprop='name')= self.t('my_clubs')
 
-      .page-actions.clubs-index__toolbar-controls
-        if self.settings.clubs_can_create_clubs
-          button.btn.btn-secondary(
-            data-on-click='clubs.index:create_club'
-            type='button'
-          )= self.t('create')
+      != self.partial('@clubs.index.blocks.toolbar_controls')
 
     .clubs-index__club-list
       each club in self.clubs
@@ -46,4 +34,8 @@ article#content.clubs-index
               = ' '
               != self.timetag(club.cache.last_ts, 'relative_full')
       else
-        p.clubs-index__no-clubs= self.t('no_clubs')
+        p.clubs-index__no-clubs
+          if self.runtime.is_member
+            = self.t('member_no_clubs')
+          else
+            = self.t('guest_no_clubs')
