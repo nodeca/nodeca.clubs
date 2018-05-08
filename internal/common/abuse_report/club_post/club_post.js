@@ -48,20 +48,21 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch recipients
+  // Send message to all users with infraction permissions
   //
   N.wire.before(apiPath, async function fetch_recipients(params) {
-    // send message to all users with infraction permissions
+    params.recipients = params.recipients || {};
+
     let groups = await N.models.users.UserGroup.find().select('_id');
 
     let allowed_groups = [];
 
     for (let usergroup of groups) {
-      let params = {
+      let settings_params = {
         usergroup_ids: [ usergroup._id ]
       };
 
-      let can_add_infractions = await N.settings.get('clubs_mod_can_add_infractions', params, {});
+      let can_add_infractions = await N.settings.get('clubs_mod_can_add_infractions', settings_params, {});
 
       if (can_add_infractions) allowed_groups.push(usergroup._id);
     }
@@ -73,24 +74,49 @@ module.exports = function (N, apiPath) {
 
     let user_infos = await userInfo(N, _.map(recipients, '_id'));
 
-    let allowed_userinfos = {};
-
     // double-check all permissions in case a user is disallowed from another
     // group with force=true
     for (let user_id of Object.keys(user_infos)) {
       let user_info = user_infos[user_id];
 
-      let params = {
+      let settings_params = {
         user_id: user_info.user_id,
         usergroup_ids: user_info.usergroups
       };
 
-      let can_add_infractions = await N.settings.get('clubs_mod_can_add_infractions', params, {});
+      let can_add_infractions = await N.settings.get('clubs_mod_can_add_infractions', settings_params, {});
 
-      if (can_add_infractions) allowed_userinfos[user_id] = user_info;
+      if (can_add_infractions) params.recipients[user_id] = user_info;
     }
+  });
 
-    params.recipients = allowed_userinfos;
+
+  // Send message to club owners, but only if abuse report wasn't created
+  // against one of them.
+  //
+  N.wire.before(apiPath, async function fetch_recipients(params) {
+    params.recipients = params.recipients || {};
+
+    let membership = await N.models.clubs.ClubMember.find()
+                               .where('club').equals(params.data.club._id)
+                               .where('is_owner').equals(true)
+                               .sort('joined_ts')
+                               .lean(true);
+
+    let userids = _.map(membership, 'user');
+
+    // don't send to club owners if abuse was reported against one
+    if (userids.some(u => String(u) === String(params.data.post.user))) return;
+
+    let recipients = await N.models.users.User.find()
+                               .where('_id').in(userids)
+                               .lean(true);
+
+    let user_infos = await userInfo(N, _.map(recipients, '_id'));
+
+    for (let user_id of Object.keys(user_infos)) {
+      params.recipients[user_id] = user_infos[user_id];
+    }
   });
 
 
