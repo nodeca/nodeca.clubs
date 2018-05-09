@@ -22,14 +22,24 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch club
+  // Fetch club info and membership
   //
-  N.wire.before(apiPath, async function fetch_club(env) {
-    env.data.club = await N.models.clubs.Club.findOne()
-                              .where('hid').equals(env.params.club_hid)
-                              .lean(true);
+  N.wire.before(apiPath, async function fetch_club_info(env) {
+    let club = await N.models.clubs.Club.findOne()
+                         .where('hid').equals(env.params.club_hid)
+                         .lean(true);
 
-    if (!env.data.club) throw N.io.NOT_FOUND;
+    if (!club) throw N.io.NOT_FOUND;
+
+    env.data.club = club;
+
+    let membership = await N.models.clubs.ClubMember.findOne()
+                               .where('user').equals(env.user_info.user_id)
+                               .where('club').equals(env.data.club._id)
+                               .lean(true);
+
+    env.res.is_club_member = env.data.is_club_member = !!membership;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
   });
 
 
@@ -43,7 +53,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.club_member_ids = _.map(membership, 'user');
-    env.res.club_admin_ids  = _.map(membership.filter(user => user.is_owner), 'user');
+    env.res.club_owner_ids  = _.map(membership.filter(user => user.is_owner), 'user');
 
     env.data.users = (env.data.users || []).concat(env.res.club_member_ids);
   });
@@ -53,7 +63,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, function fill_head(env) {
     env.res.head = env.res.head || {};
-    env.res.head.title = env.t('title');
+    env.res.head.title = env.t('@clubs.sole.members.title');
     env.res.head.robots = 'noindex,follow';
   });
 

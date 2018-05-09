@@ -52,7 +52,7 @@ article#content.clubs-sole-root(
 
       .clubs-sole__meta
         .clubs-sole__meta-top
-          .clubs-sole__meta-title-admins
+          .clubs-sole__meta-title-owners
             .clubs-sole__title
               span.clubs-sole__title-text= self.club.title
 
@@ -62,20 +62,20 @@ article#content.clubs-sole-root(
                   title=self.t('edit_club')
                 )
 
-            .clubs-sole__admins
-              = self.t('owners', self.club_admin_ids.length)
-              ul.clubs-sole__admin-list
-                each userid in self.club_admin_ids
+            .clubs-sole__owners
+              = self.t('owners', self.club_owner_ids.length)
+              ul.clubs-sole__owner-list
+                each userid in self.club_owner_ids
                   - var user = self.users && self.users[userid];
                   if user
-                    li.clubs-sole__admin-list-item
-                      a.clubs-sole__admin-list-link(href=self.link_to('users.member', { user_hid: user.hid }))= user.name
+                    li.clubs-sole__owner-list-item
+                      a.clubs-sole__owner-list-link(href=self.link_to('users.member', { user_hid: user.hid }))= user.name
 
           != self.partial('@clubs.sole.blocks.toolbar_controls')
 
         .clubs-sole__description= self.club.description
         .clubs-sole__members
-          a(href=self.link_to('clubs.sole.members', { club_hid: self.club.hid }), rel='nofollow')= self.t('members', self.club.members)
+          a(href=self.link_to('clubs.sole.members.index', { club_hid: self.club.hid }), rel='nofollow')= self.t('members', self.club.members)
 
     if self.topics && self.topics.length
       .clubs-sole__loading-prev.nojs-hide(

@@ -1,10 +1,13 @@
 en-US:
-  title_input_name: Club name
+  title_input_name: Name
   title_input_desc: Enter club name here
-  description_input_name: Club description
+  description_input_name: Description
   description_input_desc: Description for this club (optional)
-  avatar_input_name: Club picture
+  avatar_input_name: Picture
   change_avatar: click to change
   err_image_invalid: File should be an image.
   err_invalid_size: "Image too small. Should be at least #{w}x#{h}."
+  membership_input_name: Membership
+  membership_open: Open (anyone can join)
+  membership_closed: Closed (requires leader approval)
   save: Save

@@ -1,2 +1,7 @@
 en-US:
   title: Members
+  tabs:
+    index: Current
+    owners: Leaders
+    blocked: Blocked
+    pending: Pending

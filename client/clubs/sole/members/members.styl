@@ -1,15 +1,28 @@
 @import "nodeca.core/client/common/_variables"
 
+.clubs-sole-members__tabs
+  margin-bottom 1.5rem
+  justify-content center
+
+.clubs-sole-members__tab-counter
+  color $body-color-secondary
+  margin-left .5rem
+  font-size $font-size-xs
+
 .clubs-sole-members__list
-  padding 0
+  padding 1.25rem
   margin 0
+  border 1px solid rgba(0, 0, 0, 0.125)
+  border-radius 0.25rem
 
 .clubs-sole-members__list-item
-  display block
+  display flex
+  align-items baseline
 
 .clubs-sole-members__member
+  flex 1 1 0%
+  padding 0.25em 0
   display inline-block
-  width 100%
   shortable()
 
 .clubs-sole-members__avatar
@@ -17,3 +30,28 @@
   height 16px
   margin 0px 5px
   border-radius 2px
+
+.clubs-sole-members__action
+  background-color transparent
+  color $body-color-secondary
+
+  &:hover
+  &:focus
+  &:active
+    color $body-color-secondary - 20%
+    background-color $body-bg-secondary
+
+.clubs-sole-members__form
+  margin-bottom 1rem
+
+.clubs-sole-members__input-group
+  display flex
+
+  & > .twitter-typeahead
+    flex 1 1 0%
+    width auto
+
+@media (max-width: $grid-breakpoints.sm - 1)
+  .clubs-sole-members__list
+    padding 0
+    border 0

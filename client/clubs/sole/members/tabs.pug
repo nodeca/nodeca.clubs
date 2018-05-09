@@ -1,0 +1,32 @@
+.clubs-sole-members__tabs.nav.nav-tabs-underlined
+  a.nav-link(
+    href=self.link_to('clubs.sole.members.index', { club_hid: self.club.hid })
+    class=self.active_tab === 'index' ? 'active' : ''
+  )
+    = self.t('index')
+    span.clubs-sole-members__tab-counter(title='17')
+      = '(17)'
+
+  a.nav-link(
+    href=self.link_to('clubs.sole.members.blocked', { club_hid: self.club.hid })
+    class=self.active_tab === 'blocked' ? 'active' : ''
+  )
+    = self.t('blocked')
+    span.clubs-sole-members__tab-counter(title='0')
+      = '(0)'
+
+  a.nav-link(
+    href=self.link_to('clubs.sole.members.pending', { club_hid: self.club.hid })
+    class=self.active_tab === 'pending' ? 'active' : ''
+  )
+    = self.t('pending')
+    span.clubs-sole-members__tab-counter(title='1')
+      = '(1)'
+
+  a.nav-link(
+    href=self.link_to('clubs.sole.members.owners', { club_hid: self.club.hid })
+    class=self.active_tab === 'owners' ? 'active' : ''
+  )
+    = self.t('owners')
+    span.clubs-sole-members__tab-counter(title='2')
+      = '(2)'

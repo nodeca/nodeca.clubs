@@ -76,4 +76,17 @@
                   data-on-click='clubs.sole.edit:avatar_remove'
                 )
 
+            .form-group
+              label= self.t('membership_input_name')
+
+              .form-check
+                input#club-membership-open.form-check-input(type='radio', name='membership', checked)
+                label.form-check-label(for='club-membership-open')
+                  = self.t('membership_open')
+
+              .form-check
+                input#club-membership-closed.form-check-input(type='radio', name='membership')
+                label.form-check-label(for='club-membership-closed')
+                  = self.t('membership_closed')
+
             button.btn.btn-primary(type='submit')= self.t('save')

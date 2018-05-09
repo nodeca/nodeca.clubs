@@ -84,18 +84,18 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch club administrators
+  // Fetch club leaders
   //
-  N.wire.after(apiPath, async function fetch_club_admins(env) {
+  N.wire.after(apiPath, async function fetch_club_owners(env) {
     let membership = await N.models.clubs.ClubMember.find()
                                .where('club').equals(env.data.club._id)
                                .where('is_owner').equals(true)
                                .sort('joined_ts')
                                .lean(true);
 
-    env.res.club_admin_ids = _.map(membership, 'user');
+    env.res.club_owner_ids = _.map(membership, 'user');
 
-    env.data.users = (env.data.users || []).concat(env.res.club_admin_ids);
+    env.data.users = (env.data.users || []).concat(env.res.club_owner_ids);
   });
 
 

@@ -21,8 +21,26 @@ router:
           match: /\d+/
           type: integer
 
-    clubs.sole.members:
+    clubs.sole.members.index:
       "/clubs/c{club_hid}/members":
+        club_hid:
+          match: /\d+/
+          type: integer
+
+    clubs.sole.members.owners:
+      "/clubs/c{club_hid}/members/leaders":
+        club_hid:
+          match: /\d+/
+          type: integer
+
+    clubs.sole.members.blocked:
+      "/clubs/c{club_hid}/members/blocked":
+        club_hid:
+          match: /\d+/
+          type: integer
+
+    clubs.sole.members.pending:
+      "/clubs/c{club_hid}/members/pending":
         club_hid:
           match: /\d+/
           type: integer
