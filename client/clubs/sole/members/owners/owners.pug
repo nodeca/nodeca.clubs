@@ -28,26 +28,25 @@ article#content.clubs-sole-members-owners
 
     != self.partial('@clubs.sole.members.tabs', { active_tab: 'owners' })
 
-    .row
-      .col-md-6.col-sm-8.m-auto
-        form.clubs-sole-members__form
-          .input-group.clubs-sole-members__input-group
-            input.form-control#clubs-sole-members-add-leader(type='text', placeholder=self.t('input_placeholder'))
+    .clubs-sole-members__content
+      form.clubs-sole-members__form
+        .input-group.clubs-sole-members__input-group
+          input.form-control#clubs-sole-members-add-leader(type='text', placeholder=self.t('input_placeholder'))
 
-            span.input-group-append
-              button.btn.btn-secondary(type='submit')= self.t('add_owner')
+          span.input-group-append
+            button.btn.btn-secondary(type='submit')= self.t('add_owner')
 
-        ul.clubs-sole-members__list
-          //- sort users by nick
-          -
-            var users = self.club_owner_ids.map(function (id) {
-              return self.users[id];
-            }).filter(Boolean).sort(function (user1, user2) {
-              return user1.nick > user2.nick ? 1 : -1;
-            });
+      ul.clubs-sole-members__list
+        //- sort users by nick
+        -
+          var users = self.club_owner_ids.map(function (id) {
+            return self.users[id];
+          }).filter(Boolean).sort(function (user1, user2) {
+            return user1.nick > user2.nick ? 1 : -1;
+          });
 
-          each user in users
-            li.clubs-sole-members__list-item
-              a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
-                img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
-                span.clubs-sole-members__nick= user.name
+        each user in users
+          li.clubs-sole-members__list-item
+            a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
+              img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
+              span.clubs-sole-members__nick= user.name

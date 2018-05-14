@@ -1,5 +1,7 @@
 @import "nodeca.core/client/common/_variables"
 
+$member-list-width = $grid-breakpoints['sm']
+
 .clubs-sole-members__tabs
   margin-bottom 1.5rem
   justify-content center
@@ -8,6 +10,10 @@
   color $body-color-secondary
   margin-left .5rem
   font-size $font-size-xs
+
+.clubs-sole-members__content
+  max-width $member-list-width
+  margin auto
 
 .clubs-sole-members__list
   padding 1.25rem
@@ -51,7 +57,7 @@
     flex 1 1 0%
     width auto
 
-@media (max-width: $grid-breakpoints.sm - 1)
+@media (max-width: $member-list-width - 1)
   .clubs-sole-members__list
     padding 0
     border 0

@@ -29,30 +29,29 @@ article#content.clubs-sole-members
     if self.is_club_owner
       != self.partial('@clubs.sole.members.tabs', { active_tab: 'index' })
 
-    .row
-      .col-md-6.col-sm-8.m-auto
-        ul.clubs-sole-members__list
-          //- sort users by nick
-          -
-            var users = self.club_member_ids.map(function (id) {
-              return self.users[id];
-            }).filter(Boolean).sort(function (user1, user2) {
-              return user1.nick > user2.nick ? 1 : -1;
-            });
+    .clubs-sole-members__content
+      ul.clubs-sole-members__list
+        //- sort users by nick
+        -
+          var users = self.club_member_ids.map(function (id) {
+            return self.users[id];
+          }).filter(Boolean).sort(function (user1, user2) {
+            return user1.nick > user2.nick ? 1 : -1;
+          });
 
-          each user in users
-            li.clubs-sole-members__list-item
-              a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
-                img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
-                span.clubs-sole-members__nick= user.name
+        each user in users
+          li.clubs-sole-members__list-item
+            a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
+              img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
+              span.clubs-sole-members__nick= user.name
 
-              if self.is_club_owner
-                button.clubs-sole-members__action.btn.btn-sm.btn-square.dropdown-toggle.icon.icon-dropdown-local(
-                  data-toggle='dropdown'
-                  role='button'
-                )
-                .dropdown-menu.dropdown-menu-right(role='menu')
-                  button.dropdown-item(
-                    data-user-id=user._id
-                    data-on-click=''
-                  )= self.t('block')
+            if self.is_club_owner
+              button.clubs-sole-members__action.btn.btn-sm.btn-square.dropdown-toggle.icon.icon-dropdown-local(
+                data-toggle='dropdown'
+                role='button'
+              )
+              .dropdown-menu.dropdown-menu-right(role='menu')
+                button.dropdown-item(
+                  data-user-id=user._id
+                  data-on-click=''
+                )= self.t('block')
