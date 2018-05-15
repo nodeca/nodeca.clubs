@@ -80,12 +80,12 @@
               label= self.t('membership_input_name')
 
               .form-check
-                input#club-membership-open.form-check-input(type='radio', name='membership', checked)
+                input#club-membership-open.form-check-input(type='radio', name='membership', value='open', checked=!self.club.is_closed)
                 label.form-check-label(for='club-membership-open')
                   = self.t('membership_open')
 
               .form-check
-                input#club-membership-closed.form-check-input(type='radio', name='membership')
+                input#club-membership-closed.form-check-input(type='radio', name='membership', value='closed', checked=self.club.is_closed)
                 label.form-check-label(for='club-membership-closed')
                   = self.t('membership_closed')
 

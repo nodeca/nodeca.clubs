@@ -90,7 +90,7 @@ module.exports = function (N, apiPath) {
   // Fetch club membership
   //
   N.wire.before(apiPath, async function fetch_club_membership(env) {
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);

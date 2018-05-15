@@ -59,7 +59,7 @@ module.exports = function (N, apiPath) {
       title: env.params.title
     });
 
-    await N.models.clubs.ClubMember.create({
+    await N.models.clubs.Membership.create({
       club: club._id,
       user: env.user_info.user_id,
       is_owner: true

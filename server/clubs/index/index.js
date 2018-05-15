@@ -19,7 +19,7 @@ module.exports = function (N, apiPath) {
     let membership = [], clubs = [];
 
     if (env.user_info.is_member) {
-      membership = await N.models.clubs.ClubMember.find()
+      membership = await N.models.clubs.Membership.find()
                              .where('user').equals(env.user_info.user_id)
                              .lean(true);
     }

@@ -31,7 +31,7 @@ module.exports = function (N, apiPath) {
   // Fetch club membership
   //
   N.wire.before(apiPath, async function fetch_club_membership(env) {
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);
@@ -48,7 +48,7 @@ module.exports = function (N, apiPath) {
     if (env.data.is_club_member) return;
 
     // create membership record, use upsert to avoid race condition duplicates
-    await N.models.clubs.ClubMember.update(
+    await N.models.clubs.Membership.update(
       { club: env.data.club._id, user: env.user_info.user_id },
       { $set: { is_owner: false, joined_ts: new Date() } },
       { upsert: true }

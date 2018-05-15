@@ -35,6 +35,9 @@ module.exports = function (N, collectionName) {
     // member count
     members:      Number,
 
+    // membership requires leader approval
+    is_closed:    { type: Boolean, 'default': false },
+
     avatar_id:    Schema.Types.ObjectId,
 
     // cache
@@ -118,7 +121,7 @@ module.exports = function (N, collectionName) {
   // Update member count
   //
   Club.statics.updateMembers = async function (club_id) {
-    let members = await N.models.clubs.ClubMember.count({ club: club_id });
+    let members = await N.models.clubs.Membership.count({ club: club_id });
 
     await N.models.clubs.Club.update(
       { _id: club_id },

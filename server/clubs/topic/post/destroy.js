@@ -63,7 +63,7 @@ module.exports = function (N, apiPath) {
 
     env.data.club = club;
 
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);

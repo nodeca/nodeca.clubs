@@ -50,3 +50,5 @@ article#content.clubs-sole-members-owners
             a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
               img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
               span.clubs-sole-members__nick= user.name
+        else
+          .clubs-sole-members__list-empty= self.t('no_users')

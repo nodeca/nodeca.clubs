@@ -39,7 +39,7 @@ article#content.clubs-sole-members-blocked
       ul.clubs-sole-members__list
         //- sort users by nick
         -
-          var users = self.club_member_ids.map(function (id) {
+          var users = self.blocked_ids.map(function (id) {
             return self.users[id];
           }).filter(Boolean).sort(function (user1, user2) {
             return user1.nick > user2.nick ? 1 : -1;
@@ -58,3 +58,5 @@ article#content.clubs-sole-members-blocked
             button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
               title=self.t('unblock')
             )
+        else
+          .clubs-sole-members__list-empty= self.t('no_users')

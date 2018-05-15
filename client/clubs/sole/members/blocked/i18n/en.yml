@@ -2,3 +2,4 @@ en-US:
   unblock: Cancel ban
   block: Ban user
   input_placeholder: Type nick here
+  no_users: No one is banned from this club

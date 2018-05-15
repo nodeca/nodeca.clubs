@@ -12,7 +12,7 @@ module.exports = function (N) {
   // Fetch user blog entries
   //
   N.wire.after('server:users.member', async function fetch_user_blog_entries(env) {
-    let membership = await N.models.clubs.ClubMember.find()
+    let membership = await N.models.clubs.Membership.find()
                                .where('user').equals(env.data.user._id)
                                .lean(true);
 

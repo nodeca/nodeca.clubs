@@ -19,6 +19,7 @@ module.exports = function (N, apiPath) {
     club_id:       { format: 'mongo', required: true },
     title:         { type: 'string',  required: true },
     description:   { type: 'string',  required: true },
+    membership:    { enum: [ 'open', 'closed' ], required: true },
     remove_avatar: { type: 'boolean' },
     avatar:        { type: 'string' }
   });
@@ -34,7 +35,7 @@ module.exports = function (N, apiPath) {
 
     env.data.club = club;
 
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);
@@ -139,7 +140,8 @@ module.exports = function (N, apiPath) {
     let update_data = {
       $set: {
         title: env.params.title,
-        description: env.params.description
+        description: env.params.description,
+        is_closed: env.params.membership === 'closed'
       }
     };
 

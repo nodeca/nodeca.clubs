@@ -33,7 +33,7 @@ module.exports = function (N, apiPath) {
 
     env.data.club = club;
 
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);
@@ -48,7 +48,7 @@ module.exports = function (N, apiPath) {
   N.wire.on(apiPath, async function fetch_club_members(env) {
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
 
-    let membership = await N.models.clubs.ClubMember.find()
+    let membership = await N.models.clubs.Membership.find()
                                .where('club').equals(env.data.club._id)
                                .lean(true);
 

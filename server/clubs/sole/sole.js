@@ -87,7 +87,7 @@ module.exports = function (N, apiPath) {
   // Fetch club leaders
   //
   N.wire.after(apiPath, async function fetch_club_owners(env) {
-    let membership = await N.models.clubs.ClubMember.find()
+    let membership = await N.models.clubs.Membership.find()
                                .where('club').equals(env.data.club._id)
                                .where('is_owner').equals(true)
                                .sort('joined_ts')

@@ -31,7 +31,7 @@ module.exports = function (N, apiPath) {
   // Fetch club membership
   //
   N.wire.before(apiPath, async function fetch_club_membership(env) {
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);
@@ -49,7 +49,7 @@ module.exports = function (N, apiPath) {
 
     // prevent leaving if user is the last owner
     if (env.data.is_club_owner) {
-      let owner_count = await N.models.clubs.ClubMember.count()
+      let owner_count = await N.models.clubs.Membership.count()
                                   .where('club').equals(env.data.club._id)
                                   .where('is_owner').equals(true);
 
@@ -62,7 +62,7 @@ module.exports = function (N, apiPath) {
     }
 
     // remove membership record
-    await N.models.clubs.ClubMember.remove(
+    await N.models.clubs.Membership.remove(
       { club: env.data.club._id, user: env.user_info.user_id },
     );
 

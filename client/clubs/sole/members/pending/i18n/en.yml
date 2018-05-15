@@ -1,3 +1,4 @@
 en-US:
   approve: Approve
   reject: Reject
+  no_users: There are no pending membership requests

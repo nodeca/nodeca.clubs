@@ -33,7 +33,7 @@ module.exports = function (N, apiPath) {
 
     env.data.club = club;
 
-    let membership = await N.models.clubs.ClubMember.findOne()
+    let membership = await N.models.clubs.Membership.findOne()
                                .where('user').equals(env.user_info.user_id)
                                .where('club').equals(env.data.club._id)
                                .lean(true);
@@ -50,19 +50,18 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch club members
+  // Fetch blocked members
   //
-  N.wire.on(apiPath, async function fetch_club_members(env) {
+  N.wire.on(apiPath, async function fetch_blocked_members(env) {
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
 
-    let membership = await N.models.clubs.ClubMember.find()
+    let blocked = await N.models.clubs.Blocked.find()
                                .where('club').equals(env.data.club._id)
                                .lean(true);
 
-    env.res.club_member_ids = _.map(membership, 'user');
-    env.res.club_owner_ids  = _.map(membership.filter(user => user.is_owner), 'user');
+    env.res.blocked_ids = _.map(blocked, 'user');
 
-    env.data.users = (env.data.users || []).concat(env.res.club_member_ids);
+    env.data.users = (env.data.users || []).concat(env.res.blocked_ids);
   });
 
 

@@ -32,7 +32,7 @@ article#content.clubs-sole-members-pending
       ul.clubs-sole-members__list
         //- sort users by nick
         -
-          var users = self.club_member_ids.map(function (id) {
+          var users = self.pending_ids.map(function (id) {
             return self.users[id];
           }).filter(Boolean).sort(function (user1, user2) {
             return user1.nick > user2.nick ? 1 : -1;
@@ -51,3 +51,5 @@ article#content.clubs-sole-members-pending
             button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
               title=self.t('reject')
             )
+        else
+          .clubs-sole-members__list-empty= self.t('no_users')

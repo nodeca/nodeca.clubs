@@ -244,7 +244,7 @@ async function createClubs(global_admins) {
     //
     /*eslint-disable no-loop-func*/
     await Promise.all(admins.map(user =>
-      models.clubs.ClubMember.create({
+      models.clubs.Membership.create({
         club:     club._id,
         user:     user._id,
         is_owner: true
@@ -252,7 +252,7 @@ async function createClubs(global_admins) {
     ));
 
     await Promise.all(members.map(user =>
-      models.clubs.ClubMember.create({
+      models.clubs.Membership.create({
         club:     club._id,
         user:     user._id,
         is_owner: false

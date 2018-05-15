@@ -54,6 +54,9 @@ article#content.clubs-sole-root(
         .clubs-sole__meta-top
           .clubs-sole__meta-title-owners
             .clubs-sole__title
+              if self.club.is_closed
+                span.clubs-sole__closed-mark.icon.icon-closed.icon-space-after(title=self.t('closed'))
+
               span.clubs-sole__title-text= self.club.title
 
               if self.is_club_owner

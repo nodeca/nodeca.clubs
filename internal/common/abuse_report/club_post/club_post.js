@@ -97,7 +97,7 @@ module.exports = function (N, apiPath) {
   N.wire.before(apiPath, async function fetch_recipients(params) {
     params.recipients = params.recipients || {};
 
-    let membership = await N.models.clubs.ClubMember.find()
+    let membership = await N.models.clubs.Membership.find()
                                .where('club').equals(params.data.club._id)
                                .where('is_owner').equals(true)
                                .sort('joined_ts')
