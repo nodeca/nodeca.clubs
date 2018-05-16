@@ -16,7 +16,7 @@ module.exports = function (N, collectionName) {
 
     // user id of club owner who made this ban
     from: Schema.Types.ObjectId,
-    ts: { type: Date, 'default': Date.now },
+    ts: { type: Date, 'default': Date.now }
   }, {
     versionKey: false
   });

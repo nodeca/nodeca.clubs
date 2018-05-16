@@ -13,7 +13,7 @@ module.exports = function (N, collectionName) {
   let MembershipPending = new Schema({
     user: Schema.Types.ObjectId,
     club: Schema.Types.ObjectId,
-    ts: { type: Date, 'default': Date.now },
+    ts: { type: Date, 'default': Date.now }
   }, {
     versionKey: false
   });
