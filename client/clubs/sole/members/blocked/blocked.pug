@@ -29,9 +29,11 @@ article#content.clubs-sole-members-blocked
     != self.partial('@clubs.sole.members.tabs', { active_tab: 'blocked' })
 
     .clubs-sole-members__content
-      form.clubs-sole-members__form
+      form.clubs-sole-members__form(novalidate, data-on-submit='clubs.sole.members.blocked:add')
+        input(type='hidden', name='club_id', value=self.club._id)
+
         .input-group.clubs-sole-members__input-group
-          input.form-control#clubs-sole-members-add-block(type='text', placeholder=self.t('input_placeholder'))
+          input.form-control#clubs-sole-members-add-block(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
 
           span.input-group-append
             button.btn.btn-secondary(type='submit')= self.t('block')
@@ -39,24 +41,28 @@ article#content.clubs-sole-members-blocked
       ul.clubs-sole-members__list
         //- sort users by nick
         -
-          var users = self.blocked_ids.map(function (id) {
-            return self.users[id];
-          }).filter(Boolean).sort(function (user1, user2) {
-            return user1.nick > user2.nick ? 1 : -1;
+          var items = self.blocked.map(function (block) {
+            return { block: block, user: self.users[block.user] };
+          }).filter(Boolean).sort(function (a, b) {
+            return a.user.nick > b.user.nick ? 1 : -1;
           });
 
-        each user in users
+        each item in items
           li.clubs-sole-members__list-item
-            a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
-              img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
-              span.clubs-sole-members__nick= user.name
+            a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: item.user.hid }))
+              img.clubs-sole-members__avatar(alt=item.user.name)&attributes(self.avatar(item.user, 'sm'))
+              span.clubs-sole-members__nick= item.user.name
 
             span.clubs-sole-members__ban-date(
-              title='Banned by username on 10 May 2018, 19:07'
-            )= '10 May'
+              title=self.t('block_title', { user: self.users[item.block.from] && self.users[item.block.from].nick, date: self.date(item.block.ts, 'datetime') })
+            )= self.date(item.block.ts, 'relative')
 
             button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
               title=self.t('unblock')
+              type='button'
+              data-on-click='clubs.sole.members.blocked:remove'
+              data-user-nick=item.user.nick
+              data-club-id=self.club._id
             )
         else
           .clubs-sole-members__list-empty= self.t('no_users')

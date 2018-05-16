@@ -58,3 +58,28 @@ N.wire.on('navigate.done:' + module.apiPath, function init_user_input() {
     }
   });
 });
+
+
+N.wire.once('navigate.done:' + module.apiPath, function page_once() {
+
+  // Add user to block list
+  //
+  N.wire.on(module.apiPath + ':add', function add_block(data) {
+    data.$this.addClass('was-validated');
+    if (data.$this[0].checkValidity() === false) return;
+
+    return N.io.rpc('clubs.sole.members.blocked.add', data.fields)
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+
+
+  // Remove user from block list
+  //
+  N.wire.on(module.apiPath + ':remove', function remove_block(data) {
+    let nick = data.$this.data('user-nick');
+    let club_id = data.$this.data('club-id');
+
+    return N.io.rpc('clubs.sole.members.blocked.remove', { nick, club_id })
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+});

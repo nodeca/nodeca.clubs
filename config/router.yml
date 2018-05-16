@@ -21,7 +21,7 @@ router:
           match: /\d+/
           type: integer
 
-    clubs.sole.members.index:
+    clubs.sole.members:
       "/clubs/c{club_hid}/members":
         club_hid:
           match: /\d+/

@@ -46,7 +46,33 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.FORBIDDEN;
+    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
+  });
+
+
+  // Fetch number of members, leaders, pending and blocked users;
+  // needed to display this information on tabs
+  //
+  N.wire.before(apiPath, async function fetch_stats(env) {
+    if (!env.data.is_club_owner) return;
+
+    let [ members, owners, blocked, pending_members, pending_owners ] = await Promise.all([
+      N.models.clubs.Membership.count({ club: env.data.club._id }),
+      N.models.clubs.Membership.count({ club: env.data.club._id, is_owner: true }),
+      N.models.clubs.Blocked.count({ club: env.data.club._id }),
+      env.data.club.is_closed ?
+        N.models.clubs.MembershipPending.count({ club: env.data.club._id }) :
+        Promise.resolve(0),
+      N.models.clubs.OwnershipPending.count({ club: env.data.club._id })
+    ]);
+
+    env.res.stats = {
+      members,
+      owners,
+      blocked,
+      pending_members,
+      pending_owners
+    };
   });
 
 
@@ -59,9 +85,11 @@ module.exports = function (N, apiPath) {
                                .where('club').equals(env.data.club._id)
                                .lean(true);
 
-    env.res.blocked_ids = _.map(blocked, 'user');
+    env.res.blocked = blocked;
 
-    env.data.users = (env.data.users || []).concat(env.res.blocked_ids);
+    env.data.users = (env.data.users || [])
+                       .concat(_.map(blocked, 'user'))
+                       .concat(_.map(blocked, 'from'));
   });
 
 

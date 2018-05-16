@@ -41,6 +41,25 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check if user is blocked from this club
+  //
+  N.wire.before(apiPath, async function check_block(env) {
+    // already a member - nothing to do
+    if (env.data.is_club_member) return;
+
+    let block = await N.models.clubs.Blocked.findOne()
+                          .where('user').equals(env.user_info.user_id)
+                          .where('club').equals(env.data.club._id);
+
+    if (!block) return;
+
+    throw {
+      code: N.io.CLIENT_ERROR,
+      message: env.t('err_blocked')
+    };
+  });
+
+
   // Join club
   //
   N.wire.on(apiPath, async function club_join(env) {

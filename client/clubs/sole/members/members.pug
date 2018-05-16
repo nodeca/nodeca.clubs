@@ -52,8 +52,10 @@ article#content.clubs-sole-members
               )
               .dropdown-menu.dropdown-menu-right(role='menu')
                 button.dropdown-item(
-                  data-user-id=user._id
-                  data-on-click=''
+                  type='button'
+                  data-on-click='clubs.sole.members:block'
+                  data-user-nick=user.nick
+                  data-club-id=self.club._id
                 )= self.t('block')
         else
           .clubs-sole-members__list-empty= self.t('no_users')

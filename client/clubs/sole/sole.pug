@@ -78,7 +78,7 @@ article#content.clubs-sole-root(
 
         .clubs-sole__description= self.club.description
         .clubs-sole__members
-          a(href=self.link_to('clubs.sole.members.index', { club_hid: self.club.hid }), rel='nofollow')= self.t('members', self.club.members)
+          a(href=self.link_to('clubs.sole.members', { club_hid: self.club.hid }), rel='nofollow')= self.t('members', self.club.members)
 
     if self.topics && self.topics.length
       .clubs-sole__loading-prev.nojs-hide(

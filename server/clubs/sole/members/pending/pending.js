@@ -43,19 +43,52 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch club members
+  // Check permissions
   //
-  N.wire.on(apiPath, async function fetch_club_members(env) {
+  N.wire.before(apiPath, async function check_permissions(env) {
+    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
+    if (!env.data.club.is_closed) throw N.io.NOT_FOUND;
+  });
+
+
+  // Fetch number of members, leaders, pending and blocked users;
+  // needed to display this information on tabs
+  //
+  N.wire.before(apiPath, async function fetch_stats(env) {
+    if (!env.data.is_club_owner) return;
+
+    let [ members, owners, blocked, pending_members, pending_owners ] = await Promise.all([
+      N.models.clubs.Membership.count({ club: env.data.club._id }),
+      N.models.clubs.Membership.count({ club: env.data.club._id, is_owner: true }),
+      N.models.clubs.Blocked.count({ club: env.data.club._id }),
+      env.data.club.is_closed ?
+        N.models.clubs.MembershipPending.count({ club: env.data.club._id }) :
+        Promise.resolve(0),
+      N.models.clubs.OwnershipPending.count({ club: env.data.club._id })
+    ]);
+
+    env.res.stats = {
+      members,
+      owners,
+      blocked,
+      pending_members,
+      pending_owners
+    };
+  });
+
+
+  // Fetch pending members
+  //
+  N.wire.on(apiPath, async function fetch_pending_members(env) {
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
 
-    let membership = await N.models.clubs.Membership.find()
-                               .where('club').equals(env.data.club._id)
-                               .lean(true);
+    let pending = await N.models.clubs.MembershipPending.find()
+                            .where('club').equals(env.data.club._id)
+                            .lean(true);
 
-    env.res.club_member_ids = _.map(membership, 'user');
-    env.res.club_owner_ids  = _.map(membership.filter(user => user.is_owner), 'user');
+    env.res.pending_ids = _.map(pending, 'user');
 
-    env.data.users = (env.data.users || []).concat(env.res.club_member_ids);
+    env.data.users = (env.data.users || []).concat(env.res.pending_ids);
   });
 
 

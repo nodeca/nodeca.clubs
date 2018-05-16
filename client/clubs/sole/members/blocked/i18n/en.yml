@@ -3,3 +3,4 @@ en-US:
   block: Ban user
   input_placeholder: Type nick here
   no_users: No one is banned from this club
+  block_title: 'Banned by #{user} on #{date}'

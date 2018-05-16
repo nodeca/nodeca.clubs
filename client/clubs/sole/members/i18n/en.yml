@@ -1,5 +1,9 @@
 en-US:
   title: Members
+  block: Ban from this club
+  no_users: There are no members in this club
+  block_confirm: Are you sure you want to kick and ban this user from the club?
+
   tabs:
     index: Current
     owners: Leaders
