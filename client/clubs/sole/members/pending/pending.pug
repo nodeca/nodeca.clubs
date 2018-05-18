@@ -45,11 +45,17 @@ article#content.clubs-sole-members-pending
               span.clubs-sole-members__nick= user.name
 
             button.btn.btn-sm.btn-square.icon.icon-check.clubs-sole-members__action(
-              title=self.t('approve')
+              title=self.t('accept')
+              data-on-click='clubs.sole.members.pending:accept'
+              data-user-id=user._id
+              data-club-id=self.club._id
             )
 
             button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
               title=self.t('reject')
+              data-on-click='clubs.sole.members.pending:reject'
+              data-user-id=user._id
+              data-club-id=self.club._id
             )
         else
           .clubs-sole-members__list-empty= self.t('no_users')

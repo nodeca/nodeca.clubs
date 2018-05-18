@@ -132,7 +132,14 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
     return Promise.resolve()
       .then(() => N.io.rpc('clubs.sole.join', { club_hid: hid }))
-      .then(() => N.wire.emit('navigate.reload'));
+      .then(res => {
+        if (res.request_pending) {
+          return N.wire.emit('notify.info', t('result_pending'));
+        }
+
+        return N.wire.emit('notify.info', t('result_success'))
+                  .then(() => N.wire.emit('navigate.reload'));
+      });
   });
 
 

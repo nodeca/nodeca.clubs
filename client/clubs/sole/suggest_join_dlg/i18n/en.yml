@@ -2,16 +2,17 @@ en-US:
   yes: Yes, join
   no: No
 
-  message: |
+  msg_not_a_member: |
     md:You should be a club member to post here.
 
     Would you like to join?
 
-  #message_moderated: |
-  #  md:You should be a club member to post here. Membership in this club is moderated, so you will need a leader's approval before you become a member.
-  #
-  #  Would you like to join?
+  msg_not_a_member_moderated: |
+    md:You should be a club member to post here.
+
+    Membership in this club is moderated, so you will need to wait for a leader's approval before you become a member.
+
+    Would you like to request membership?
 
   result_success: You're now a member of this club
-  #result_pending: Your join request is awaiting confirmation
-  #result_ignored: You have been banned from this club
+  result_pending: "Your request to join has been sent and awaiting leader's approval"

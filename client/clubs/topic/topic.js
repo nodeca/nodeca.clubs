@@ -362,11 +362,14 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   N.wire.before(module.apiPath + ':reply', function suggest_join() {
     if (N.runtime.page_data.is_club_member) return;
 
-    return N.wire.emit('clubs.sole.suggest_join_dlg', { club_hid: topicState.club.hid })
-               .then(() => {
-                 N.runtime.page_data.is_club_member = true;
-               })
-               .then(updateTopicState);
+    return N.wire.emit('clubs.sole.suggest_join_dlg', {
+      club_hid: topicState.club.hid,
+      club_closed: N.runtime.page_data.club.is_closed
+    })
+      .then(() => {
+        N.runtime.page_data.is_club_member = true;
+      })
+      .then(updateTopicState);
   });
 
   // Click on post reply link or toolbar reply button

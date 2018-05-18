@@ -45,7 +45,14 @@ N.wire.on(module.apiPath, function confirm(data) {
 
         if (confirmed) {
           N.io.rpc('clubs.sole.join', { club_hid: data.club_hid })
-              .then(() => N.wire.emit('notify.info', t('result_success')))
+              .then(res => {
+                if (res.request_pending) {
+                  return N.wire.emit('notify.info', t('result_pending'))
+                           .then(() => reject('CANCELED'));
+                }
+
+                return N.wire.emit('notify.info', t('result_success'));
+              })
               .then(resolve, reject);
         } else {
           reject('CANCELED');
