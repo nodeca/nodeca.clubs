@@ -1,5 +1,6 @@
 en-US:
-  err_perm_expired: You can not modify this post anymore
+  err_perm_expired: You cannot modify this post anymore
+  err_members_only: You cannot modify this post because you are no longer a member of this club
 
   update:
     err_text_too_short: "Post text should have at least #{count} ((character|characters))"

@@ -53,6 +53,13 @@ article#content.clubs-sole-members
               .dropdown-menu.dropdown-menu-right(role='menu')
                 button.dropdown-item(
                   type='button'
+                  data-on-click='clubs.sole.members:kick'
+                  data-user-id=user._id
+                  data-club-id=self.club._id
+                )= self.t('kick')
+
+                button.dropdown-item(
+                  type='button'
                   data-on-click='clubs.sole.members:block'
                   data-user-nick=user.nick
                   data-club-id=self.club._id

@@ -39,6 +39,26 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Fetch club info and membership
+  //
+  N.wire.before(apiPath, async function fetch_club_info(env) {
+    let club = await N.models.clubs.Club.findById(env.data.topic.club)
+                         .lean(true);
+
+    if (!club) throw N.io.NOT_FOUND;
+
+    env.data.club = club;
+
+    let membership = await N.models.clubs.Membership.findOne()
+                               .where('user').equals(env.user_info.user_id)
+                               .where('club').equals(env.data.club._id)
+                               .lean(true);
+
+    env.data.is_club_member = !!membership;
+    env.data.is_club_owner  = !!membership && membership.is_owner;
+  });
+
+
   // Check if user can see this post
   //
   N.wire.before(apiPath, async function check_access(env) {
@@ -69,6 +89,20 @@ module.exports = function (N, apiPath) {
         message: env.t('@clubs.topic.post.edit.err_perm_expired')
       };
     }
+
+    // check if user is a member of the club, maybe he quit or got kicked
+    // after posting this message
+    if (!env.data.is_club_member) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('@clubs.topic.post.edit.err_members_only')
+      };
+    }
+
+    // check if user has permission to reply, maybe he was banned after posting
+    let can_reply = await env.extras.settings.fetch('clubs_can_reply');
+
+    if (!can_reply) throw N.io.FORBIDDEN;
   });
 
 

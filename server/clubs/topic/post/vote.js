@@ -56,9 +56,36 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Fetch club info and membership
+  //
+  N.wire.before(apiPath, async function fetch_club_info(env) {
+    let club = await N.models.clubs.Club.findById(env.data.topic.club)
+                         .lean(true);
+
+    if (!club) throw N.io.NOT_FOUND;
+
+    env.data.club = club;
+
+    let membership = await N.models.clubs.Membership.findOne()
+                               .where('user').equals(env.user_info.user_id)
+                               .where('club').equals(env.data.club._id)
+                               .lean(true);
+
+    env.data.is_club_member = !!membership;
+    env.data.is_club_owner  = !!membership && membership.is_owner;
+  });
+
+
   // Check voting permissions
   //
   N.wire.before(apiPath, async function check_vote_permissions(env) {
+    if (!env.data.is_club_member) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('err_members_only')
+      };
+    }
+
     let can_vote = await env.extras.settings.fetch('can_vote');
 
     if (!can_vote) throw N.io.FORBIDDEN;
