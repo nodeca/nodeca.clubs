@@ -45,6 +45,15 @@ router:
           match: /\d+/
           type: integer
 
+    clubs.sole.members.owners.confirm:
+      "/clubs/c{club_hid}/confirm_owner/{secret_key}":
+        club_hid:
+          match: /\d+/
+          type: integer
+        secret_key:
+          match: /[0-9a-f]+/
+          type: string
+
     clubs.sole.unsubscribe:
       "/unsubscribe/clubs/c{club_hid}":
         club_hid:

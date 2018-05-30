@@ -1,0 +1,12 @@
+en-US:
+  add:
+    err_user_not_found: Unable to find user with that nickname
+
+    text: |
+      You have been appointed leader of "[#{club_title}](#{club_link})" by [#{user_name}](#{user_link}).
+
+      To accept this appointment, click [here](#{confirm_link}).
+
+  remove:
+    err_user_not_found: Unable to find user with that nickname
+    err_last_owner: "You can't resign if you're the last leader, appoint someone else as a leader first"

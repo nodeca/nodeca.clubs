@@ -85,9 +85,22 @@ module.exports = function (N, apiPath) {
                                .where('club').equals(env.data.club._id)
                                .lean(true);
 
-    env.res.club_owner_ids  = _.map(membership.filter(user => user.is_owner), 'user');
+    env.res.club_owner_ids = _.map(membership.filter(user => user.is_owner), 'user');
 
     env.data.users = (env.data.users || []).concat(env.res.club_owner_ids);
+  });
+
+
+  // Fetch pending leadership requests
+  //
+  N.wire.on(apiPath, async function fetch_pending(env) {
+    let pending = await N.models.clubs.OwnershipPending.find()
+                            .where('club').equals(env.data.club._id)
+                            .lean(true);
+
+    env.res.club_pending_ids = _.map(pending, 'user');
+
+    env.data.users = (env.data.users || []).concat(env.res.club_pending_ids);
   });
 
 

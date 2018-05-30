@@ -29,26 +29,65 @@ article#content.clubs-sole-members-owners
     != self.partial('@clubs.sole.members.tabs', { active_tab: 'owners' })
 
     .clubs-sole-members__content
-      form.clubs-sole-members__form
+      form.clubs-sole-members__form(novalidate, data-on-submit='clubs.sole.members.owners:add')
+        input(type='hidden', name='club_id', value=self.club._id)
+
         .input-group.clubs-sole-members__input-group
-          input.form-control#clubs-sole-members-add-leader(type='text', placeholder=self.t('input_placeholder'))
+          input.form-control#clubs-sole-members-add-owner(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
 
           span.input-group-append
             button.btn.btn-secondary(type='submit')= self.t('add_owner')
 
       ul.clubs-sole-members__list
-        //- sort users by nick
-        -
-          var users = self.club_owner_ids.map(function (id) {
-            return self.users[id];
-          }).filter(Boolean).sort(function (user1, user2) {
-            return user1.nick > user2.nick ? 1 : -1;
-          });
+        if self.club_owner_ids.length > 0
+          .clubs-sole-members__owners
+            //- sort users by nick
+            -
+              var users = self.club_owner_ids.map(function (id) {
+                return self.users[id];
+              }).filter(Boolean).sort(function (user1, user2) {
+                return user1.nick > user2.nick ? 1 : -1;
+              });
 
-        each user in users
-          li.clubs-sole-members__list-item
-            a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
-              img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
-              span.clubs-sole-members__nick= user.name
-        else
+            each user in users
+              li.clubs-sole-members__list-item
+                a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
+                  img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
+                  span.clubs-sole-members__nick= user.name
+
+                button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
+                  title=self.t('revoke_ownership')
+                  data-on-click='clubs.sole.members.owners:remove'
+                  data-user-nick=user.nick
+                  data-club-id=self.club._id
+                  data-is-oneself=user._id === self.runtime.user_id ? 'true' : null
+                )
+
+        if self.club_pending_ids.length > 0
+          .clubs-sole-members__owners-pending-title=self.t('pending')
+
+          .clubs-sole-members__owners-pending
+            //- sort pending requests by nick
+            -
+              var users = self.club_pending_ids.map(function (id) {
+                return self.users[id];
+              }).filter(Boolean).sort(function (user1, user2) {
+                return user1.nick > user2.nick ? 1 : -1;
+              });
+
+            each user in users
+              li.clubs-sole-members__list-item
+                a.clubs-sole-members__member(href=self.link_to('users.member', { user_hid: user.hid }))
+                  img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
+                  span.clubs-sole-members__nick= user.name
+
+                button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
+                  title=self.t('revoke_pending')
+                  data-on-click='clubs.sole.members.owners:remove'
+                  data-user-nick=user.nick
+                  data-club-id=self.club._id
+                  data-is-pending='true'
+                )
+
+        if self.club_owner_ids.length === 0 && self.club_pending_ids.length === 0
           .clubs-sole-members__list-empty= self.t('no_users')
