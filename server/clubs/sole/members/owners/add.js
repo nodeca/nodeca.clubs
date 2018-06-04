@@ -3,8 +3,6 @@
 
 'use strict';
 
-const _           = require('lodash');
-const ObjectId    = require('mongoose').Types.ObjectId;
 const createToken = require('nodeca.core/lib/app/random_token');
 const userInfo    = require('nodeca.users/lib/user_info');
 
@@ -71,6 +69,24 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check if target user is ignoring the sender
+  // to avoid giving club owners the opportunity to spam people
+  //
+  N.wire.before(apiPath, async function check_ignore(env) {
+    let ignore_data = await N.models.users.Ignore.findOne()
+                                .where('from').equals(env.data.user._id)
+                                .where('to').equals(env.user_info.user_id)
+                                .lean(true);
+
+    if (ignore_data) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('err_sender_is_ignored')
+      };
+    }
+  });
+
+
   // Send ownership request for that user
   //
   N.wire.on(apiPath, async function add_ownership_request(env) {
@@ -93,7 +109,7 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Notify user via PM (via dialogs)
+  // Notify user via email
   //
   N.wire.after(apiPath, async function notify_user(env) {
     // duplicate request, nothing to do
@@ -102,15 +118,13 @@ module.exports = function (N, apiPath) {
     let to = await userInfo(N, env.data.user._id);
     let locale = to.locale || N.config.locales[0];
 
-    // Fetch user to send messages from
-    //
-    let bot = await N.models.users.User.findOne()
-                        .where('hid').equals(N.config.bots.default_bot_hid)
-                        .lean(true);
+    let general_project_name = await N.settings.get('general_project_name');
 
-    // Render message text
-    //
-    let text = N.i18n.t(locale, 'clubs.sole.members.owners.add.text', {
+    let subject = N.i18n.t(locale, 'clubs.sole.members.owners.add.email_subject', {
+      project_name: general_project_name
+    });
+
+    let text = N.i18n.t(locale, 'clubs.sole.members.owners.add.email_text', {
       user_name: env.user_info.user_name,
       user_link: N.router.linkTo('users.member', {
         user_hid: env.user_info.user_hid
@@ -125,91 +139,11 @@ module.exports = function (N, apiPath) {
       })
     });
 
-    let options = {
-      link: true
-    };
-
-    let parse_result = await N.parser.md2html({
+    await N.mailer.send({
+      to: env.data.user.email,
+      subject,
       text,
-      attachments: [],
-      options,
-      user_info: to
+      safe_error: true
     });
-
-    let preview_data = await N.parser.md2preview({
-      text,
-      limit: 500,
-      link2text: true
-    });
-
-
-    // Prepare message and dialog data
-    //
-    let message_data = {
-      common_id:    new ObjectId(),
-      ts:           Date.now(),
-      user:         bot._id,
-      html:         parse_result.html,
-      md:           text,
-      attach:       [],
-      params:       options,
-      imports:      parse_result.imports,
-      import_users: parse_result.import_users,
-      tail:         parse_result.tail
-    };
-
-    let dlg_update_data = {
-      exists: true, // force dialog to re-appear if it was deleted
-      cache: {
-        last_user: message_data.user,
-        last_ts: message_data.ts,
-        preview: preview_data.preview
-      }
-    };
-
-    // Find opponent's dialog, create if doesn't exist
-    //
-    let opponent_dialog = await N.models.users.Dialog.findOne({
-      user: env.data.user._id,
-      to:   bot._id
-    });
-
-    if (!opponent_dialog) {
-      opponent_dialog = new N.models.users.Dialog({
-        user: env.data.user._id,
-        to:   bot._id
-      });
-    }
-
-    _.merge(opponent_dialog, dlg_update_data);
-
-    let opponent_msg = new N.models.users.DlgMessage(_.assign({
-      parent: opponent_dialog._id
-    }, message_data));
-
-    opponent_dialog.unread = (opponent_dialog.unread || 0) + 1;
-    opponent_dialog.cache.last_message = opponent_msg._id;
-    opponent_dialog.cache.is_reply     = String(opponent_msg.user) === String(message_data.user);
-
-
-    // Save dialogs and messages
-    //
-    await Promise.all([
-      opponent_dialog.save(),
-      opponent_msg.save()
-    ]);
-
-
-    // Notify user
-    //
-    let dialogs_notify = await N.settings.get('dialogs_notify', { user_id: opponent_dialog.user });
-
-    if (dialogs_notify) {
-      await N.wire.emit('internal:users.notify', {
-        src:  opponent_dialog._id,
-        to:   opponent_dialog.user,
-        type: 'USERS_MESSAGE'
-      });
-    }
   });
 };

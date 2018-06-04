@@ -1,4 +1,4 @@
-// User accepts an appointment to be owner of a club
+// User accepts an invite to be owner of a club
 // by clicking on a link received by email/pm
 //
 'use strict';

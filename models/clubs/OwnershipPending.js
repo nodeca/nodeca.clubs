@@ -1,4 +1,4 @@
-// List of owner appointments awaiting confirmation
+// List of ownership invites awaiting confirmation
 //
 
 'use strict';

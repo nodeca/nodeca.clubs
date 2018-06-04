@@ -1,11 +1,14 @@
 en-US:
   add:
     err_user_not_found: Unable to find user with that nickname
+    err_sender_is_ignored: You cannot invite this user because they are ignoring you
 
-    text: |
-      You have been appointed leader of "[#{club_title}](#{club_link})" by [#{user_name}](#{user_link}).
+    email_subject: '#{project_name}: Club leadership invite'
 
-      To accept this appointment, click [here](#{confirm_link}).
+    email_text: |
+      You have been invited by [#{user_name}](#{user_link}) to be a leader of "[#{club_title}](#{club_link})".
+
+      To accept this invitation, click [here](#{confirm_link}).
 
   remove:
     err_user_not_found: Unable to find user with that nickname
