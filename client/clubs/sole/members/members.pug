@@ -26,7 +26,7 @@ article#content.clubs-sole-members
       h1.page-head__title(itemprop='name')
         span.clubs-sole-members__title= self.t('@clubs.sole.members.title')
 
-    if self.is_club_owner
+    if self.can_manage_users
       != self.partial('@clubs.sole.members.tabs', { active_tab: 'index' })
 
     .clubs-sole-members__content
@@ -45,7 +45,7 @@ article#content.clubs-sole-members
               img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
               span.clubs-sole-members__nick= user.name
 
-            if self.is_club_owner
+            if (self.is_club_owner && self.settings.clubs_lead_can_edit_club_members) || self.settings.clubs_mod_can_edit_club_members
               button.clubs-sole-members__action.btn.btn-sm.btn-square.dropdown-toggle.icon.icon-dropdown-local(
                 data-toggle='dropdown'
                 role='button'
@@ -53,10 +53,10 @@ article#content.clubs-sole-members
               .dropdown-menu.dropdown-menu-right(role='menu')
                 button.dropdown-item(
                   type='button'
-                  data-on-click='clubs.sole.members:kick'
+                  data-on-click='clubs.sole.members:remove'
                   data-user-id=user._id
                   data-club-id=self.club._id
-                )= self.t('kick')
+                )= self.t('remove')
 
                 button.dropdown-item(
                   type='button'

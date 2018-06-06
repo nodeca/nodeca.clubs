@@ -1,4 +1,4 @@
-// Kick user from the club
+// Remove user from the club without banning
 //
 
 'use strict';
@@ -35,7 +35,15 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
+    let settings = await env.extras.settings.fetch([
+      'clubs_lead_can_edit_club_members',
+      'clubs_mod_can_edit_club_members'
+    ]);
+
+    if (env.data.is_club_owner && settings.clubs_lead_can_edit_club_members) return;
+    if (settings.clubs_mod_can_edit_club_members) return;
+
+    throw N.io.NOT_FOUND;
   });
 
 

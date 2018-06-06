@@ -70,7 +70,7 @@ module.exports = function (N, apiPath) {
 
   // Check permission to reply in this club
   //
-  N.wire.before(apiPath, async function check_can_reply(env) {
+  N.wire.before(apiPath, async function check_permissions(env) {
     if (!env.data.is_club_member) {
       throw {
         code: N.io.CLIENT_ERROR,

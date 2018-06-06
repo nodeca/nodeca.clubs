@@ -83,19 +83,21 @@ module.exports = function (N, apiPath) {
 
     if (env.params.as_moderator) {
       let settings = await env.extras.settings.fetch([
+        'clubs_lead_can_delete_topics',
         'clubs_mod_can_delete_topics',
         'clubs_mod_can_hard_delete_topics'
       ]);
 
-      if (!settings.clubs_mod_can_delete_topics && !env.data.is_club_owner && env.params.method === 'soft') {
-        throw N.io.FORBIDDEN;
+      if (env.params.method === 'soft') {
+        if (settings.clubs_mod_can_delete_topics) return;
+        if (env.data.is_club_owner && settings.clubs_lead_can_delete_topics) return;
       }
 
-      if (!settings.clubs_mod_can_hard_delete_topics && env.params.method === 'hard') {
-        throw N.io.FORBIDDEN;
+      if (env.params.method === 'hard') {
+        if (settings.clubs_mod_can_hard_delete_topics) return;
       }
 
-      return;
+      throw N.io.FORBIDDEN;
     }
 
     // Check user permissions

@@ -66,7 +66,18 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.FORBIDDEN;
+    let settings = await env.extras.settings.fetch([
+      'clubs_lead_can_pin_topic',
+      'clubs_mod_can_pin_topic'
+    ]);
+
+    // Permit pinning as club owner
+    if (env.data.is_club_owner && settings.clubs_lead_can_pin_topic) return;
+
+    // Permit pinning as global moderator
+    if (settings.clubs_mod_can_pin_topic) return;
+
+    throw N.io.FORBIDDEN;
   });
 
 

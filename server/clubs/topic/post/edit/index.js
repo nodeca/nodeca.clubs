@@ -6,7 +6,8 @@
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
-    post_id: { format: 'mongo', required: true }
+    post_id: { format: 'mongo', required: true },
+    as_moderator: { type: 'boolean', required: true }
   });
 
 
@@ -77,6 +78,16 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
+    let settings = await env.extras.settings.fetch([ 'clubs_lead_can_edit_posts', 'clubs_mod_can_edit_posts' ]);
+
+    if (settings.clubs_mod_can_edit_posts && env.params.as_moderator) {
+      return;
+    }
+
+    if (env.data.is_club_owner && settings.clubs_lead_can_edit_posts && env.params.as_moderator) {
+      return;
+    }
+
     if (!env.user_info.user_id || String(env.user_info.user_id) !== String(env.data.post.user)) {
       throw N.io.FORBIDDEN;
     }

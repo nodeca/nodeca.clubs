@@ -35,7 +35,16 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
+    // allow seeing this page to:
+    //  - club owners (regardless of permissions)
+    //  - global administrators (who can edit members or owners)
+    let can_manage_users = env.data.settings.clubs_mod_can_edit_club_members ||
+                           env.data.settings.clubs_mod_can_edit_club_owners ||
+                           env.data.is_club_owner;
+
+    if (!can_manage_users) throw N.io.NOT_FOUND;
+
+    env.res.can_manage_users = can_manage_users;
   });
 
 

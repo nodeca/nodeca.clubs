@@ -14,7 +14,8 @@ module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
     topic_hid:        { type: 'integer', required: true },
-    title:            { type: 'string', minLength: 1, required: true }
+    title:            { type: 'string', minLength: 1, required: true },
+    as_moderator:     { type: 'boolean', required: true }
   });
 
 
@@ -50,6 +51,26 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Fetch club info and membership
+  //
+  N.wire.before(apiPath, async function fetch_club_info(env) {
+    let club = await N.models.clubs.Club.findById(env.data.topic.club)
+                         .lean(true);
+
+    if (!club) throw N.io.NOT_FOUND;
+
+    env.data.club = club;
+
+    let membership = await N.models.clubs.Membership.findOne()
+                               .where('user').equals(env.user_info.user_id)
+                               .where('club').equals(env.data.club._id)
+                               .lean(true);
+
+    env.data.is_club_member = !!membership;
+    env.data.is_club_owner  = !!membership && membership.is_owner;
+  });
+
+
   // Check if user can view this topic
   //
   N.wire.before(apiPath, async function check_access(env) {
@@ -64,17 +85,38 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    // Check is user topic owner
+    let settings = await env.extras.settings.fetch([ 'clubs_lead_can_edit_titles', 'clubs_mod_can_edit_titles' ]);
+
+    // check moderator permissions
+    if (env.params.as_moderator) {
+      if (settings.clubs_mod_can_edit_titles) return;
+      if (env.data.is_club_owner && settings.clubs_lead_can_edit_titles) return;
+
+      throw N.io.FORBIDDEN;
+    }
+
+    // check permissions for editing title as user
     if (env.user_info.user_id !== String(env.data.topic.cache.first_user)) {
       throw N.io.FORBIDDEN;
     }
 
     let clubs_edit_max_time = await env.extras.settings.fetch('clubs_edit_max_time');
 
-    // Check, that topic created not more than 30 minutes ago
+    // Check that topic was created no more than 30 minutes ago
     if (clubs_edit_max_time !== 0 && env.data.topic.cache.first_ts < Date.now() - clubs_edit_max_time * 60 * 1000) {
       throw N.io.FORBIDDEN;
     }
+
+    // check if user is a member of the club, maybe he quit or got kicked
+    // after posting this message
+    if (!env.data.is_club_member) {
+      throw N.io.FORBIDDEN;
+    }
+
+    // check if user has permission to reply, maybe he was banned after posting
+    let can_reply = await env.extras.settings.fetch('clubs_can_reply');
+
+    if (!can_reply) throw N.io.FORBIDDEN;
   });
 
 

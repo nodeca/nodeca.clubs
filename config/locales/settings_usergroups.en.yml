@@ -4,6 +4,7 @@ i18n:
       core:
         category_names:
           perm_clubs: Clubs
+          perm_clubs_lead: Actions in own club
           perm_clubs_moderate: Clubs moderation
 
         setting_names:
@@ -11,8 +12,24 @@ i18n:
           clubs_can_reply: Reply to topics
           clubs_can_start_topics: Start topics
           clubs_edit_max_time: Max time to edit post after create (minutes)
+          clubs_can_close_topic: Close own topics
           clubs_show_ignored: Show ignored posts
-          clubs_mod_can_add_infractions: Can give infractions in clubs
+          clubs_lead_can_pin_topic: Pin topic
+          clubs_lead_can_edit_posts: Edit posts
+          clubs_lead_can_delete_topics: Delete topics
+          clubs_lead_can_edit_titles: Edit topic titles
+          clubs_lead_can_close_topic: Close topics
+          clubs_lead_can_edit_clubs: Edit club info (title, description)
+          clubs_lead_can_edit_club_members: Manage members (invite, kick, ban)
+          clubs_lead_can_edit_club_owners: Change leadership
+          clubs_mod_can_pin_topic: Pin topic
+          clubs_mod_can_edit_posts: Edit posts
           clubs_mod_can_delete_topics: Delete topics
           clubs_mod_can_hard_delete_topics: Hard delete topics
           clubs_mod_can_see_hard_deleted_topics: See hard deleted topics
+          clubs_mod_can_edit_titles: Edit topic titles
+          clubs_mod_can_close_topic: Close topics
+          clubs_mod_can_edit_clubs: Edit club info (title, description)
+          clubs_mod_can_edit_club_members: Manage members (invite, kick, ban)
+          clubs_mod_can_edit_club_owners: Change leadership
+          clubs_mod_can_add_infractions: Can give infractions in clubs

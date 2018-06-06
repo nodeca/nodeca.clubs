@@ -21,29 +21,30 @@ if topicOwnerId === self.runtime.user_id
     if self.topic.st !== topicStatuses.DELETED && self.topic.st !== topicStatuses.DELETED_HARD
       - items.push('delete')
 
-  if self.topic.st === topicStatuses.OPEN || self.topic.ste === topicStatuses.OPEN
-    - items.push('close')
-  if self.topic.st === topicStatuses.CLOSED || self.topic.ste === topicStatuses.CLOSED
-    - items.push('open')
+  if self.settings.clubs_can_close_topic
+    if self.topic.st === topicStatuses.OPEN || self.topic.ste === topicStatuses.OPEN
+      - items.push('close')
+    if self.topic.st === topicStatuses.CLOSED || self.topic.ste === topicStatuses.CLOSED
+      - items.push('open')
 
 if items.length > 0
   - items.push('divider')
 
 - items.push('header')
 
-if self.is_club_owner || self.settings.clubs_mod_can_delete_topics
+if (self.is_club_owner && self.settings.clubs_lead_can_delete_topics) || self.settings.clubs_mod_can_delete_topics
   if self.topic.st === topicStatuses.DELETED || self.topic.st === topicStatuses.DELETED_HARD
     - items.push('mod_undelete')
   else
     - items.push('mod_delete')
 
-if self.is_club_owner
+if (self.is_club_owner && self.settings.clubs_lead_can_close_topic) || self.settings.clubs_mod_can_close_topic
   if self.topic.st === topicStatuses.OPEN || self.topic.ste === topicStatuses.OPEN
     - items.push('mod_close')
   if self.topic.st === topicStatuses.CLOSED || self.topic.ste === topicStatuses.CLOSED
     - items.push('mod_open')
 
-if self.is_club_owner
+if (self.is_club_owner && self.settings.clubs_lead_can_pin_topic) || self.settings.clubs_mod_can_pin_topic
   if self.topic.st === topicStatuses.PINNED
     - items.push('mod_unpin')
   if self.topic.st === topicStatuses.OPEN || self.topic.st === topicStatuses.CLOSED
@@ -65,7 +66,7 @@ if self.selected_cnt
     - items.push('divider')
   - items.push('many_header')
   - items.push('many_unselect')
-  if self.is_club_owner || self.settings.clubs_mod_can_delete_topics
+  if (self.is_club_owner && self.settings.clubs_mod_can_delete_topics) || self.settings.clubs_mod_can_delete_topics
     - items.push('many_delete')
   if self.settings.clubs_mod_can_delete_topics
     //- club owner can't see deleted posts, so don't show "undelete"

@@ -6,7 +6,16 @@
 //- - appending next page posts via autoload or "more" button
 
 //- show many operations checkbox
-- var many_ops_permitted = self.settings.clubs_mod_can_delete_topics || self.is_club_owner;
+-
+  var multiselect_allowed = false;
+
+  if (self.settings.clubs_mod_can_delete_topics) multiselect_allowed = true;
+  if (self.settings.clubs_mod_can_close_topic) multiselect_allowed = true;
+
+  if (self.is_club_owner) {
+    if (self.settings.clubs_lead_can_delete_topics) multiselect_allowed = true;
+    if (self.settings.clubs_lead_can_close_topic) multiselect_allowed = true;
+  }
 
 each topic, idx in self.topics
   //- skip topics created by ignored users
@@ -107,7 +116,7 @@ each topic, idx in self.topics
       span.icon.icon-views.icon-space-after
       = self.number_short(views)
 
-    if many_ops_permitted
+    if multiselect_allowed
       label.clubs-topicline__select.clubs-topicline__cell(title=self.t('multiselect_hint'))
         input.clubs-topicline__select-cb(
           type='checkbox'

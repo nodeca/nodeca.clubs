@@ -23,12 +23,12 @@ if self.selected_cnt
     - items.push('divider')
   - items.push('many_header')
   - items.push('many_unselect')
-  if self.is_club_owner || self.settings.clubs_mod_can_delete_topics
+  if (self.is_club_owner && self.settings.clubs_lead_can_delete_topics) || self.settings.clubs_mod_can_delete_topics
     - items.push('many_delete')
   if self.settings.clubs_mod_can_delete_topics
     //- club owner can't see deleted topics, so don't show "undelete"
     - items.push('many_undelete')
-  if self.is_club_owner
+  if (self.is_club_owner && self.settings.clubs_lead_can_close_topic) || self.settings.clubs_mod_can_close_topic
     - items.push('many_open')
     - items.push('many_close')
 

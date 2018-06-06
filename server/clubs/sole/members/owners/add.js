@@ -38,7 +38,15 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
+    let settings = await env.extras.settings.fetch([
+      'clubs_lead_can_edit_club_owners',
+      'clubs_mod_can_edit_club_owners'
+    ]);
+
+    if (env.data.is_club_owner && settings.clubs_lead_can_edit_club_owners) return;
+    if (settings.clubs_mod_can_edit_club_owners) return;
+
+    throw N.io.NOT_FOUND;
   });
 
 

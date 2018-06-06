@@ -40,7 +40,13 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.FORBIDDEN;
+    let settings = await env.extras.settings.fetch([ 'clubs_lead_can_close_topic', 'clubs_mod_can_close_topic' ]);
+
+    if (settings.clubs_mod_can_close_topic) return;
+
+    if (env.data.is_club_owner && settings.clubs_lead_can_close_topic) return;
+
+    throw N.io.FORBIDDEN;
   });
 
 

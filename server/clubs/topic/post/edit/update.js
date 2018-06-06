@@ -23,7 +23,8 @@ module.exports = function (N, apiPath) {
     },
     option_no_mlinks:         { type: 'boolean', required: true },
     option_no_emojis:         { type: 'boolean', required: true },
-    option_no_quote_collapse: { type: 'boolean', required: true }
+    option_no_quote_collapse: { type: 'boolean', required: true },
+    as_moderator:             { type: 'boolean', required: true }
   });
 
 

@@ -22,6 +22,18 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Fetch permissions
+  //
+  N.wire.before(apiPath, async function fetch_permissions(env) {
+    env.res.settings = env.data.settings = await env.extras.settings.fetch([
+      'clubs_lead_can_edit_club_members',
+      'clubs_lead_can_edit_club_owners',
+      'clubs_mod_can_edit_club_members',
+      'clubs_mod_can_edit_club_owners'
+    ]);
+  });
+
+
   // Fetch club info and membership
   //
   N.wire.before(apiPath, async function fetch_club_info(env) {
@@ -47,9 +59,24 @@ module.exports = function (N, apiPath) {
   // needed to display this information on tabs
   //
   N.wire.before(apiPath, async function fetch_stats(env) {
-    if (!env.data.is_club_owner) return;
+    // return stats for:
+    //  - club owners (regardless of permissions)
+    //  - global administrators (who can edit members or owners)
+    let can_manage_users = env.data.settings.clubs_mod_can_edit_club_members ||
+                           env.data.settings.clubs_mod_can_edit_club_owners ||
+                           env.data.is_club_owner;
 
-    let [ members, owners, blocked, pending_members, pending_owners ] = await Promise.all([
+    if (!can_manage_users) throw N.io.NOT_FOUND;
+
+    env.res.can_manage_users = can_manage_users;
+
+    let [
+      members,
+      owners,
+      blocked,
+      pending_members,
+      pending_owners
+    ] = await Promise.all([
       N.models.clubs.Membership.count({ club: env.data.club._id }),
       N.models.clubs.Membership.count({ club: env.data.club._id, is_owner: true }),
       N.models.clubs.Blocked.count({ club: env.data.club._id }),

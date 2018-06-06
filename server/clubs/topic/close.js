@@ -58,15 +58,28 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    // Permit open/close as moderator
-    if (env.data.is_club_owner && env.params.as_moderator) {
+    let settings = await env.extras.settings.fetch([
+      'clubs_can_close_topic',
+      'clubs_lead_can_close_topic',
+      'clubs_mod_can_close_topic'
+    ]);
+
+    // Permit open/close as club owner
+    if (env.data.is_club_owner && settings.clubs_lead_can_close_topic && env.params.as_moderator) {
       return;
     }
 
-    // Check topic owner
-    if (env.user_info.user_id !== String(env.data.topic.cache.first_user)) {
-      throw N.io.FORBIDDEN;
+    // Permit open/close as global moderator
+    if (settings.clubs_mod_can_close_topic && env.params.as_moderator) {
+      return;
     }
+
+    // Permit open/close as topic starter
+    if (env.user_info.user_id === String(env.data.topic.cache.first_user) && settings.clubs_can_close_topic) {
+      return;
+    }
+
+    throw N.io.FORBIDDEN;
   });
 
 

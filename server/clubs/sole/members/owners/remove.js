@@ -33,13 +33,6 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Check permissions
-  //
-  N.wire.before(apiPath, async function check_permissions(env) {
-    if (!env.data.is_club_owner) throw N.io.NOT_FOUND;
-  });
-
-
   // Fetch user by nick
   //
   N.wire.before(apiPath, async function fetch_user(env) {
@@ -57,9 +50,33 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check permissions
+  //
+  N.wire.before(apiPath, async function check_permissions(env) {
+    let settings = await env.extras.settings.fetch([
+      'clubs_lead_can_edit_club_owners',
+      'clubs_mod_can_edit_club_owners',
+      'clubs_can_create_clubs'
+    ]);
+
+    if (env.data.is_club_owner && settings.clubs_lead_can_edit_club_owners) return;
+    if (settings.clubs_mod_can_edit_club_owners) return;
+
+    if (String(env.data.user._id) === env.user_info.user_id) {
+      // special case - allow resigning even if user can't manage owners,
+      // but we still need to forbid it to violators
+      // TODO: add `clubs_can_join_clubs` permission and use it here
+      if (settings.clubs_can_create_clubs) return;
+    }
+
+    throw N.io.NOT_FOUND;
+  });
+
+
   // Prevent resigning if user is the last owner
   //
   N.wire.before(apiPath, async function check_last_owner(env) {
+    if (!env.data.is_club_owner) return;
     if (String(env.data.user._id) !== env.user_info.user_id) return;
 
     let owner_count = await N.models.clubs.Membership.count()

@@ -44,18 +44,19 @@ article#content.clubs-sole-members-pending
               img.clubs-sole-members__avatar(alt=user.name)&attributes(self.avatar(user, 'sm'))
               span.clubs-sole-members__nick= user.name
 
-            button.btn.btn-sm.btn-square.icon.icon-check.clubs-sole-members__action(
-              title=self.t('accept')
-              data-on-click='clubs.sole.members.pending:accept'
-              data-user-id=user._id
-              data-club-id=self.club._id
-            )
+            if (self.is_club_owner && self.settings.clubs_lead_can_edit_club_members) || self.settings.clubs_mod_can_edit_club_members
+              button.btn.btn-sm.btn-square.icon.icon-check.clubs-sole-members__action(
+                title=self.t('accept')
+                data-on-click='clubs.sole.members.pending:accept'
+                data-user-id=user._id
+                data-club-id=self.club._id
+              )
 
-            button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
-              title=self.t('reject')
-              data-on-click='clubs.sole.members.pending:reject'
-              data-user-id=user._id
-              data-club-id=self.club._id
-            )
+              button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
+                title=self.t('reject')
+                data-on-click='clubs.sole.members.pending:reject'
+                data-user-id=user._id
+                data-club-id=self.club._id
+              )
         else
           .clubs-sole-members__list-empty= self.t('no_users')

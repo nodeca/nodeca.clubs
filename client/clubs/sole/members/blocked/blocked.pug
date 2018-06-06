@@ -29,14 +29,15 @@ article#content.clubs-sole-members-blocked
     != self.partial('@clubs.sole.members.tabs', { active_tab: 'blocked' })
 
     .clubs-sole-members__content
-      form.clubs-sole-members__form(novalidate, data-on-submit='clubs.sole.members.blocked:add')
-        input(type='hidden', name='club_id', value=self.club._id)
+      if (self.is_club_owner && self.settings.clubs_lead_can_edit_club_members) || self.settings.clubs_mod_can_edit_club_members
+        form.clubs-sole-members__form(novalidate, data-on-submit='clubs.sole.members.blocked:add')
+          input(type='hidden', name='club_id', value=self.club._id)
 
-        .input-group.clubs-sole-members__input-group
-          input.form-control#clubs-sole-members-add-block(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
+          .input-group.clubs-sole-members__input-group
+            input.form-control#clubs-sole-members-add-block(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
 
-          span.input-group-append
-            button.btn.btn-secondary(type='submit')= self.t('block')
+            span.input-group-append
+              button.btn.btn-secondary(type='submit')= self.t('block')
 
       ul.clubs-sole-members__list
         //- sort users by nick
@@ -57,11 +58,12 @@ article#content.clubs-sole-members-blocked
               title=self.t('block_title', { user: self.users[item.block.from] && self.users[item.block.from].nick, date: self.date(item.block.ts, 'datetime') })
             )= self.date(item.block.ts, 'relative')
 
-            button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
-              title=self.t('unblock')
-              data-on-click='clubs.sole.members.blocked:remove'
-              data-user-nick=item.user.nick
-              data-club-id=self.club._id
-            )
+            if (self.is_club_owner && self.settings.clubs_lead_can_edit_club_members) || self.settings.clubs_mod_can_edit_club_members
+              button.btn.btn-sm.btn-square.icon.icon-x.clubs-sole-members__action(
+                title=self.t('unblock')
+                data-on-click='clubs.sole.members.blocked:remove'
+                data-user-nick=item.user.nick
+                data-club-id=self.club._id
+              )
         else
           .clubs-sole-members__list-empty= self.t('no_users')

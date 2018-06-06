@@ -7,6 +7,7 @@
 // - club_hid
 // - post_id
 // - post_hid
+// - as_moderator
 //
 'use strict';
 
@@ -41,7 +42,7 @@ N.wire.before(module.apiPath + ':begin', function fetch_options(data) {
   let postData;
 
   return Promise.resolve()
-    .then(() => N.io.rpc('clubs.topic.post.edit.index', { post_id: data.post_id }))
+    .then(() => N.io.rpc('clubs.topic.post.edit.index', { post_id: data.post_id, as_moderator: data.as_moderator }))
     .then(response => {
       postData = response;
 
@@ -94,6 +95,7 @@ N.wire.on(module.apiPath + ':begin', function show_editor(data) {
       $editor.find('.mdedit-btn__submit').addClass('disabled');
 
       let params = {
+        as_moderator:             data.as_moderator,
         post_id:                  data.post_id,
         txt:                      N.MDEdit.text(),
         attach:                   _.map(N.MDEdit.attachments(), 'media_id'),
