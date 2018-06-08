@@ -9,6 +9,7 @@ i18n:
 
         setting_names:
           clubs_can_create_clubs: Create clubs
+          clubs_can_join_clubs: Join/leave clubs
           clubs_can_reply: Reply to topics
           clubs_can_start_topics: Start topics
           clubs_edit_max_time: Max time to edit post after create (minutes)

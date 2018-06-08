@@ -2,6 +2,12 @@ setting_schemas:
   usergroup:
 
     clubs_can_create_clubs:
+      priority: 10
+      category_key: clubs
+      type: boolean
+      default: false
+
+    clubs_can_join_clubs:
       priority: 15
       category_key: clubs
       type: boolean

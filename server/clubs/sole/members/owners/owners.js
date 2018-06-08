@@ -30,7 +30,7 @@ module.exports = function (N, apiPath) {
       'clubs_lead_can_edit_club_owners',
       'clubs_mod_can_edit_club_members',
       'clubs_mod_can_edit_club_owners',
-      'clubs_can_create_clubs' // assign resigning to this permission
+      'clubs_can_join_clubs' // assign resigning to this permission
     ]);
   });
 

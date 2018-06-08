@@ -10,6 +10,7 @@ module.exports.up = async function (N) {
 
   await usergroupStore.set({
     clubs_can_create_clubs:                { value: true },
+    clubs_can_join_clubs:                  { value: true },
     clubs_can_reply:                       { value: true },
     clubs_can_start_topics:                { value: true },
     //clubs_can_close_topic:                 { value: true },
@@ -43,6 +44,7 @@ module.exports.up = async function (N) {
 
   await usergroupStore.set({
     clubs_can_create_clubs:                { value: true },
+    clubs_can_join_clubs:                  { value: true },
     clubs_can_reply:                       { value: true },
     clubs_can_start_topics:                { value: true },
     //clubs_can_close_topic:                 { value: true },
@@ -65,6 +67,7 @@ module.exports.up = async function (N) {
 
   await usergroupStore.set({
     clubs_can_create_clubs:           { value: false, force: true },
+    clubs_can_join_clubs:             { value: false, force: true },
     clubs_can_reply:                  { value: false, force: true },
     clubs_can_start_topics:           { value: false, force: true },
     clubs_can_close_topic:            { value: false, force: true },

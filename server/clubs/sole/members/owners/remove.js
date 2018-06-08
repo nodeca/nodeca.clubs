@@ -56,7 +56,7 @@ module.exports = function (N, apiPath) {
     let settings = await env.extras.settings.fetch([
       'clubs_lead_can_edit_club_owners',
       'clubs_mod_can_edit_club_owners',
-      'clubs_can_create_clubs'
+      'clubs_can_join_clubs'
     ]);
 
     if (env.data.is_club_owner && settings.clubs_lead_can_edit_club_owners) return;
@@ -65,8 +65,7 @@ module.exports = function (N, apiPath) {
     if (String(env.data.user._id) === env.user_info.user_id) {
       // special case - allow resigning even if user can't manage owners,
       // but we still need to forbid it to violators
-      // TODO: add `clubs_can_join_clubs` permission and use it here
-      if (settings.clubs_can_create_clubs) return;
+      if (settings.clubs_can_join_clubs) return;
     }
 
     throw N.io.NOT_FOUND;

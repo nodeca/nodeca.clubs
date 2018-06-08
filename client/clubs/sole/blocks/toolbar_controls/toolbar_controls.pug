@@ -3,7 +3,7 @@
 
 - var items = []
 
-if self.runtime.is_member && !self.is_club_member
+if self.runtime.is_member && !self.is_club_member && self.settings.clubs_can_join_clubs
   - items.push('club_join')
 
 if self.runtime.is_member
@@ -14,7 +14,7 @@ if self.runtime.is_member
   - items.push('mark_read')
   - items.push('subscription')
 
-if self.runtime.is_member && self.is_club_member
+if self.runtime.is_member && self.is_club_member && self.settings.clubs_can_join_clubs
   - items.push('club_leave')
 
 
@@ -38,7 +38,7 @@ if items.length > 0 && items[items.length - 1] === 'header'
 
 
 .page-actions.clubs-sole__toolbar-controls
-  if self.runtime.is_member && !self.is_club_member
+  if self.runtime.is_member && !self.is_club_member && self.settings.clubs_can_join_clubs
     button.btn.btn-secondary.d-none.d-sm-inline-block(
       type='button'
       data-on-click='clubs.sole:join'

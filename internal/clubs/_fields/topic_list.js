@@ -3,6 +3,7 @@
 module.exports = {
   settings: [
     'can_see_hellbanned',
+    'clubs_can_join_clubs',
     'clubs_can_start_topics',
     'clubs_lead_can_close_topic',
     'clubs_lead_can_delete_topics',
