@@ -388,7 +388,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   // Click report button
   //
   N.wire.on(module.apiPath + ':report', function report(data) {
-    let params = { messages: t('@clubs.abuse_report.messages') };
+    let params = { messages: t('@clubs.abuse_report.club_post.messages') };
     let postId = data.$this.data('post-id');
 
     return Promise.resolve()

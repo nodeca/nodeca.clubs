@@ -2,6 +2,7 @@
 
 module.exports = {
   settings: [
+    'can_report_abuse',
     'can_see_hellbanned',
     'clubs_can_join_clubs',
     'clubs_can_start_topics',

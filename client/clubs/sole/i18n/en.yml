@@ -20,5 +20,8 @@ en-US:
 
   search_club: in club
 
+  abuse_report_placeholder: Please report if this club violates terms of service.
+  abuse_reported: Your report has been sent
+
   result_success: You're now a member of this club
   result_pending: Your request to join has been sent and awaiting leader's approval

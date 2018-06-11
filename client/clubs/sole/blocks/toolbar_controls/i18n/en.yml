@@ -4,6 +4,7 @@ en-US:
   mark_read: Mark all read
   topic_create: New topic
   subscription: Subscription
+  abuse_report: Report
   subs_muted: Muted. You will never be notified of anything about this club.
   subs_normal: Normal. You will be notified if someone mentions your @name in new thread.
   subs_tracking: Tracking. You will see club updates in your subscriptions list.

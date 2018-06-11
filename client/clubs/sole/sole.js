@@ -164,6 +164,19 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   });
 
 
+  // Click report button
+  //
+  N.wire.on(module.apiPath + ':report', function report(data) {
+    let params = { placeholder: t('abuse_report_placeholder'), messages: t('@clubs.abuse_report.club_sole.messages') };
+    let clubId = data.$this.data('club-id');
+
+    return Promise.resolve()
+      .then(() => N.wire.emit('common.blocks.abuse_report_dlg', params))
+      .then(() => N.io.rpc('clubs.sole.abuse_report', { club_id: clubId, message: params.message }))
+      .then(() => N.wire.emit('notify.info', t('abuse_reported')));
+  });
+
+
   // Click mark all read
   //
   N.wire.on(module.apiPath + ':mark_read', function reply(data) {
