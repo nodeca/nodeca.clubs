@@ -3,6 +3,8 @@
 
 'use strict';
 
+const userInfo = require('nodeca.users/lib/user_info');
+
 
 module.exports = function (N, apiPath) {
 
@@ -35,16 +37,15 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    // allow seeing this page to:
-    //  - club owners (regardless of permissions)
-    //  - global administrators (who can edit members or owners)
-    let can_manage_users = env.data.settings.clubs_mod_can_edit_club_members ||
-                           env.data.settings.clubs_mod_can_edit_club_owners ||
-                           env.data.is_club_owner;
+    let settings = await env.extras.settings.fetch([
+      'clubs_lead_can_edit_club_members',
+      'clubs_mod_can_edit_club_members'
+    ]);
 
-    if (!can_manage_users) throw N.io.NOT_FOUND;
+    if (env.data.is_club_owner && settings.clubs_lead_can_edit_club_members) return;
+    if (settings.clubs_mod_can_edit_club_members) return;
 
-    env.res.can_manage_users = can_manage_users;
+    throw N.io.NOT_FOUND;
   });
 
 
@@ -87,5 +88,33 @@ module.exports = function (N, apiPath) {
     await N.models.clubs.MembershipPending.remove(
       { user: env.params.user_id, club: env.data.club._id }
     );
+  });
+
+
+  // Notify user via email
+  //
+  N.wire.after(apiPath, async function notify_user(env) {
+    let to = await userInfo(N, env.data.user._id);
+    let locale = to.locale || N.config.locales[0];
+
+    let general_project_name = await N.settings.get('general_project_name');
+
+    let subject = N.i18n.t(locale, 'clubs.sole.members.pending.accept.email_subject', {
+      project_name: general_project_name
+    });
+
+    let text = N.i18n.t(locale, 'clubs.sole.members.pending.accept.email_text', {
+      club_title: env.data.club.title,
+      club_link: N.router.linkTo('clubs.sole', {
+        club_hid: env.data.club.hid
+      })
+    });
+
+    await N.mailer.send({
+      to: env.data.user.email,
+      subject,
+      text,
+      safe_error: true
+    });
   });
 };

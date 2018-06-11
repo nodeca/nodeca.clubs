@@ -1,0 +1,6 @@
+en-US:
+  accept:
+    email_subject: "#{project_name}: You've been accepted into a club"
+
+    email_text: |
+      You are now a member of "[#{club_title}](#{club_link})".
