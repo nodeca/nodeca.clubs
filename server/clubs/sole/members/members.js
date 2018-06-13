@@ -55,35 +55,49 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch number of members, leaders, pending and blocked users;
-  // needed to display this information on tabs
+  // Check permissions
   //
-  N.wire.before(apiPath, async function fetch_stats(env) {
-    // return stats for:
+  N.wire.before(apiPath, async function check_permissions(env) {
+    // allow seeing all pages to:
     //  - club owners (regardless of permissions)
     //  - global administrators (who can edit members or owners)
     let can_manage_users = env.data.settings.clubs_mod_can_edit_club_members ||
                            env.data.settings.clubs_mod_can_edit_club_owners ||
                            env.data.is_club_owner;
+    // allow seeing log to:
+    //  - global administrators (who can edit members or owners)
+    let can_see_log = env.data.settings.clubs_mod_can_edit_club_members ||
+                      env.data.settings.clubs_mod_can_edit_club_owners;
 
-    if (!can_manage_users) throw N.io.NOT_FOUND;
+    env.res.can_manage_users = env.data.can_manage_users = can_manage_users;
+    env.res.can_see_log = env.data.can_see_log = can_see_log;
+  });
 
-    env.res.can_manage_users = can_manage_users;
+
+  // Fetch number of members, leaders, pending and blocked users;
+  // needed to display this information on tabs
+  //
+  N.wire.before(apiPath, async function fetch_stats(env) {
+    if (!env.data.can_manage_users) return;
 
     let [
       members,
       owners,
       blocked,
       pending_members,
-      pending_owners
+      pending_owners,
+      log_records
     ] = await Promise.all([
       N.models.clubs.Membership.count({ club: env.data.club._id }),
       N.models.clubs.Membership.count({ club: env.data.club._id, is_owner: true }),
       N.models.clubs.Blocked.count({ club: env.data.club._id }),
       env.data.club.is_closed ?
         N.models.clubs.MembershipPending.count({ club: env.data.club._id }) :
-        Promise.resolve(0),
-      N.models.clubs.OwnershipPending.count({ club: env.data.club._id })
+        Promise.resolve(),
+      N.models.clubs.OwnershipPending.count({ club: env.data.club._id }),
+      env.data.can_see_log ?
+        N.models.clubs.ClubAuditLog.count({ club: env.data.club._id }) :
+        Promise.resolve()
     ]);
 
     env.res.stats = {
@@ -91,7 +105,8 @@ module.exports = function (N, apiPath) {
       owners,
       blocked,
       pending_members,
-      pending_owners
+      pending_owners,
+      log_records
     };
   });
 

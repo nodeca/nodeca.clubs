@@ -45,6 +45,12 @@ router:
           match: /\d+/
           type: integer
 
+    clubs.sole.members.log:
+      "/clubs/c{club_hid}/members/log":
+        club_hid:
+          match: /\d+/
+          type: integer
+
     clubs.sole.members.owners.confirm:
       "/clubs/c{club_hid}/confirm_owner/{secret_key}":
         club_hid:

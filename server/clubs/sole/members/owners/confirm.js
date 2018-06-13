@@ -86,4 +86,17 @@ module.exports = function (N, apiPath) {
 
     env.res.breadcrumbs = env.data.breadcrumbs;
   });
+
+
+  // Create audit log record
+  //
+  N.wire.after(apiPath, function create_log_record(env) {
+    return N.models.clubs.ClubAuditLog.create({
+      club:         env.data.club._id,
+      action:       'leader_confirmed',
+      user:         env.user_info.user_id,
+      ip:           env.req.ip,
+      user_agent:   env.origin.req.headers['user-agent']
+    });
+  });
 };

@@ -31,3 +31,12 @@
     = self.t('owners')
     span.clubs-sole-members__tab-counter
       = '(' + String(self.stats.owners + self.stats.pending_owners) + ')'
+
+  if self.can_see_log
+    a.nav-link(
+      href=self.link_to('clubs.sole.members.log', { club_hid: self.club.hid })
+      class=self.active_tab === 'log' ? 'active' : ''
+    )
+      = self.t('log')
+      span.clubs-sole-members__tab-counter
+        = '(' + String(self.stats.log_records) + ')'

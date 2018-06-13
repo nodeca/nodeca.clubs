@@ -117,6 +117,20 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Create audit log record
+  //
+  N.wire.after(apiPath, function create_log_record(env) {
+    return N.models.clubs.ClubAuditLog.create({
+      club:         env.data.club._id,
+      action:       'leader_added',
+      user:         env.user_info.user_id,
+      target_user:  env.data.user._id,
+      ip:           env.req.ip,
+      user_agent:   env.origin.req.headers['user-agent']
+    });
+  });
+
+
   // Notify user via email
   //
   N.wire.after(apiPath, async function notify_user(env) {

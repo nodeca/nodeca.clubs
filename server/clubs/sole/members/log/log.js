@@ -1,10 +1,9 @@
-// Show the list of club members
+// Show audit log
 //
 
 'use strict';
 
 
-const _             = require('lodash');
 const sanitize_club = require('nodeca.clubs/lib/sanitizers/club');
 
 
@@ -72,7 +71,7 @@ module.exports = function (N, apiPath) {
     env.res.can_manage_users = env.data.can_manage_users = can_manage_users;
     env.res.can_see_log = env.data.can_see_log = can_see_log;
 
-    if (!can_manage_users) throw N.io.NOT_FOUND;
+    if (!can_see_log) throw N.io.NOT_FOUND;
   });
 
 
@@ -113,20 +112,17 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Fetch blocked members
+  // Fetch audit log records
   //
-  N.wire.on(apiPath, async function fetch_blocked_members(env) {
+  N.wire.on(apiPath, async function fetch_log(env) {
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
 
-    let blocked = await N.models.clubs.Blocked.find()
-                               .where('club').equals(env.data.club._id)
-                               .lean(true);
+    let records = await N.models.clubs.ClubAuditLog.find()
+                            .where('club').equals(env.data.club._id)
+                            .lean(true);
 
-    env.res.blocked = blocked;
-
-    env.data.users = (env.data.users || [])
-                       .concat(_.map(blocked, 'user'))
-                       .concat(_.map(blocked, 'from'));
+    // TODO: sanitize and format
+    //env.res.log_records = records;
   });
 
 

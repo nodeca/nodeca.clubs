@@ -1,0 +1,7 @@
+en-US:
+  user_blocked: '#{date}: #{user} blocked #{target}'
+  user_unblocked: '#{date}: #{user} unblocked #{target}'
+  leader_invited: '#{date}: #{user} invited #{target} to leaders'
+  leader_confirmed: '#{date}: #{user} accepted leadership position'
+  leader_removed: '#{date}: #{user} removed #{target} from leaders'
+  leader_removed_self: '#{date}: #{user} removed themselves from leaders'
