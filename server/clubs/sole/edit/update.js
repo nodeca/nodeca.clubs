@@ -12,6 +12,10 @@ const sharp       = require('sharp');
 const resizeParse = require('nodeca.users/server/_lib/resize_parse');
 const resize      = require('nodeca.users/models/users/_lib/resize');
 
+// If same user edits the same club within 5 minutes, all changes
+// made within that period will be squashed into one diff.
+const HISTORY_GRACE_PERIOD = 5 * 60 * 1000;
+
 
 module.exports = function (N, apiPath) {
 
@@ -144,7 +148,7 @@ module.exports = function (N, apiPath) {
 
   // Update club info
   //
-  N.wire.on(apiPath, function update_club(env) {
+  N.wire.on(apiPath, async function update_club(env) {
     let update_data = {
       $set: {
         title: env.params.title,
@@ -159,7 +163,78 @@ module.exports = function (N, apiPath) {
       update_data.$unset = { avatar_id: true };
     }
 
-    return N.models.clubs.Club.update({ _id: env.data.club._id }, update_data);
+    let update_result = await N.models.clubs.Club.update({ _id: env.data.club._id }, update_data);
+
+    env.data.is_updated = update_result.nModified > 0;
+  });
+
+
+  // Save old version in club history
+  //
+  N.wire.after(apiPath, async function save_history(env) {
+    if (!env.data.is_updated) return;
+
+    let new_club = await N.models.clubs.Club.findById(env.data.club._id)
+                             .lean(true);
+
+    let last_entry = await N.models.clubs.ClubHistory.findOne({
+      club: env.data.club._id
+    }).sort('-_id').lean(true);
+
+    let last_update_time = last_entry ? last_entry.ts   : new Date(0);
+    let last_update_user = last_entry ? last_entry.user : null;
+    let now = new Date();
+
+    // if the same user edits the same club within grace period, history won't be changed
+    if (!(last_update_time > now - HISTORY_GRACE_PERIOD &&
+          last_update_time < now &&
+          String(last_update_user) === String(env.user_info.user_id))) {
+
+      /* eslint-disable no-undefined */
+      last_entry = await new N.models.clubs.ClubHistory({
+        club:        env.data.club._id,
+        user:        env.user_info.user_id,
+        title:       env.data.club.title,
+        description: env.data.club.description,
+        is_closed:   env.data.club.is_closed,
+        avatar_id:   env.data.club.avatar_id
+      }).save();
+    }
+
+    // if the next history entry would be the same as the last one
+    // (e.g. user saves post without changes or reverts change within 5 min),
+    // remove redundant history entry
+    if (last_entry) {
+      let last_club_str = JSON.stringify({
+        club:        last_entry.club,
+        user:        last_entry.user,
+        title:       last_entry.title,
+        description: last_entry.description,
+        is_closed:   last_entry.is_closed,
+        avatar_id:   last_entry.avatar_id
+      });
+
+      let next_club_str = JSON.stringify({
+        club:        new_club._id,
+        user:        env.user_info.user_id,
+        title:       new_club.title,
+        description: new_club.description,
+        is_closed:   new_club.is_closed,
+        avatar_id:   new_club.avatar_id
+      });
+
+      if (last_club_str === next_club_str) {
+        await N.models.clubs.ClubHistory.remove({ _id: last_entry._id });
+      }
+    }
+
+    await N.models.clubs.Club.update(
+      { _id: env.data.club._id },
+      { $set: {
+        last_edit_ts: new Date(),
+        edit_count: await N.models.clubs.ClubHistory.count({ club: env.data.club._id })
+      } }
+    );
   });
 
 

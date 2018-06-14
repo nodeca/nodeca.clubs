@@ -40,6 +40,10 @@ module.exports = function (N, collectionName) {
 
     avatar_id:    Schema.Types.ObjectId,
 
+    // history: when this info was changed last time, and total edit count
+    last_edit_ts: Date,
+    edit_count:   Number,
+
     // cache
     cache,
     cache_hb:     cache
