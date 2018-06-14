@@ -4,6 +4,7 @@
 'use strict';
 
 
+const _             = require('lodash');
 const sanitize_club = require('nodeca.clubs/lib/sanitizers/club');
 
 
@@ -121,8 +122,35 @@ module.exports = function (N, apiPath) {
                             .where('club').equals(env.data.club._id)
                             .lean(true);
 
-    // TODO: sanitize and format
-    //env.res.log_records = records;
+    let user_ids = _.uniq(
+      [].concat(_.map(records, 'user').filter(Boolean).map(String))
+        .concat(_.map(records, 'target_user').filter(Boolean).map(String))
+    );
+
+    let can_see_deleted_users = await env.extras.settings.fetch('can_see_deleted_users');
+
+    let query = N.models.users.User.find()
+                    .where('_id').in(user_ids);
+
+    if (!can_see_deleted_users) query = query.where('exists').equals(true);
+
+    let users_by_id = _.keyBy(await query.lean(true), '_id');
+
+    env.res.log_records = records.map(record => {
+      let tpl_params = {
+        date:        env.helpers.date(record.ts, 'datetime'),
+        user_nick:   (users_by_id[record.user] || {}).nick,
+        user_link:   N.router.linkTo('users.member', {
+          user_hid: (users_by_id[record.user] || {}).hid
+        }),
+        target_nick: (users_by_id[record.target_user] || {}).nick,
+        target_link: N.router.linkTo('users.member', {
+          user_hid: (users_by_id[record.target_user] || {}).hid
+        })
+      };
+
+      return env.t.exists(record.action) ? env.t(record.action, tpl_params) : record.type;
+    });
   });
 
 

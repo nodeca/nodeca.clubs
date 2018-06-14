@@ -30,5 +30,8 @@ article#content.clubs-sole-members-log
 
     .clubs-sole-members__content
       ul.clubs-sole-members__list
-        //- TODO
-        //= JSON.stringify(self.log_records)
+        each record in self.log_records
+          li.clubs-sole-members__list-item
+            .clubs-sole-members__log-record!= record
+        else
+          .clubs-sole-members__list-empty= self.t('no_records')
