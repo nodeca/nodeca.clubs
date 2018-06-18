@@ -21,6 +21,12 @@ router:
           match: /\d+/
           type: integer
 
+    clubs.sole.edit.location:
+      "/clubs/c{club_hid}/edit/location":
+        club_hid:
+          match: /\d+/
+          type: integer
+
     clubs.sole.members:
       "/clubs/c{club_hid}/members":
         club_hid:

@@ -1,6 +1,5 @@
-// Show club edit form
+// Form for user club location
 //
-
 'use strict';
 
 
@@ -57,11 +56,6 @@ module.exports = function (N, apiPath) {
     env.res.head.title = env.t('title');
 
     env.res.club = await sanitize_club(N, env.data.club, env.user_info);
-    env.res.title_max_length = await env.extras.settings.fetch('clubs_club_title_max_length');
-
-    if (env.data.club.location) {
-      env.res.location_name = (await N.models.core.Location.info([ env.data.club.location ], env.user_info.locale))[0];
-    }
   });
 
 

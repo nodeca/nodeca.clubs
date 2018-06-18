@@ -4,6 +4,10 @@ en-US:
   description_input_name: Description
   description_input_desc: Description for this club (optional)
   avatar_input_name: Picture
+  location_input_name: Location
+  location_edit: edit
+  location_set: set
+  location_remove: remove
   change_avatar: click to change
   err_image_invalid: File should be an image.
   err_invalid_size: "Image too small. Should be at least #{w}x#{h}."

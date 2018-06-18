@@ -76,6 +76,36 @@
                   data-on-click='clubs.sole.edit:avatar_remove'
                 )
 
+            .form-group.club-edit-location
+              label= self.t('location_input_name')
+              .form-control-plaintext.club-edit-location__content
+                a(
+                  href=self.link_to('clubs.sole.edit.location', { club_hid: self.club.hid })
+                )
+                  if self.club.location
+                    span.icon.icon-location.icon-space-after
+
+                    if self.location_name
+                      = self.location_name
+                    else
+                      = self.t('location_edit')
+                  else
+                    = self.t('location_set')
+
+                if self.club.location
+                  a.icon.icon-x.icon-space-before(
+                    href='#'
+                    title=self.t('location_remove')
+                    data-on-click='clubs.sole.edit:location_remove'
+                  )
+
+              //- shown only if user removed the location and didn't save changes yet
+              .form-control-plaintext.club-edit-location__removed-content
+                a(
+                  href=self.link_to('clubs.sole.edit.location', { club_hid: self.club.hid })
+                )
+                  = self.t('location_set')
+
             .form-group
               label= self.t('membership_input_name')
 

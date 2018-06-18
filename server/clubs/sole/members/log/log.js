@@ -120,6 +120,7 @@ module.exports = function (N, apiPath) {
 
     let records = await N.models.clubs.ClubAuditLog.find()
                             .where('club').equals(env.data.club._id)
+                            .sort('-_id')
                             .lean(true);
 
     let user_ids = _.uniq(
@@ -149,7 +150,7 @@ module.exports = function (N, apiPath) {
         })
       };
 
-      return env.t.exists(record.action) ? env.t(record.action, tpl_params) : record.type;
+      return env.t.exists(record.action) ? env.t(record.action, tpl_params) : record.action;
     });
   });
 

@@ -245,4 +245,12 @@ N.wire.once('navigate.done:' + module.apiPath, function club_edit_init_handlers(
     $('.club-avatar__image').attr('src', identicon($('.club-avatar').closest('form')[0].club_id.value, avatarWidth));
     addFields = { remove_avatar: true };
   });
+
+
+  // User removes existing location
+  //
+  N.wire.on(module.apiPath + ':location_remove', function location_remove() {
+    $('.club-edit-location').addClass('club-edit-location__m-removed');
+    addFields = { remove_location: true };
+  });
 });

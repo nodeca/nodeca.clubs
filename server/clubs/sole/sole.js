@@ -84,6 +84,15 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Fetch location name if available
+  //
+  N.wire.after(apiPath, async function fetch_location(env) {
+    if (!env.data.club.location) return;
+
+    env.res.location_name = (await N.models.core.Location.info([ env.data.club.location ], env.user_info.locale))[0];
+  });
+
+
   // Fetch club leaders
   //
   N.wire.after(apiPath, async function fetch_club_owners(env) {

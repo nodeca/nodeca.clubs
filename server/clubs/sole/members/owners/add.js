@@ -122,7 +122,7 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, function create_log_record(env) {
     return N.models.clubs.ClubAuditLog.create({
       club:         env.data.club._id,
-      action:       'leader_added',
+      action:       'leader_invited',
       user:         env.user_info.user_id,
       target_user:  env.data.user._id,
       ip:           env.req.ip,

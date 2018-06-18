@@ -40,6 +40,9 @@ module.exports = function (N, collectionName) {
 
     avatar_id:    Schema.Types.ObjectId,
 
+    // coordinates, either [ Number, Number ] or Null
+    location:     Schema.Types.Mixed,
+
     // history: when this info was changed last time, and total edit count
     last_edit_ts: Date,
     edit_count:   Number,
@@ -131,6 +134,15 @@ module.exports = function (N, collectionName) {
       { _id: club_id },
       { $set: { members } }
     );
+  };
+
+
+  // Resolve name for club location with 5 second delay used for deduplication
+  //
+  Club.statics.resolveLocation = async function resolveLocation(club_id, locale) {
+    await N.redis.zaddAsync('geo:club', Date.now(), String(club_id) + ':' + locale);
+
+    N.queue.geo_club_location_process().postpone();
   };
 
 

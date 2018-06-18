@@ -1,0 +1,12 @@
+en-US:
+  title: Location
+  description: Click on the map to select location.
+  notice: Precise location is not required, you can pick any place in the vicinity.
+  submit: Save
+
+  err_geolocation_denied: 'No permission to locate position'
+  err_geolocation_unavailable: 'Failed to locate position: data unavailable'
+  err_geolocation_timeout: 'Failed to locate position: timed out'
+
+  locator_btn:
+    title: My location

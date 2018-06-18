@@ -77,7 +77,16 @@ article#content.clubs-sole-root(
           != self.partial('@clubs.sole.blocks.toolbar_controls')
 
         .clubs-sole__description= self.club.description
-        .clubs-sole__members
+        .clubs-sole__members 
+          if self.club.location
+            a.clubs-sole__location.icon.icon-location(
+              href='#'
+              title=self.location_name
+              data-on-click='common.blocks.location_show_dlg'
+              data-latitude=self.club.location[1]
+              data-longitude=self.club.location[0]
+            )
+
           a(href=self.link_to('clubs.sole.members', { club_hid: self.club.hid }), rel='nofollow')= self.t('members', self.club.members)
 
     if self.topics && self.topics.length

@@ -23,6 +23,9 @@ module.exports = function (N, collectionName) {
     is_closed:   Boolean,
     avatar_id:   Schema.ObjectId,
 
+    // coordinates, either [ Number, Number ] or Null
+    location:     Schema.Types.Mixed,
+
     // change time
     ts:         { type: Date, 'default': Date.now }
   }, {
