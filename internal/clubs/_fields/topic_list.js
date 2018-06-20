@@ -10,6 +10,7 @@ module.exports = {
     'clubs_lead_can_delete_topics',
     'clubs_lead_can_edit_clubs',
     'clubs_mod_can_close_topic',
+    'clubs_mod_can_delete_clubs',
     'clubs_mod_can_delete_topics',
     'clubs_mod_can_edit_clubs',
     'clubs_mod_can_hard_delete_topics',

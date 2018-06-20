@@ -154,6 +154,28 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   });
 
 
+  // Delete club
+  //
+  N.wire.on(module.apiPath + ':delete', function club_delete(data) {
+    let hid = data.$this.data('club-hid');
+
+    return Promise.resolve()
+      .then(() => N.io.rpc('clubs.sole.destroy', { club_hid: hid }))
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+
+
+  // Restore deleted club
+  //
+  N.wire.on(module.apiPath + ':undelete', function club_undelete(data) {
+    let hid = data.$this.data('club-hid');
+
+    return Promise.resolve()
+      .then(() => N.io.rpc('clubs.sole.undelete', { club_hid: hid }))
+      .then(() => N.wire.emit('navigate.reload'));
+  });
+
+
   // Click topic create
   //
   N.wire.on(module.apiPath + ':create', function reply(data) {

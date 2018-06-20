@@ -23,7 +23,8 @@ module.exports = function (N) {
     //
     let access_env = { params: {
       topics,
-      user_info: env.user_info
+      user_info: env.user_info,
+      preload: clubs
     } };
 
     await N.wire.emit('internal:clubs.access.topic', access_env);

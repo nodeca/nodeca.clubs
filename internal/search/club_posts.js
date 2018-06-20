@@ -125,7 +125,7 @@ module.exports = function (N, apiPath) {
     let access_env = { params: {
       posts: locals.sandbox.posts,
       user_info: locals.params.user_info,
-      preload: locals.sandbox.topics
+      preload: [].concat(locals.sandbox.topics).concat(locals.sandbox.clubs)
     } };
 
     await N.wire.emit('internal:clubs.access.post', access_env);

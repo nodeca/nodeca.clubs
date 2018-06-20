@@ -65,7 +65,35 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Check topic permissions
+  // Check clubs permission
+  //
+  N.wire.before(apiPath, async function check_clubs(locals) {
+    let clubs = _.uniq(
+      locals.data.topic_ids
+          .filter((__, i) => locals.data.access_read[i] !== false)
+          .map(id => String(locals.cache[id].club))
+    );
+
+    let access_env = {
+      params: { clubs, user_info: locals.data.user_info },
+      cache: locals.cache
+    };
+    await N.wire.emit('internal:clubs.access.club', access_env);
+
+    // club_id -> access
+    let clubs_access = {};
+
+    clubs.forEach((club_id, i) => {
+      clubs_access[club_id] = access_env.data.access_read[i];
+    });
+
+    locals.data.topic_ids.forEach((id, i) => {
+      if (!clubs_access[locals.cache[id].club]) locals.data.access_read[i] = false;
+    });
+  });
+
+
+  // Check topic and club permissions
   //
   N.wire.on(apiPath, async function check_topic_access(locals) {
     let Topic = N.models.clubs.Topic;

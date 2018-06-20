@@ -39,6 +39,17 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check if user can view this club
+  //
+  N.wire.before(apiPath, async function check_access(env) {
+    let access_env = { params: { clubs: env.data.club, user_info: env.user_info } };
+
+    await N.wire.emit('internal:clubs.access.club', access_env);
+
+    if (!access_env.data.access_read) throw N.io.NOT_FOUND;
+  });
+
+
   N.wire.on(apiPath, function search_club(env) {
     let menu = _.get(N.config, 'search.club_sole.menu', {});
     let content_types = Object.keys(menu)

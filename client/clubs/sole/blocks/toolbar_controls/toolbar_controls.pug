@@ -20,6 +20,12 @@ if self.settings.can_report_abuse
 if self.runtime.is_member && self.is_club_member && self.settings.clubs_can_join_clubs
   - items.push('club_leave')
 
+if self.settings.clubs_mod_can_delete_clubs
+  if self.club.exists
+    - items.push('club_delete')
+  else
+    - items.push('club_undelete')
+
 
 if self.selected_cnt
   if items.length > 0
@@ -117,6 +123,20 @@ if items.length > 0 && items[items.length - 1] === 'header'
                 data-on-click='clubs.sole:leave'
                 data-club-hid=self.club.hid
               )= self.t('club_leave')
+
+            when 'club_delete'
+              button.dropdown-item(
+                type='button'
+                data-on-click='clubs.sole:delete'
+                data-club-hid=self.club.hid
+              )= self.t('club_delete')
+
+            when 'club_undelete'
+              button.dropdown-item(
+                type='button'
+                data-on-click='clubs.sole:undelete'
+                data-club-hid=self.club.hid
+              )= self.t('club_undelete')
 
             when 'topic_create'
               button.dropdown-item.d-sm-none(

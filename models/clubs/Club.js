@@ -43,6 +43,8 @@ module.exports = function (N, collectionName) {
     // coordinates, either [ Number, Number ] or Null
     location:     Schema.Types.Mixed,
 
+    exists:       { type: Boolean, 'default': true },
+
     // history: when this info was changed last time, and total edit count
     last_edit_ts: Date,
     edit_count:   Number,

@@ -34,3 +34,4 @@ search:
     'club_sole : _default_content':
       rt_field: [ title, description ]
       rt_attr_string: [ object_id ]
+      rt_attr_bool: [ public ]

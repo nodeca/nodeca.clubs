@@ -30,7 +30,7 @@ module.exports = function (N, apiPath) {
   N.wire.on(apiPath, async function execute_search(locals) {
     locals.sandbox = locals.sandbox || {};
 
-    let query  = 'SELECT object_id FROM club_sole WHERE MATCH(?)'; // AND public=1';
+    let query  = 'SELECT object_id FROM club_sole WHERE MATCH(?) AND public=1';
     let params = [ sphinx_escape(locals.params.query) ];
 
     if (!_.isNil(locals.params.limit)) {
@@ -70,6 +70,22 @@ module.exports = function (N, apiPath) {
 
     locals.count = Number(count[0].Value);
     locals.reached_end = reached_end;
+  });
+
+
+  // Check permissions for each club
+  //
+  N.wire.on(apiPath, async function check_permissions(locals) {
+    if (!locals.sandbox.clubs.length) return;
+
+    let access_env = { params: {
+      clubs: locals.sandbox.clubs,
+      user_info: locals.params.user_info
+    } };
+
+    await N.wire.emit('internal:clubs.access.club', access_env);
+
+    locals.sandbox.clubs = locals.sandbox.clubs.filter((club, idx) => access_env.data.access_read[idx]);
   });
 
 

@@ -151,6 +151,12 @@ setting_schemas:
       type: boolean
       default: false
 
+    clubs_mod_can_delete_clubs:
+      priority: 1130
+      category_key: perm_clubs_moderate
+      type: boolean
+      default: false
+
     clubs_mod_can_add_infractions:
       priority: 2100
       category_key: perm_infractions

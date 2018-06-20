@@ -35,6 +35,7 @@ module.exports.up = async function (N) {
     clubs_mod_can_edit_clubs:              { value: true },
     clubs_mod_can_edit_club_members:       { value: true },
     clubs_mod_can_edit_club_owners:        { value: true },
+    clubs_mod_can_delete_clubs:            { value: true },
     clubs_mod_can_add_infractions:         { value: true }
   }, { usergroup_id: adminGroupId });
 

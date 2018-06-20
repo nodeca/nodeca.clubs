@@ -21,7 +21,19 @@ module.exports = function (N) {
     if (membership.length > 0) {
       clubs = await N.models.clubs.Club.find()
                         .where('_id').in(_.map(membership, 'club'))
+                        // only show existing clubs in user profile
+                        .where('exists').equals(true)
                         .lean(true);
+
+      // double-check permissions to see all clubs
+      let access_env = { params: {
+        clubs,
+        user_info: env.user_info
+      } };
+
+      await N.wire.emit('internal:clubs.access.club', access_env);
+
+      clubs = clubs.filter((club, idx) => access_env.data.access_read[idx]);
     }
 
     clubs = _.sortBy(clubs, 'title');

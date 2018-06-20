@@ -246,6 +246,13 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Schedule search index update
+  //
+  N.wire.after(apiPath, async function add_search_index(env) {
+    await N.queue.club_sole_search_update_by_ids([ env.data.club._id ]).postpone();
+  });
+
+
   // Remove old avatar
   //
   N.wire.after(apiPath, async function remove_old_avatar(env) {

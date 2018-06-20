@@ -33,4 +33,5 @@ i18n:
           clubs_mod_can_edit_clubs: Edit club info (title, description)
           clubs_mod_can_edit_club_members: Manage members (invite, kick, ban)
           clubs_mod_can_edit_club_owners: Change leadership
+          clubs_mod_can_delete_clubs: Delete clubs
           clubs_mod_can_add_infractions: Can give infractions in clubs

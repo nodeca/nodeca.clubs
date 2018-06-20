@@ -46,7 +46,7 @@ module.exports = function (N, apiPath) {
     let access_env = { params: {
       posts,
       user_info: info_env.user_info,
-      preload: [].concat(topics)
+      preload: [].concat(topics).concat(clubs)
     } };
 
     await N.wire.emit('internal:clubs.access.post', access_env);

@@ -53,7 +53,7 @@ module.exports = function (N) {
       let access_env = { params: {
         posts: post,
         user_info: users_info[user_id],
-        preload: [ topic ]
+        preload: [ topic, club ]
       } };
 
       return N.wire.emit('internal:clubs.access.post', access_env)

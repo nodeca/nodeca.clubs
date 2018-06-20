@@ -20,9 +20,9 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    let clubs_can_join_club = await env.extras.settings.fetch('clubs_can_join_clubs');
+    let clubs_can_join_clubs = await env.extras.settings.fetch('clubs_can_join_clubs');
 
-    if (!clubs_can_join_club) throw N.io.FORBIDDEN;
+    if (!clubs_can_join_clubs) throw N.io.FORBIDDEN;
   });
 
 
