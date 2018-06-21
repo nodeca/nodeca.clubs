@@ -37,6 +37,17 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check if user has an access to this club
+  //
+  N.wire.before(apiPath, async function check_access(env) {
+    let access_env = { params: { clubs: env.data.club, user_info: env.user_info } };
+
+    await N.wire.emit('internal:clubs.access.club', access_env);
+
+    if (!access_env.data.access_read) throw N.io.NOT_FOUND;
+  });
+
+
   // Remove club
   //
   N.wire.on(apiPath, function club_remove(env) {
@@ -47,6 +58,6 @@ module.exports = function (N, apiPath) {
   // Schedule search index update
   //
   N.wire.after(apiPath, async function update_search_index(env) {
-    await N.queue.club_sole_search_update_by_ids([ env.data.club._id ]).postpone();
+    await N.queue.club_sole_search_update_with_topics([ env.data.club._id ]).postpone();
   });
 };

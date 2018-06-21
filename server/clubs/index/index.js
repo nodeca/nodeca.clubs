@@ -31,6 +31,16 @@ module.exports = function (N, apiPath) {
                         .where('_id').in(_.map(membership, 'club'))
                         .sort(env.user_info.hb || can_see_hellbanned ? '-cache_hb.last_ts' : '-cache.last_ts')
                         .lean(true);
+
+      // check permissions to see all clubs
+      let access_env = { params: {
+        clubs,
+        user_info: env.user_info
+      } };
+
+      await N.wire.emit('internal:clubs.access.club', access_env);
+
+      clubs = clubs.filter((club, idx) => access_env.data.access_read[idx]);
     }
 
     env.res.clubs = await sanitize_club(N, clubs, env.user_info);

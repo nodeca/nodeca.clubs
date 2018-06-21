@@ -118,6 +118,13 @@ module.exports = function (N, collectionName) {
     hid:   1
   });
 
+  // - reindex all posts inside a club
+  //
+  Post.index({
+    club: 1,
+    _id:  1
+  });
+
   // Set 'hid' for the new post.
   //
   Post.pre('save', async function () {

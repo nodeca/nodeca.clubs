@@ -40,6 +40,17 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Check if user has an access to this club
+  //
+  N.wire.before(apiPath, async function check_access(env) {
+    let access_env = { params: { clubs: env.data.club, user_info: env.user_info } };
+
+    await N.wire.emit('internal:clubs.access.club', access_env);
+
+    if (!access_env.data.access_read) throw N.io.NOT_FOUND;
+  });
+
+
   // Fetch topics & check permissions
   //
   N.wire.before(apiPath, async function fetch_topics(env) {
