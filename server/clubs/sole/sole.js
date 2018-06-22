@@ -191,12 +191,6 @@ module.exports = function (N, apiPath) {
       route: 'clubs.index'
     });
 
-    env.data.breadcrumbs.push({
-      text: env.data.club.title,
-      route: 'clubs.sole',
-      params: { club_hid: env.data.club.hid }
-    });
-
     env.res.breadcrumbs = env.data.breadcrumbs;
   });
 

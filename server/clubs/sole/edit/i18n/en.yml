@@ -1,6 +1,5 @@
 en-US:
   title: Edit club
-  breadcrumbs_title: Edit
 
   update:
     err_title_empty: "Club title should not be empty"

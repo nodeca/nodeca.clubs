@@ -186,12 +186,6 @@ module.exports = function (N, apiPath) {
       params: { club_hid: env.data.club.hid }
     });
 
-    env.data.breadcrumbs.push({
-      text: env.data.topic.title,
-      route: 'clubs.topic',
-      params: { club_hid: env.data.club.hid, topic_hid: env.data.topic.hid }
-    });
-
     env.res.breadcrumbs = env.data.breadcrumbs;
   });
 

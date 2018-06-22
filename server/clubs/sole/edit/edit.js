@@ -92,10 +92,6 @@ module.exports = function (N, apiPath) {
       params: { club_hid: env.data.club.hid }
     });
 
-    env.data.breadcrumbs.push({
-      text: env.t('breadcrumbs_title')
-    });
-
     env.res.breadcrumbs = env.data.breadcrumbs;
   });
 };
