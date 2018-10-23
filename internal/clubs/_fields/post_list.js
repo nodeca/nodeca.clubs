@@ -5,6 +5,7 @@ module.exports = {
     'can_report_abuse',
     'can_see_hellbanned',
     'can_see_ip',
+    'can_see_history',
     'can_vote',
     'clubs_can_close_topic',
     'clubs_can_reply',
