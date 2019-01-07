@@ -68,7 +68,6 @@ module.exports = function (N, apiPath) {
       .where('hid').in(env.params.topics_hids)
       .where('club').equals(env.data.club._id)
       .or([ { st: N.models.clubs.Topic.statuses.CLOSED }, { ste: N.models.clubs.Topic.statuses.CLOSED } ])
-      .select('_id st')
       .lean(true);
 
     if (!env.data.topics.length) throw { code: N.io.CLIENT_ERROR, message: env.t('err_no_topics') };
@@ -78,6 +77,8 @@ module.exports = function (N, apiPath) {
   // Open topics
   //
   N.wire.on(apiPath, async function open_topics(env) {
+    env.data.changes = [];
+
     let statuses = N.models.clubs.Topic.statuses;
     let bulk = N.models.clubs.Topic.collection.initializeUnorderedBulkOp();
 
@@ -90,10 +91,29 @@ module.exports = function (N, apiPath) {
         setData.st = statuses.OPEN;
       }
 
+      env.data.changes.push({
+        old_topic: topic,
+        new_topic: Object.assign({}, topic, setData)
+      });
+
       bulk.find({ _id: topic._id }).updateOne({ $set: setData });
     });
 
     await bulk.execute();
+  });
+
+
+  // Save old version in history
+  //
+  N.wire.after(apiPath, function save_history(env) {
+    return N.models.clubs.PostHistory.add(
+      env.data.changes,
+      {
+        user: env.user_info.user_id,
+        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        ip:   env.req.ip
+      }
+    );
   });
 
 
@@ -102,6 +122,4 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_search_index(env) {
     await N.queue.club_topics_search_update_with_posts(env.data.topics.map(t => t._id)).postpone();
   });
-
-  // TODO: log moderator actions
 };

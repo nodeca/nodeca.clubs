@@ -6,6 +6,30 @@
 const _ = require('lodash');
 
 
+// apply $set and $unset operations on an object
+function mongo_apply(object, ops) {
+  let result = Object.assign({}, object);
+
+  for (let [ k, v ]  of Object.entries(ops)) {
+    if (k === '$set') {
+      Object.assign(result, v);
+      continue;
+    }
+
+    if (k === '$unset') {
+      for (let delete_key of Object.keys(v)) {
+        delete result[delete_key];
+      }
+      continue;
+    }
+
+    result[k] = v;
+  }
+
+  return result;
+}
+
+
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
@@ -66,7 +90,7 @@ module.exports = function (N, apiPath) {
   // Check permissions
   //
   N.wire.before(apiPath, async function check_permissions(env) {
-    // We can't delete first port. Topic operation should be requested instead
+    // We can't delete first post. Topic operation should be requested instead
     env.params.posts_ids.forEach(postId => {
       if (String(env.data.topic.cache.first_post) === postId) {
         throw N.io.BAD_REQUEST;
@@ -100,7 +124,6 @@ module.exports = function (N, apiPath) {
                               .where('_id').in(env.params.posts_ids)
                               .where('topic').equals(env.data.topic._id)
                               .where('st').in(statuses.LIST_DELETABLE)
-                              .select('_id st ste')
                               .lean(true);
 
     if (!env.data.posts.length) throw { code: N.io.CLIENT_ERROR, message: env.t('err_no_posts') };
@@ -110,6 +133,8 @@ module.exports = function (N, apiPath) {
   // Remove post
   //
   N.wire.on(apiPath, async function delete_posts(env) {
+    env.data.changes = [];
+
     let bulk = N.models.clubs.Post.collection.initializeUnorderedBulkOp();
 
     env.data.posts.forEach(post => {
@@ -121,13 +146,36 @@ module.exports = function (N, apiPath) {
 
       if (env.params.reason) setData.del_reason = env.params.reason;
 
-      bulk.find({ _id: post._id }).updateOne({
+      let update = {
         $set: setData,
         $unset: { ste: 1 }
+      };
+
+      env.data.changes.push({
+        old_topic: env.data.topic,
+        new_topic: env.data.topic,
+        old_post:  post,
+        new_post:  mongo_apply(post, update)
       });
+
+      bulk.find({ _id: post._id }).updateOne(update);
     });
 
     await bulk.execute();
+  });
+
+
+  // Save old version in history
+  //
+  N.wire.after(apiPath, function save_history(env) {
+    return N.models.clubs.PostHistory.add(
+      env.data.changes,
+      {
+        user: env.user_info.user_id,
+        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        ip:   env.req.ip
+      }
+    );
   });
 
 
@@ -170,6 +218,4 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
   });
-
-  // TODO: log moderator actions
 };

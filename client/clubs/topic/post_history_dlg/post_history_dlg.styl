@@ -1,9 +1,10 @@
 @import "nodeca.core/client/common/_variables"
 
-.club-post-history-dlg__entry
+.club-post-history-entry
+  overflow-wrap break-word
   margin-bottom 2rem
 
-.club-post-history-dlg__meta
+.club-post-history-entry__meta
   display flex
   padding .375rem .75rem
   margin-bottom .5rem
@@ -12,18 +13,35 @@
   border-radius 3px
   line-height 1.1em
 
-.club-post-history-dlg__meta-author
+.club-post-history-entry__icon-task
+.club-post-history-entry__icon-moderator
+  font-weight bold
+  color #c97971
+  margin-right .375rem
+  display none
+
+.club-post-history-entry__m-task .club-post-history-entry__icon-task
+.club-post-history-entry__m-moderator .club-post-history-entry__icon-moderator
+  display inline
+
+.club-post-history-entry__meta-author
   flex 1 1 0%
 
-.club-post-history-dlg__meta-author-link
+.club-post-history-entry__meta-author-link
   color inherit
 
-.club-post-history-dlg__meta-ts
+.club-post-history-entry__meta-ts
   white-space nowrap
   font-size $font-size-xs
   align-self flex-end
   padding-left 1rem
 
-.club-post-history-dlg__title
+.club-post-history-entry__title
   font-size $font-size-lg
   margin-bottom .5rem
+
+.club-post-history-entry__diff
+  margin-bottom .5rem
+
+.club-post-history-entry__actions
+  color $body-color-secondary

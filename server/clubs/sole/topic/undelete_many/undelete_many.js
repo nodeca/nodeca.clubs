@@ -6,6 +6,30 @@
 const _ = require('lodash');
 
 
+// apply $set and $unset operations on an object
+function mongo_apply(object, ops) {
+  let result = Object.assign({}, object);
+
+  for (let [ k, v ]  of Object.entries(ops)) {
+    if (k === '$set') {
+      Object.assign(result, v);
+      continue;
+    }
+
+    if (k === '$unset') {
+      for (let delete_key of Object.keys(v)) {
+        delete result[delete_key];
+      }
+      continue;
+    }
+
+    result[k] = v;
+  }
+
+  return result;
+}
+
+
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
@@ -78,7 +102,6 @@ module.exports = function (N, apiPath) {
                                 .where('hid').in(env.params.topics_hids)
                                 .where('club').equals(env.data.club._id)
                                 .where('st').in(st)
-                                .select('_id prev_st')
                                 .lean(true);
 
     if (!env.data.topics.length) throw { code: N.io.CLIENT_ERROR, message: env.t('err_no_topics') };
@@ -88,16 +111,39 @@ module.exports = function (N, apiPath) {
   // Undelete topics
   //
   N.wire.on(apiPath, async function undelete_topics(env) {
+    env.data.changes = [];
+
     let bulk = N.models.clubs.Topic.collection.initializeUnorderedBulkOp();
 
     env.data.topics.forEach(topic => {
-      bulk.find({ _id: topic._id }).updateOne({
+      let update = {
         $set: topic.prev_st,
         $unset: { del_reason: 1, prev_st: 1, del_by: 1 }
+      };
+
+      env.data.changes.push({
+        old_topic: topic,
+        new_topic: mongo_apply(topic, update)
       });
+
+      bulk.find({ _id: topic._id }).updateOne(update);
     });
 
     await bulk.execute();
+  });
+
+
+  // Save old version in history
+  //
+  N.wire.after(apiPath, function save_history(env) {
+    return N.models.clubs.PostHistory.add(
+      env.data.changes,
+      {
+        user: env.user_info.user_id,
+        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        ip:   env.req.ip
+      }
+    );
   });
 
 
@@ -134,6 +180,4 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_search_index(env) {
     await N.queue.club_topics_search_update_with_posts(env.data.topics.map(t => t._id)).postpone();
   });
-
-  // TODO: log moderator actions
 };

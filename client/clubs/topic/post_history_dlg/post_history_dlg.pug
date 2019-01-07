@@ -1,3 +1,5 @@
+- var roles = '$$ JSON.stringify(N.models.clubs.PostHistory.roles) $$'
+
 .modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
   .modal-dialog.modal-lg
     .modal-content
@@ -8,18 +10,45 @@
         each entry in self.entries.reverse()
           - var user = self.users[entry.user];
 
-          .club-post-history-dlg__entry
-            .club-post-history-dlg__meta
-              .club-post-history-dlg__meta-author
+          .club-post-history-entry(
+            class=entry.role === roles.USER ? 'club-post-history-entry__m-user' : ''
+            class=entry.role === roles.MODERATOR ? 'club-post-history-entry__m-moderator' : ''
+            class=entry.role === roles.TASK ? 'club-post-history-entry__m-task' : ''
+          )
+            .club-post-history-entry__meta
+              .club-post-history-entry__meta-author
+                span.club-post-history-entry__icon-task(
+                  title=self.t('role_task')
+                )= '*'
+                span.club-post-history-entry__icon-moderator(
+                  title=self.t('role_moderator')
+                )= '*'
                 if user
-                  a.club-post-history-dlg__meta-author-link(href=self.link_to('users.member', { user_hid: user.hid }))
+                  a.club-post-history-entry__meta-author-link(href=self.link_to('users.member', { user_hid: user.hid }))
                     = user.nick
-              .club-post-history-dlg__meta-ts!= self.timetag(entry.ts, 'relative')
+              .club-post-history-entry__meta-ts!= self.timetag(entry.ts, 'relative')
 
             if entry.title_diff
-              .club-post-history-dlg__title
+              .club-post-history-entry__title
                 != entry.title_diff
 
             if entry.text_diff
-              .club-post-history-dlg__diff
+              .club-post-history-entry__diff
                 != entry.text_diff
+
+            if entry.actions && entry.actions.length > 0
+              .club-post-history-entry__actions
+                each d in entry.actions
+                  - var key = d[0], value = d[1], new_value = d[2];
+                  .club-post-history-entry__action-item
+                    case key
+                      when 'topic_delete'
+                      when 'topic_hard_delete'
+                      when 'post_delete'
+                      when 'post_hard_delete'
+                        .diff-line
+                          = self.t('action_' + key)
+                          if value
+                            = ' ' + self.t('del_reason', { text: value })
+                      default
+                        .diff-line= self.t('action_' + key)

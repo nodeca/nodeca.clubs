@@ -90,7 +90,28 @@ module.exports = function (N, apiPath) {
 
     env.res.topic = { st: update.st, ste: update.ste };
 
-    await N.models.clubs.Topic.update({ _id: topic._id }, update);
+    env.data.new_topic = await N.models.clubs.Topic.findOneAndUpdate(
+      { _id: topic._id },
+      update,
+      { 'new': true }
+    );
+  });
+
+
+  // Save old version in history
+  //
+  N.wire.after(apiPath, function save_history(env) {
+    return N.models.clubs.PostHistory.add(
+      {
+        old_topic: env.data.topic,
+        new_topic: env.data.new_topic
+      },
+      {
+        user: env.user_info.user_id,
+        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        ip:   env.req.ip
+      }
+    );
   });
 
 
@@ -125,6 +146,4 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
   });
-
-  // TODO: log moderator actions
 };

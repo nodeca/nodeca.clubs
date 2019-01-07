@@ -74,7 +74,30 @@ module.exports = function (N, apiPath) {
 
     _.assign(update, post.prev_st);
 
-    await N.models.clubs.Post.update({ _id: post._id }, update);
+    env.data.new_post = await N.models.clubs.Post.findOneAndUpdate(
+      { _id: post._id },
+      update,
+      { 'new': true }
+    );
+  });
+
+
+  // Save old version in history
+  //
+  N.wire.after(apiPath, function save_history(env) {
+    return N.models.clubs.PostHistory.add(
+      {
+        old_topic: env.data.topic,
+        new_topic: env.data.topic,
+        old_post:  env.data.post,
+        new_post:  env.data.new_post
+      },
+      {
+        user: env.user_info.user_id,
+        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        ip:   env.req.ip
+      }
+    );
   });
 
 
@@ -110,6 +133,4 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
   });
-
-  // TODO: log moderator actions
 };

@@ -133,7 +133,7 @@ module.exports = function (N, collectionName) {
     let topic = await N.models.clubs.Topic.findByIdAndUpdate(
       this.topic,
       { $inc: { last_post_counter: 1 } },
-      { 'new': true },
+      { 'new': true }
     );
 
     this.hid = topic.last_post_counter;
