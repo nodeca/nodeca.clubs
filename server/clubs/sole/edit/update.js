@@ -121,8 +121,10 @@ module.exports = function (N, apiPath) {
     let sharpInstance = sharp(fileInfo.path);
 
     sharpInstance.rotate()
-                 .resize(config.resize.orig.width, config.resize.orig.height)
-                 .crop(sharp.strategy.center);
+                 .resize(config.resize.orig.width, config.resize.orig.height, {
+                   fit: 'cover',
+                   position: 'center'
+                 });
 
     try {
       await sharpInstance.toFile(tmpfile);
