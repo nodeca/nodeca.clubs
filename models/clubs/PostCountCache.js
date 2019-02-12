@@ -1,4 +1,4 @@
-// Cache for `N.models.clubs.Post.count()`
+// Cache for `N.models.clubs.Post.countDocuments()`
 
 'use strict';
 
@@ -57,7 +57,7 @@ module.exports = function (N, collectionName) {
             .where('st').equals(st)
             .where('hid').lt(hid)
             .where('hid').gte(cut_from)
-            .count()
+            .countDocuments()
       )
     );
 
@@ -120,7 +120,7 @@ module.exports = function (N, collectionName) {
 
     // Update cache record
     await N.models.clubs.PostCountCache
-              .update({ src }, update, { upsert: true });
+              .updateOne({ src }, update, { upsert: true });
 
     // Get count between cached hid and required hid
     let cnt = await countFn(src, hid, cached_hid, hb);

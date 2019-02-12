@@ -51,7 +51,7 @@ module.exports = function (N, apiPath) {
   // Restore club
   //
   N.wire.on(apiPath, function club_restore(env) {
-    return N.models.clubs.Club.update({ _id: env.data.club._id }, { $set: { exists: true } });
+    return N.models.clubs.Club.updateOne({ _id: env.data.club._id }, { $set: { exists: true } });
   });
 
 

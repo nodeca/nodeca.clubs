@@ -73,7 +73,7 @@ module.exports = function (N, apiPath) {
       }
     };
 
-    let update_result = await N.models.clubs.Club.update({ _id: env.data.club._id }, update_data);
+    let update_result = await N.models.clubs.Club.updateOne({ _id: env.data.club._id }, update_data);
 
     env.data.is_updated = update_result.nModified > 0;
 
@@ -141,15 +141,15 @@ module.exports = function (N, apiPath) {
       });
 
       if (last_club_str === next_club_str) {
-        await N.models.clubs.ClubHistory.remove({ _id: last_entry._id });
+        await N.models.clubs.ClubHistory.deleteOne({ _id: last_entry._id });
       }
     }
 
-    await N.models.clubs.Club.update(
+    await N.models.clubs.Club.updateOne(
       { _id: env.data.club._id },
       { $set: {
         last_edit_ts: new Date(),
-        edit_count: await N.models.clubs.ClubHistory.count({ club: env.data.club._id })
+        edit_count: await N.models.clubs.ClubHistory.countDocuments({ club: env.data.club._id })
       } }
     );
   });

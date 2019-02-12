@@ -101,15 +101,15 @@ module.exports = function (N, apiPath) {
       pending_owners,
       log_records
     ] = await Promise.all([
-      N.models.clubs.Membership.count({ club: env.data.club._id }),
-      N.models.clubs.Membership.count({ club: env.data.club._id, is_owner: true }),
-      N.models.clubs.Blocked.count({ club: env.data.club._id }),
+      N.models.clubs.Membership.countDocuments({ club: env.data.club._id }),
+      N.models.clubs.Membership.countDocuments({ club: env.data.club._id, is_owner: true }),
+      N.models.clubs.Blocked.countDocuments({ club: env.data.club._id }),
       env.data.club.is_closed ?
-        N.models.clubs.MembershipPending.count({ club: env.data.club._id }) :
+        N.models.clubs.MembershipPending.countDocuments({ club: env.data.club._id }) :
         Promise.resolve(),
-      N.models.clubs.OwnershipPending.count({ club: env.data.club._id }),
+      N.models.clubs.OwnershipPending.countDocuments({ club: env.data.club._id }),
       env.data.can_see_log ?
-        N.models.clubs.ClubAuditLog.count({ club: env.data.club._id }) :
+        N.models.clubs.ClubAuditLog.countDocuments({ club: env.data.club._id }) :
         Promise.resolve()
     ]);
 

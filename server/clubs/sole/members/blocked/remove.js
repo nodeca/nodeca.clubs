@@ -78,7 +78,7 @@ module.exports = function (N, apiPath) {
   // Remove user from club block list
   //
   N.wire.on(apiPath, async function remove_from_block_list(env) {
-    await N.models.clubs.Blocked.remove(
+    await N.models.clubs.Blocked.deleteOne(
       { club: env.data.club._id, user: env.data.user._id }
     );
   });

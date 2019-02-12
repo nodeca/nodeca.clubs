@@ -89,7 +89,7 @@ module.exports = function (N, apiPath) {
     if (!env.data.is_club_owner) return;
     if (String(env.data.user._id) !== env.user_info.user_id) return;
 
-    let owner_count = await N.models.clubs.Membership.count()
+    let owner_count = await N.models.clubs.Membership.countDocuments()
                                 .where('club').equals(env.data.club._id)
                                 .where('is_owner').equals(true);
 
@@ -106,13 +106,13 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function remove_from_block_list(env) {
     // revoke ownership, does nothing if not a member yet
-    await N.models.clubs.Membership.update(
+    await N.models.clubs.Membership.updateOne(
       { club: env.data.club._id, user: env.data.user._id },
       { $set: { is_owner: false } }
     );
 
     // revoke ownership request
-    await N.models.clubs.OwnershipPending.remove(
+    await N.models.clubs.OwnershipPending.deleteOne(
       { club: env.data.club._id, user: env.data.user._id }
     );
 

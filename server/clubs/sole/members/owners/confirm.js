@@ -58,19 +58,19 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function club_set_owner(env) {
     // remove ban in case invited user is banned from the club
-    await N.models.clubs.Blocked.remove(
+    await N.models.clubs.Blocked.deleteOne(
       { club: env.data.club._id, user: env.user_info.user_id }
     );
 
     // set ownership status, join the club if isn't already there
-    await N.models.clubs.Membership.update(
+    await N.models.clubs.Membership.updateOne(
       { club: env.data.club._id, user: env.user_info.user_id },
       { $set: { is_owner: true }, $setOnInsert: { joined_ts: new Date() } },
       { upsert: true }
     );
 
     // cancel ownership requests to user
-    await N.models.clubs.OwnershipPending.remove(
+    await N.models.clubs.OwnershipPending.deleteOne(
       { club: env.data.club._id, user: env.user_info.user_id }
     );
 

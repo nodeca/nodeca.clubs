@@ -69,7 +69,7 @@ module.exports = function (N, apiPath) {
 
     // prevent leaving if user is the last owner
     if (env.data.is_club_owner) {
-      let owner_count = await N.models.clubs.Membership.count()
+      let owner_count = await N.models.clubs.Membership.countDocuments()
                                   .where('club').equals(env.data.club._id)
                                   .where('is_owner').equals(true);
 
@@ -82,7 +82,7 @@ module.exports = function (N, apiPath) {
     }
 
     // remove membership record
-    await N.models.clubs.Membership.remove(
+    await N.models.clubs.Membership.deleteOne(
       { club: env.data.club._id, user: env.user_info.user_id },
     );
 

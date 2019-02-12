@@ -96,7 +96,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function add_to_block_list(env) {
     // user may be already banned, so use upsert to avoid duplicates
-    await N.models.clubs.Blocked.update(
+    await N.models.clubs.Blocked.updateOne(
       { club: env.data.club._id, user: env.data.user._id },
       { $setOnInsert: { from: env.user_info.user_id, ts: new Date() } },
       { upsert: true }
@@ -107,7 +107,7 @@ module.exports = function (N, apiPath) {
   // Kick target user from the club
   //
   N.wire.after(apiPath, async function kick_user(env) {
-    await N.models.clubs.Membership.remove(
+    await N.models.clubs.Membership.deleteOne(
       { club: env.data.club._id, user: env.data.user._id },
     );
 

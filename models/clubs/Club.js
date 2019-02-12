@@ -123,16 +123,16 @@ module.exports = function (N, collectionName) {
       }
     }
 
-    await Club.update({ _id: club_id }, updateData);
+    await Club.updateOne({ _id: club_id }, updateData);
   };
 
 
   // Update member count
   //
   Club.statics.updateMembers = async function (club_id) {
-    let members = await N.models.clubs.Membership.count({ club: club_id });
+    let members = await N.models.clubs.Membership.countDocuments({ club: club_id });
 
-    await N.models.clubs.Club.update(
+    await N.models.clubs.Club.updateOne(
       { _id: club_id },
       { $set: { members } }
     );

@@ -121,7 +121,7 @@ module.exports = function (N, apiPath) {
         N.models.clubs.Topic
             .where('club').equals(env.data.club._id)
             .where('st').equals(st)
-            .count()
+            .countDocuments()
       )
     );
 
@@ -130,7 +130,7 @@ module.exports = function (N, apiPath) {
                        await N.models.clubs.Topic
                                .where('club').equals(env.data.club._id)
                                .where('st').equals(N.models.clubs.Topic.statuses.PINNED)
-                               .count();
+                               .countDocuments();
 
     let topic_count = _.sum(counters_by_status) + pinned_count;
 
@@ -150,7 +150,7 @@ module.exports = function (N, apiPath) {
               .where(`${cache}.last_post`).gt(last_post_id)
               .where('club').equals(env.data.club._id)
               .where('st').equals(st)
-              .count()
+              .countDocuments()
         )
       );
 

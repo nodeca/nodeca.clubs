@@ -88,7 +88,7 @@ module.exports = function (N, apiPath) {
 
     if (env.data.club.is_closed) {
       // create pending request, use upsert to avoid race condition duplicates
-      await N.models.clubs.MembershipPending.update(
+      await N.models.clubs.MembershipPending.updateOne(
         { club: env.data.club._id, user: env.user_info.user_id },
         { $setOnInsert: { ts: new Date() } },
         { upsert: true }
@@ -99,7 +99,7 @@ module.exports = function (N, apiPath) {
     }
 
     // create membership record, use upsert to avoid race condition duplicates
-    await N.models.clubs.Membership.update(
+    await N.models.clubs.Membership.updateOne(
       { club: env.data.club._id, user: env.user_info.user_id },
       { $setOnInsert: { is_owner: false, joined_ts: new Date() } },
       { upsert: true }

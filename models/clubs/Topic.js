@@ -192,7 +192,7 @@ module.exports = function (N, collectionName) {
                           N.models.clubs.Post
                               .where('topic').equals(topicID)
                               .where('st').equals(st)
-                              .count()
+                              .countDocuments()
                         )
                       );
 
@@ -202,7 +202,7 @@ module.exports = function (N, collectionName) {
     // Hellbanned post count
     updateData['cache_hb.post_count'] = count[0] + count[1];
 
-    await N.models.clubs.Topic.update({ _id: topicID }, updateData);
+    await N.models.clubs.Topic.updateOne({ _id: topicID }, updateData);
   };
 
 

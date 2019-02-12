@@ -83,7 +83,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function club_join(env) {
     // create membership record, use upsert to avoid race condition duplicates
-    await N.models.clubs.Membership.update(
+    await N.models.clubs.Membership.updateOne(
       { club: env.data.club._id, user: env.data.user._id },
       { $setOnInsert: { is_owner: false, joined_ts: new Date() } },
       { upsert: true }
@@ -96,7 +96,7 @@ module.exports = function (N, apiPath) {
   // Remove membership request
   //
   N.wire.after(apiPath, async function remove_request(env) {
-    await N.models.clubs.MembershipPending.remove(
+    await N.models.clubs.MembershipPending.deleteOne(
       { user: env.params.user_id, club: env.data.club._id }
     );
   });

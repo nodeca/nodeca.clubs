@@ -115,7 +115,7 @@ module.exports = function (N, apiPath) {
     let secret_key = createToken();
 
     // user may already have a request, so use upsert to avoid duplicates
-    let result = await N.models.clubs.OwnershipPending.update(
+    let result = await N.models.clubs.OwnershipPending.updateOne(
       { club: env.data.club._id, user: env.data.user._id },
       { $setOnInsert: { from: env.user_info.user_id, ts: new Date(), secret_key } },
       { upsert: true }

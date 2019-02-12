@@ -61,7 +61,7 @@ module.exports = function (N, apiPath) {
   // Remove membership request
   //
   N.wire.on(apiPath, async function remove_request(env) {
-    await N.models.clubs.MembershipPending.remove(
+    await N.models.clubs.MembershipPending.deleteOne(
       { user: env.params.user_id, club: env.data.club._id }
     );
   });

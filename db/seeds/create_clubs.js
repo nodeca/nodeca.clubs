@@ -92,7 +92,7 @@ async function createPost(topic, previous_posts) {
   post.params = options;
 
   await post.save();
-  await models.users.User.update({ _id: post.user }, { $inc: { post_count: 1 } });
+  await models.users.User.updateOne({ _id: post.user }, { $inc: { post_count: 1 } });
 
   return post;
 }

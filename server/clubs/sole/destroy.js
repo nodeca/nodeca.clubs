@@ -51,7 +51,7 @@ module.exports = function (N, apiPath) {
   // Remove club
   //
   N.wire.on(apiPath, function club_remove(env) {
-    return N.models.clubs.Club.update({ _id: env.data.club._id }, { $set: { exists: false } });
+    return N.models.clubs.Club.updateOne({ _id: env.data.club._id }, { $set: { exists: false } });
   });
 
 
