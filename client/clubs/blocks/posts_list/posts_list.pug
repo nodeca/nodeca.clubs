@@ -115,10 +115,6 @@ each post, post_idx in self.posts
       .clubs-post__content
         .clubs-post__message.markup !{post.html}
 
-        if post.tail && post.tail.length
-          .clubs-post__tail.markup-tail
-            != self.partial('@users.blocks.attachments', { message: post })
-
       footer.clubs-post__controls
         ul.clubs-post__controls-blk
 
