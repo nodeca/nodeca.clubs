@@ -1630,6 +1630,17 @@ N.wire.once('navigate.done:' + module.apiPath, function topic_post_selection_ini
   });
 
 
+  // Show topic history popup
+  //
+  N.wire.on('clubs.topic:topic_history', function show_topic_history(data) {
+    let topic_id = data.$this.data('topic-id');
+
+    return Promise.resolve()
+      .then(() => N.io.rpc('clubs.topic.show_history', { topic_id }))
+      .then(res => N.wire.emit('clubs.topic.topic_history_dlg', res));
+  });
+
+
   // Show post history popup
   //
   N.wire.on('clubs.topic:post_history', function show_post_history(data) {

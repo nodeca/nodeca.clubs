@@ -1,4 +1,4 @@
-- var roles = '$$ JSON.stringify(N.models.clubs.PostHistory.roles) $$'
+- var roles = '$$ JSON.stringify(N.models.clubs.TopicHistory.roles) $$'
 
 .modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
   .modal-dialog.modal-lg
@@ -6,36 +6,36 @@
       .modal-header
         h4.modal-title= self.t('title')
         button.close(type='button', tabindex='-1', data-dismiss='modal') &times;
-      .modal-body.club-post-history-dlg__content
+      .modal-body.club-topic-history-dlg__content
         each entry in self.entries.reverse()
           - var user = self.users[entry.user];
 
-          .club-post-history-entry(
-            class=entry.role === roles.USER ? 'club-post-history-entry__m-user' : ''
-            class=entry.role === roles.MODERATOR ? 'club-post-history-entry__m-moderator' : ''
-            class=entry.role === roles.TASK ? 'club-post-history-entry__m-task' : ''
+          .club-topic-history-entry(
+            class=entry.role === roles.USER ? 'club-topic-history-entry__m-user' : ''
+            class=entry.role === roles.MODERATOR ? 'club-topic-history-entry__m-moderator' : ''
+            class=entry.role === roles.TASK ? 'club-topic-history-entry__m-task' : ''
           )
-            .club-post-history-entry__meta
-              span.club-post-history-entry__meta-ts!= self.timetag(entry.ts, 'relative')
+            .club-topic-history-entry__meta
+              span.club-topic-history-entry__meta-ts!= self.timetag(entry.ts, 'relative')
               if user
-                a.club-post-history-entry__meta-author-link(href=self.link_to('users.member', { user_hid: user.hid }))
+                a.club-topic-history-entry__meta-author-link(href=self.link_to('users.member', { user_hid: user.hid }))
                   = user.nick
-              span.club-post-history-entry__icon-task(
+              span.club-topic-history-entry__icon-task(
                 title=self.t('role_task')
               )= '*'
-              span.club-post-history-entry__icon-moderator(
+              span.club-topic-history-entry__icon-moderator(
                 title=self.t('role_moderator')
               )= '*'
 
-            if entry.text_diff
-              .club-post-history-entry__diff
-                != entry.text_diff
+            if entry.title_diff
+              .club-topic-history-entry__title
+                != entry.title_diff
 
             if entry.actions && entry.actions.length > 0
-              .club-post-history-entry__actions
+              .club-topic-history-entry__actions
                 each d in entry.actions
                   - var key = d[0], value = d[1], new_value = d[2];
-                  .club-post-history-entry__action-item
+                  .club-topic-history-entry__action-item
                     case key
                       when 'delete'
                       when 'hard_delete'

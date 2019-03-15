@@ -106,11 +106,11 @@ module.exports = function (N, apiPath) {
   // Save old version in history
   //
   N.wire.after(apiPath, function save_history(env) {
-    return N.models.clubs.PostHistory.add(
+    return N.models.clubs.TopicHistory.add(
       env.data.changes,
       {
         user: env.user_info.user_id,
-        role: N.models.clubs.PostHistory.roles.MODERATOR,
+        role: N.models.clubs.TopicHistory.roles.MODERATOR,
         ip:   env.req.ip
       }
     );

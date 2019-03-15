@@ -1,0 +1,12 @@
+en-US:
+  title: History
+  role_task: This action was performed automatically
+  role_moderator: This action was performed by a moderator
+  action_open: Topic opened
+  action_close: Topic closed
+  action_pin: Topic pinned
+  action_unpin: Topic unpinned
+  action_delete: Topic deleted
+  action_hard_delete: Topic hard deleted
+  action_undelete: Topic restored
+  del_reason: "(#{text})"
