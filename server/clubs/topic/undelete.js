@@ -2,7 +2,9 @@
 //
 'use strict';
 
+
 const _ = require('lodash');
+const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 
 
 module.exports = function (N, apiPath) {
@@ -88,8 +90,6 @@ module.exports = function (N, apiPath) {
 
     _.assign(update, topic.prev_st);
 
-    env.res.topic = { st: update.st, ste: update.ste };
-
     env.data.new_topic = await N.models.clubs.Topic.findOneAndUpdate(
       { _id: topic._id },
       update,
@@ -144,5 +144,16 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
+  });
+
+
+  // Return changed topic info
+  //
+  N.wire.after(apiPath, async function return_topic(env) {
+    let topic = await N.models.clubs.Topic.findById(env.data.topic._id).lean(true);
+
+    if (!topic) throw N.io.NOT_FOUND;
+
+    env.res.topic = await sanitize_topic(N, topic, env.user_info);
   });
 };
