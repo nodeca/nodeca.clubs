@@ -130,4 +130,11 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
   });
+
+
+  // Update user counters
+  //
+  N.wire.after(apiPath, async function update_user(env) {
+    await N.models.clubs.UserPostCount.recount(env.data.post.user);
+  });
 };

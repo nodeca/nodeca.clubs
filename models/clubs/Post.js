@@ -57,7 +57,12 @@ module.exports = function (N, collectionName) {
     // constants should be defined globally
     st:           Number,
     ste:          Number,  // real state, if topic is sticky or hellbanned
-                               // (general `state` is used for fast selects)
+                           // (general `state` is used for fast selects)
+
+    // Flag set if topic state isn't deleted or hard deleted;
+    // used in counting user's activity to quickly determine if a post
+    // should be counted (i.e. in a visible topic) or not
+    topic_exists: { type: Boolean, 'default': true },
 
     // Aggregated votes count
     votes:        { type: Number, 'default': 0 },
@@ -118,6 +123,14 @@ module.exports = function (N, collectionName) {
     club: 1,
     _id:  1
   });
+
+  // - count all messages from a user
+  Post.index({
+    user: 1,
+    st: 1,
+    topic_exists: 1
+  });
+
 
   // Set 'hid' for the new post.
   //

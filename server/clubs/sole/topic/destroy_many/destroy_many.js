@@ -161,6 +161,16 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Change topic status in all posts
+  //
+  N.wire.after(apiPath, function change_topic_status_in_posts(env) {
+    return N.models.clubs.Post.updateMany(
+      { topic: { $in: _.map(env.data.topics, '_id') } },
+      { $set: { topic_exists: false } }
+    );
+  });
+
+
   // Remove votes
   //
   N.wire.after(apiPath, async function remove_votes(env) {
@@ -185,6 +195,30 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.club._id);
+  });
+
+
+  // Update user topic counters
+  //
+  N.wire.after(apiPath, async function update_user_topics(env) {
+    let users = _.map(env.data.topics, 'cache.first_user');
+
+    await N.models.clubs.UserTopicCount.recount(_.uniq(users.map(String)));
+  });
+
+
+  // Update user post counters
+  //
+  N.wire.after(apiPath, async function update_user_topics(env) {
+    let users = _.map(
+      await N.models.clubs.Post.find()
+                .where('topic').in(_.map(env.data.topics, '_id'))
+                .select('user')
+                .lean(true),
+      'user'
+    );
+
+    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
   });
 
 

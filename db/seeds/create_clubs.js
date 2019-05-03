@@ -91,7 +91,6 @@ async function createPost(topic, previous_posts) {
   post.params = options;
 
   await post.save();
-  await models.users.User.updateOne({ _id: post.user }, { $inc: { post_count: 1 } });
 
   return post;
 }
@@ -117,7 +116,7 @@ async function addVotes(post) {
     await vote.save();
   }
 
-  await post.update({ votes });
+  await post.updateOne({ votes });
 }
 
 
@@ -308,6 +307,12 @@ async function addBigTopic(club_id) {
 }
 
 
+async function updateUserCounters() {
+  await models.clubs.UserTopicCount.recount(_.map(users, '_id'));
+  await models.clubs.UserPostCount.recount(_.map(users, '_id'));
+}
+
+
 module.exports = async function (N) {
   models   = N.models;
   settings = N.settings;
@@ -327,4 +332,5 @@ module.exports = async function (N) {
   await createTopics(club_ids.slice(1));
   await fillBigClub(club_ids[0]);
   await addBigTopic(club_ids[0]);
+  await updateUserCounters();
 };

@@ -166,4 +166,13 @@ module.exports = function (N, apiPath) {
     await N.models.clubs.Topic.updateCache(env.data.topic._id);
     await N.models.clubs.Club.updateCache(env.data.topic.club);
   });
+
+
+  // Update user counters
+  //
+  N.wire.after(apiPath, async function update_user(env) {
+    let users = _.map(env.data.posts, 'user');
+
+    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
+  });
 };

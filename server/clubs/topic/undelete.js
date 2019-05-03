@@ -115,6 +115,16 @@ module.exports = function (N, apiPath) {
   });
 
 
+  // Change topic status in all posts
+  //
+  N.wire.after(apiPath, function change_topic_status_in_posts(env) {
+    return N.models.clubs.Post.updateMany(
+      { topic: env.data.topic._id },
+      { $set: { topic_exists: true } }
+    );
+  });
+
+
   // Restore votes
   //
   N.wire.after(apiPath, async function restore_votes(env) {
@@ -144,6 +154,23 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, async function update_club(env) {
     await N.models.clubs.Club.updateCache(env.data.topic.club);
+  });
+
+
+  // Update user counters
+  //
+  N.wire.after(apiPath, async function update_user(env) {
+    await N.models.clubs.UserTopicCount.recount(env.data.topic.cache.first_user);
+
+    let users = _.map(
+      await N.models.clubs.Post.find()
+                .where('topic').equals(env.data.topic._id)
+                .select('user')
+                .lean(true),
+      'user'
+    );
+
+    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
   });
 
 
