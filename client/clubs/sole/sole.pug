@@ -13,8 +13,6 @@ article#content.clubs-sole-root(
   class=(self.pagination.chunk_offset > 0 ? '' : 'clubs-sole-root__m-first-page')
   class=(self.club.exists ? '' : 'clubs-sole-root__m-deleted')
   data-last-topic-hid= self.last_topic_hid
-  data-top-marker=     self.topics && self.topics.length > 0 ? self.topics[0].cache.last_post : null
-  data-bottom-marker=  self.topics && self.topics.length > 0 ? self.topics[self.topics.length - 1].cache.last_post : null
 )
 
   -
@@ -96,18 +94,8 @@ article#content.clubs-sole-root(
       )
         span.icon.icon-loading-placeholder
 
-      .clubs-topiclist._affix(
-        data-affix-top={
-          offset:     500,
-          wire_above: 'clubs.sole:load_prev',
-          throttle:   100
-        }
-        data-affix-bottom={
-          offset:     500,
-          wire_below: 'clubs.sole:load_next',
-          throttle:   100
-        }
-      )!= self.partial('@clubs.blocks.topics_list')
+      .clubs-topiclist
+        != self.partial('@clubs.blocks.topics_list')
 
       .clubs-sole__loading-next.nojs-hide(
         class=(self.topics && self.topics.length > 0 && self.topics[self.topics.length - 1].hid === self.last_topic_hid ? 'd-none' : '')
