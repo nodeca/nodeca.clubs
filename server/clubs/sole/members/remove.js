@@ -90,7 +90,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function kick_user(env) {
     await N.models.clubs.Membership.deleteOne(
-      { club: env.data.club._id, user: env.data.user._id },
+      { club: env.data.club._id, user: env.data.user._id }
     );
 
     await N.models.clubs.Club.updateMembers(env.data.club._id);

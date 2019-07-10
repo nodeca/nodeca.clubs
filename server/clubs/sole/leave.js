@@ -83,7 +83,7 @@ module.exports = function (N, apiPath) {
 
     // remove membership record
     await N.models.clubs.Membership.deleteOne(
-      { club: env.data.club._id, user: env.user_info.user_id },
+      { club: env.data.club._id, user: env.user_info.user_id }
     );
 
     await N.models.clubs.Club.updateMembers(env.data.club._id);
