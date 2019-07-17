@@ -1,0 +1,25 @@
+each result in self.results
+  .users-activity-item(
+    id='item' + result.topic._id
+    data-item-id=result.topic._id
+  )
+    a.users-activity-item__title(
+      href=self.link_to('clubs.topic', { club_hid: result.club.hid, topic_hid: result.topic.hid })
+    )= result.topic.title
+
+    .users-activity-item__stat-narrow.d-sm-none
+      a.users-activity-item__stat-link(
+        href=self.link_to('clubs.sole', { club_hid: result.club.hid })
+      )= result.club.title
+
+    ul.users-activity-item__stat
+      li.users-activity-item__stat-item
+        != self.timetag(result.topic.cache.last_ts, 'relative')
+
+      li.users-activity-item__stat-item.d-none.d-sm-inline-block
+        a.users-activity-item__stat-link(
+          href=self.link_to('clubs.sole', { club_hid: result.club.hid })
+        )= result.club.title
+
+      li.users-activity-item__stat-item
+        = self.t('replies', result.topic.cache.post_count - 1)

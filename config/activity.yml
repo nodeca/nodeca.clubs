@@ -1,0 +1,8 @@
+users:
+  activity:
+    menu:
+      club_topics:
+        priority: 50
+
+      club_posts:
+        priority: 60

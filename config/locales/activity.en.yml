@@ -1,0 +1,7 @@
+i18n:
+  en-US:
+    users:
+      activity:
+        menu:
+          club_topics: 'Club topics'
+          club_posts: 'Club posts'
