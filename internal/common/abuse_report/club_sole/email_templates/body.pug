@@ -1,13 +1,15 @@
 p
   - var profile_name = pug.escape(self.author.user_name);
   - var profile_url = pug.escape(self.link_to('users.member', { user_hid: self.author.user_hid }));
-  != self.t('header', { url: '<a href="' + profile_url + '">' + profile_name + '</a>' })
+  !=self.t('header', { url: '<a href="' + profile_url + '">' + profile_name + '</a>' })
 
 blockquote=self.report_text
 
-p: a(href=self.club_url)=self.t('to', { title: self.club_title }) + '\n'
+p: a(href=self.club_url)=self.t('to') + '\n'
 
-blockquote!=self.club_description
+blockquote
+  p= self.club_title
+  p= self.club_description
 
 if self.recipients && self.recipients.length
   p=self.t('message_sent_to')

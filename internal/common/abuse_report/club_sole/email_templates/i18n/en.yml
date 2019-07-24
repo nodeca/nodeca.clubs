@@ -1,9 +1,8 @@
 en-US:
   subject:
-    subject: "abuse report about a club from #{user_name}"
+    subject: "report from #{user} (club)"
   body:
-    header: "Complaint from user #{url}:"
-    header_auto: "Complaint (auto):"
-    to: 'About club "#{title}":'
+    header: "Report from user #{url}:"
+    to: "About a club:"
     message_sent_to: "This message sent to: "
     report_topic: Topic with report.
