@@ -41,18 +41,39 @@ module.exports = function (N, apiPath) {
   });
 
 
-  // Check if user can see this post
+  // Only allow to bookmark public posts
   //
   N.wire.before(apiPath, async function check_access(env) {
     let access_env = { params: {
       posts: env.data.post,
-      user_info: env.user_info,
+      user_info: '000000000000000000000000', // guest
       preload: [ env.data.topic ]
     } };
 
     await N.wire.emit('internal:clubs.access.post', access_env);
 
-    if (!access_env.data.access_read) throw N.io.NOT_FOUND;
+    if (!access_env.data.access_read) {
+
+      // Allow hellbanned users to bookmark their own posts
+      //
+      if (env.user_info.hb && env.data.post.st === N.models.clubs.Post.statuses.HB) {
+        let access_env = { params: {
+          posts: env.data.post,
+          user_info: env.user_info,
+          preload: [ env.data.topic ]
+        } };
+
+        await N.wire.emit('internal:clubs.access.post', access_env);
+
+        if (!access_env.data.access_read) {
+          throw N.io.NOT_FOUND;
+        }
+
+        return;
+      }
+
+      throw N.io.NOT_FOUND;
+    }
   });
 
 
@@ -62,19 +83,23 @@ module.exports = function (N, apiPath) {
 
     // If `env.params.remove` - remove bookmark
     if (env.params.remove) {
-      await N.models.clubs.PostBookmark.deleteOne(
-        { user: env.user_info.user_id, post_id: env.data.post._id }
-      );
+      await N.models.users.Bookmark.deleteOne({
+        user: env.user_info.user_id,
+        src:  env.params.post_id
+      });
       return;
     }
 
-    // Add bookmark
-    let data = { user: env.user_info.user_id, post_id: env.data.post._id };
-
     // Use `findOneAndUpdate` with `upsert` to avoid duplicates in case of multi click
-    await N.models.clubs.PostBookmark.findOneAndUpdate(
-      data,
-      { $set: data },
+    await N.models.users.Bookmark.findOneAndUpdate(
+      {
+        user: env.user_info.user_id,
+        src:  env.params.post_id
+      },
+      { $set: {
+        src_type: N.shared.content_type.CLUB_POST,
+        'public': true
+      } },
       { upsert: true }
     );
   });
@@ -83,7 +108,7 @@ module.exports = function (N, apiPath) {
   // Update post, fill count
   //
   N.wire.after(apiPath, async function update_post(env) {
-    let count = await N.models.clubs.PostBookmark.countDocuments({ post_id: env.data.post._id });
+    let count = await N.models.users.Bookmark.countDocuments({ src: env.data.post._id });
 
     env.res.count = count;
 

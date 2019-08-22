@@ -135,12 +135,12 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function fill_bookmarks(env) {
     let postIds = env.data.topics.map(topic => topic.cache.first_post);
 
-    let bookmarks = await N.models.clubs.PostBookmark.find()
+    let bookmarks = await N.models.users.Bookmark.find()
                               .where('user').equals(env.user_info.user_id)
-                              .where('post_id').in(postIds)
+                              .where('src').in(postIds)
                               .lean(true);
 
-    env.res.own_bookmarks = _.map(bookmarks, 'post_id');
+    env.res.own_bookmarks = _.map(bookmarks, 'src');
   });
 
 

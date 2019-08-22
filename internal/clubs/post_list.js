@@ -171,16 +171,16 @@ module.exports = function (N, apiPath) {
   // Fetch and fill bookmarks
   //
   N.wire.after(apiPath, async function fetch_and_fill_bookmarks(env) {
-    let bookmarks = await N.models.clubs.PostBookmark.find()
+    let bookmarks = await N.models.users.Bookmark.find()
                               .where('user').equals(env.user_info.user_id)
-                              .where('post_id').in(env.data.posts_ids)
+                              .where('src').in(env.data.posts_ids)
                               .lean(true);
 
     env.data.own_bookmarks = bookmarks;
 
     if (!bookmarks.length) return;
 
-    env.res.own_bookmarks = _.map(bookmarks, 'post_id');
+    env.res.own_bookmarks = _.map(bookmarks, 'src');
   });
 
 
