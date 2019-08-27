@@ -9,14 +9,13 @@ article.users-bookmarks-item.users-bookmarks-item__m-with-content(
       )= self.topic.title
 
       .users-bookmarks-item__stat-narrow.d-sm-none
-        = self.t('source') + ': '
         a.users-bookmarks-item__stat-link.users-bookmarks-item__m-stat-parent(
           href=self.link_to('clubs.sole', { club_hid: self.club.hid })
         )= self.club.title
 
       ul.users-bookmarks-item__stat
         li.users-bookmarks-item__stat-item
-          = self.t('source')
+          = self.post.hid <= 1 ? self.t('club_topic') : self.t('club_post')
 
         li.users-bookmarks-item__stat-item
           != self.timetag(self.post.ts, 'relative')
