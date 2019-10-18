@@ -9,7 +9,7 @@ N.wire.on('navigate.done:' + module.apiPath, function page_init() {
   if (!query.trim()) return;
 
   N.io.rpc('clubs.search.list.results', { query }).then(function (res) {
-    return N.wire.emit('navigate.update', {
+    return N.wire.emit('navigate.content_update', {
       $: $(N.runtime.render(module.apiPath + '.list', res)),
       locals: res,
       $replace: $('.clubs-search__results')
@@ -18,7 +18,7 @@ N.wire.on('navigate.done:' + module.apiPath, function page_init() {
     if (err.code === N.io.CLIENT_ERROR) {
       let res = { error: err.message };
 
-      return N.wire.emit('navigate.update', {
+      return N.wire.emit('navigate.content_update', {
         $: $(N.runtime.render(module.apiPath + '.list', res)),
         locals: res,
         $replace: $('.clubs-search__results')
