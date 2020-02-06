@@ -26,8 +26,8 @@ module.exports = function (N, collectionName) {
 
   let Club = new Schema({
     title:        String,
-    description:  { type: String, 'default': '' },
-    created_ts:   { type: Date, 'default': Date.now },
+    description:  { type: String, default: '' },
+    created_ts:   { type: Date, default: Date.now },
 
     // user-friendly id (autoincremented)
     hid:          { type: Number, index: true },
@@ -36,14 +36,14 @@ module.exports = function (N, collectionName) {
     members:      Number,
 
     // membership requires leader approval
-    is_closed:    { type: Boolean, 'default': false },
+    is_closed:    { type: Boolean, default: false },
 
     avatar_id:    Schema.Types.ObjectId,
 
     // coordinates, either [ Number, Number ] or Null
     location:     Schema.Types.Mixed,
 
-    exists:       { type: Boolean, 'default': true },
+    exists:       { type: Boolean, default: true },
 
     // history: when this info was changed last time, and total edit count
     last_edit_ts: Date,

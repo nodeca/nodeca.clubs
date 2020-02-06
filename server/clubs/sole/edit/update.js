@@ -23,7 +23,7 @@ module.exports = function (N, apiPath) {
     club_id:         { format: 'mongo', required: true },
     title:           { type: 'string',  required: true },
     description:     { type: 'string',  required: true },
-    membership:      { 'enum': [ 'open', 'closed' ], required: true },
+    membership:      { enum: [ 'open', 'closed' ], required: true },
     remove_avatar:   { type: 'boolean' },
     remove_location: { type: 'boolean' },
     avatar:          { type: 'string' }

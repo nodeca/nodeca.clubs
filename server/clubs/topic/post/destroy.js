@@ -11,7 +11,7 @@ module.exports = function (N, apiPath) {
   N.validate(apiPath, {
     post_id:      { format: 'mongo', required: true },
     reason:       { type: 'string' },
-    method:       { type: 'string', 'enum': [ 'hard', 'soft' ], required: true },
+    method:       { type: 'string', enum: [ 'hard', 'soft' ], required: true },
     as_moderator: { type: 'boolean', required: true }
   });
 
@@ -142,7 +142,7 @@ module.exports = function (N, apiPath) {
     env.data.new_post = await N.models.clubs.Post.findOneAndUpdate(
       { _id: post._id },
       update,
-      { 'new': true }
+      { new: true }
     );
   });
 
@@ -175,7 +175,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, async function remove_votes(env) {
     await N.models.users.Vote.updateMany(
-      { 'for': env.data.post._id },
+      { for: env.data.post._id },
       // Just move vote `value` field to `backup` field
       { $rename: { value: 'backup' } }
     );

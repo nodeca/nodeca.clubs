@@ -42,7 +42,7 @@ module.exports = function (N, collectionName) {
 
     // metadata
     user: Schema.ObjectId,
-    ts:   { type: Date, 'default': Date.now },
+    ts:   { type: Date, default: Date.now },
     ip:   String,
     role: Number,
 

@@ -16,9 +16,9 @@ module.exports = function (N, collectionName) {
   let OwnershipPending = new Schema({
     user: Schema.Types.ObjectId,
     club: Schema.Types.ObjectId,
-    ts: { type: Date, 'default': Date.now, expires: TOKEN_EXPIRE_TIMEOUT },
+    ts: { type: Date, default: Date.now, expires: TOKEN_EXPIRE_TIMEOUT },
     from: Schema.Types.ObjectId,
-    secret_key: { type: String, 'default': createToken }
+    secret_key: { type: String, default: createToken }
   }, {
     versionKey: false
   });

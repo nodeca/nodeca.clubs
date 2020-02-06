@@ -27,7 +27,7 @@ module.exports = function (N, collectionName) {
     location:     Schema.Types.Mixed,
 
     // change time
-    ts:         { type: Date, 'default': Date.now }
+    ts:         { type: Date, default: Date.now }
   }, {
     versionKey: false
   });

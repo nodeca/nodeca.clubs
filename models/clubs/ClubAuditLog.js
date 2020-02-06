@@ -21,7 +21,7 @@ module.exports = function (N, collectionName) {
     target_user: Schema.ObjectId,
 
     // change time
-    ts:         { type: Date, 'default': Date.now },
+    ts:         { type: Date, default: Date.now },
 
     // client info
     ip:         String,
