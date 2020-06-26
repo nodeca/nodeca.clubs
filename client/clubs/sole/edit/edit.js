@@ -1,16 +1,15 @@
 'use strict';
 
 const identicon    = require('nodeca.users/lib/identicon');
-const filter_jpeg  = require('nodeca.users/lib/filter_jpeg');
 
 // Pica instance
 let pica;
 
-// Promise that waits for pica dependency to load
-let waitForPica;
+// Reducer instance
+let image_blob_reduce;
 
-// Original image
-let image;
+// Promise that waits for image-blob-reduce dependency to load
+let waitForReduce;
 
 // Avatar size config
 const avatarWidth = '$$ N.config.users.avatars.resize.orig.width $$';
@@ -26,7 +25,7 @@ N.wire.on('navigate.done:' + module.apiPath, function setup_page(data) {
 
   $('#club-edit__title').focus();
 
-  waitForPica = N.loader.loadAssets('vendor.pica');
+  waitForReduce = N.loader.loadAssets('vendor.image-blob-reduce');
 });
 
 
@@ -36,96 +35,18 @@ N.wire.on('navigate.exit:' + module.apiPath, function exit_page() {
 });
 
 
-// Apply JPEG orientation to canvas. Define flip/rotate transformation
-// on context and swap canvas width/height if needed
-//
-function orientationApply(canvas, ctx, orientation) {
-  let width = canvas.width;
-  let height = canvas.height;
-
-  if (!orientation || orientation > 8) return;
-
-  if (orientation > 4) {
-    ctx.canvas.width = height;
-    ctx.canvas.height = width;
-  }
-
-  switch (orientation) {
-
-    case 2:
-      // Horizontal flip
-      ctx.translate(width, 0);
-      ctx.scale(-1, 1);
-      break;
-
-    case 3:
-      // rotate 180 degrees left
-      ctx.translate(width, height);
-      ctx.rotate(Math.PI);
-      break;
-
-    case 4:
-      // Vertical flip
-      ctx.translate(0, height);
-      ctx.scale(1, -1);
-      break;
-
-    case 5:
-      // Vertical flip + rotate right
-      ctx.rotate(0.5 * Math.PI);
-      ctx.scale(1, -1);
-      break;
-
-    case 6:
-      // Rotate right
-      ctx.rotate(0.5 * Math.PI);
-      ctx.translate(0, -height);
-      break;
-
-    case 7:
-      // Horizontal flip + rotate right
-      ctx.rotate(0.5 * Math.PI);
-      ctx.translate(width, -height);
-      ctx.scale(-1, 1);
-      break;
-
-    case 8:
-      // Rotate left
-      ctx.rotate(-0.5 * Math.PI);
-      ctx.translate(-width, 0);
-      break;
-
-    default:
-  }
-}
-
-
 // Load image from user's file
 //
 function loadImage(file) {
-  let canvas = document.createElement('canvas');
-  let ctx = canvas.getContext('2d');
-  let orientation;
+  image_blob_reduce = image_blob_reduce || require('image-blob-reduce')();
 
-  image = new Image();
+  image_blob_reduce.to_canvas(file).then(canvas => {
+    let width = canvas.width, height = canvas.height;
 
-  image.onerror = () => { N.wire.emit('notify', t('err_image_invalid')); };
-
-  image.onload = () => {
-
-    if (image.width < avatarWidth || image.height < avatarHeight) {
+    if (width < avatarWidth || height < avatarHeight) {
       N.wire.emit('notify', t('err_invalid_size', { w: avatarWidth, h: avatarHeight }));
       return;
     }
-
-    canvas.width  = image.width;
-    canvas.height = image.height;
-
-    orientationApply(canvas, ctx, orientation);
-
-    ctx.drawImage(image, 0, 0, image.width, image.height);
-
-    let width = canvas.width, height = canvas.height;
 
     let avatarRatio = avatarWidth / avatarHeight;
 
@@ -155,7 +76,7 @@ function loadImage(file) {
     //
     // Resize image
     //
-    pica = pica || require('pica')();
+    pica = pica || require('image-blob-reduce').pica();
 
     // Create "final" avatar canvas
     let avatarCanvas = document.createElement('canvas');
@@ -180,32 +101,7 @@ function loadImage(file) {
       N.wire.emit('notify', t('err_image_invalid'));
       throw 'CANCELED';
     });
-  };
-
-  let reader = new FileReader();
-
-  reader.onloadend = e => {
-    // only keep comments and exif in header
-    let filter = filter_jpeg({
-      onIFDEntry: function readOrientation(ifd, entry) {
-        if (ifd === 0 && entry.tag === 0x112 && entry.type === 3) {
-          orientation = this.readUInt16(entry.value, 0);
-        }
-      }
-    });
-
-    try {
-      filter.push(new Uint8Array(e.target.result));
-      filter.end();
-    } catch (err) {
-      N.wire.emit('notify', t('err_image_invalid'));
-      return;
-    }
-
-    image.src = window.URL.createObjectURL(file);
-  };
-
-  reader.readAsArrayBuffer(file);
+  });
 }
 
 
@@ -231,10 +127,13 @@ N.wire.once('navigate.done:' + module.apiPath, function club_edit_init_handlers(
   N.wire.on(module.apiPath + ':avatar_change', function avatar_change(data) {
     let files = data.$this[0].files;
     if (files.length > 0) {
-      waitForPica
-        .then(() => loadImage(files[0]))
+      let avatar = files[0];
+      waitForReduce
+        .then(() => loadImage(avatar))
         .catch(err => N.wire.emit('error', err));
     }
+    // reset input, so uploading the same file again will trigger 'change' event
+    data.$this.val('');
   });
 
 
