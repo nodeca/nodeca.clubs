@@ -3,10 +3,8 @@
 
 'use strict';
 
-const from2    = require('from2');
+const stream   = require('stream');
 const multi    = require('multistream');
-const pumpify  = require('pumpify');
-const through2 = require('through2');
 
 
 module.exports = function (N, apiPath) {
@@ -18,32 +16,26 @@ module.exports = function (N, apiPath) {
 
     let clubs_by_id = {};
 
-    clubs.forEach(club => { clubs_by_id[club._id] = club; });
+    for (let club of clubs) clubs_by_id[club._id] = club;
 
     let buffer = [];
 
     buffer.push({ loc: N.router.linkTo('clubs.index', {}), lastmod: new Date() });
 
-    clubs.forEach(club => {
+    for (let club of clubs) {
       buffer.push({
         loc: N.router.linkTo('clubs.sole', {
           club_hid: club.hid
         }),
         lastmod: club.cache.last_ts
       });
-    });
+    }
 
-    let topic_stream = pumpify.obj(
-      N.models.clubs.Topic.collection.find({
-        st: { $in: N.models.clubs.Topic.statuses.LIST_VISIBLE }
-      }, {
-        club:               1,
-        hid:                1,
-        'cache.post_count': 1,
-        'cache.last_ts':    1
-      }).sort({ hid: 1 }).stream(),
+    let club_stream = stream.Readable.from(buffer);
 
-      through2.obj(function (topic, encoding, callback) {
+    let topic_stream = new stream.Transform({
+      objectMode: true,
+      transform(topic, encoding, callback) {
         let pages = Math.ceil(topic.cache.post_count / posts_per_page);
 
         for (let page = 1; page <= pages; page++) {
@@ -58,12 +50,24 @@ module.exports = function (N, apiPath) {
         }
 
         callback();
-      })
+      }
+    });
+
+    stream.pipeline(
+      N.models.clubs.Topic.find()
+          .where('st').in(N.models.clubs.Topic.statuses.LIST_VISIBLE)
+          .select('club hid cache.post_count cache.last_ts')
+          .sort('hid')
+          .lean(true)
+          .stream(),
+
+      topic_stream,
+      () => {}
     );
 
     data.streams.push({
       name: 'clubs',
-      stream: multi.obj([ from2.obj(buffer), topic_stream ])
+      stream: multi.obj([ club_stream, topic_stream ])
     });
   });
 };
