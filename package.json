@@ -5,17 +5,5 @@
   "keywords": [ "nodeca" ],
   "homepage": "https://github.com/nodeca/nodeca.clubs",
   "license": "MIT",
-  "repository": "nodeca/nodeca.clubs",
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  }
+  "repository": "nodeca/nodeca.clubs"
 }
