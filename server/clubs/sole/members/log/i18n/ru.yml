@@ -1,0 +1,13 @@
+ru-RU:
+  user_blocked: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> забанил <a href="#{target_link}">#{target_nick}</a>
+  user_unblocked: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> разбанил <a href="#{target_link}">#{target_nick}</a>
+  leader_invited: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> пригласил <a href="#{target_link}">#{target_nick}</a> быть управляющим
+  leader_confirmed: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> принял права управления
+  leader_removed: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> отозвал права управления у <a href="#{target_link}">#{target_nick}</a>
+  leader_removed_self: |
+    #{date}: <a href="#{user_link}">#{user_nick}</a> отказался от своих прав управления

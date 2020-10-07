@@ -4,8 +4,8 @@ en-US:
   no_users: There are no leaders in this club
   revoke_ownership: Revoke leadership status
   revoke_pending: Cancel pending leadership proposal
-  revoke_own_confirm: Are you sure you want to resign from leadership of this club?
-  revoke_confirm: Are you sure you want to revoke leadership from this user?
+  revoke_own_confirm: Are you sure you wish to resign from leadership of this club?
+  revoke_confirm: Are you sure you wish to revoke leadership from this user?
   pending: 'Pending:'
 
   confirm:

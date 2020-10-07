@@ -1,0 +1,17 @@
+ru-RU:
+  title_input_name: Название
+  title_input_desc: Введите название клуба
+  description_input_name: Описание
+  description_input_desc: Описание клуба (не обязательно)
+  avatar_input_name: Картинка
+  location_input_name: Местоположение
+  location_edit: редактировать
+  location_set: указать
+  location_remove: удалить
+  change_avatar: нажмите, чтоб поменять
+  err_image_invalid: Файл должен быть картинкой.
+  err_invalid_size: "Картинка слишком маленькая. Должна быть как минимум #{w}x#{h}."
+  membership_input_name: Тип членства
+  membership_open: Открытый (любой может вступить)
+  membership_closed: Закрытый (требуется одобрение управляющего)
+  save: Сохранить

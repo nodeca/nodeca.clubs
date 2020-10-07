@@ -1,0 +1,7 @@
+i18n:
+  ru-RU:
+    users:
+      activity:
+        menu:
+          club_topics: Темы в клубах
+          club_posts: Сообщения в клубах

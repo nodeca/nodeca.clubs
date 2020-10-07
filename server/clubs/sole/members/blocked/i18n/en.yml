@@ -1,7 +1,7 @@
 en-US:
   add:
     err_user_not_found: Unable to find user with that nickname
-    err_user_is_owner: You can't block yourself or another club leader
+    err_user_is_owner: You can't ban yourself or another club leader
 
   remove:
     err_user_not_found: Unable to find user with that nickname

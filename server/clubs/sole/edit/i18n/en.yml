@@ -2,7 +2,7 @@ en-US:
   title: Edit club
 
   update:
-    err_title_empty: "Club title should not be empty"
+    err_title_empty: Club title should not be empty
     err_title_too_long: "Club title should have no more than #{count} ((character|characters))"
     err_unsupported_image: "Can't upload club avatar: unsupported image format"
     err_bad_image: "Can't upload club avatar: file is not an image"

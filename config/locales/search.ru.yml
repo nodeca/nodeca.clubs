@@ -1,0 +1,12 @@
+i18n:
+  ru-RU:
+    search:
+      general:
+        menu:
+          club_topics: Темы в клубах
+          club_posts: Сообщения в клубах
+
+      club_sole:
+        menu:
+          club_topics: Темы в клубах
+          club_posts: Сообщения в клубах

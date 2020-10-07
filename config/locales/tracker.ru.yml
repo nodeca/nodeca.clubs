@@ -1,0 +1,10 @@
+i18n:
+  ru-RU:
+    users:
+      tracker:
+        menu:
+          club_topic: Клубы
+
+      subscriptions:
+        club_topic: Темы в клубах
+        club_sole: Клубы

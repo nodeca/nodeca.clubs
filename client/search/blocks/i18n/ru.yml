@@ -1,0 +1,6 @@
+ru-RU:
+  club_topics:
+    replies: "#{count} ((ответ|ответа|ответов))"
+    not_found: Темы не найдены.
+  club_posts:
+    not_found: Сообщения не найдены.

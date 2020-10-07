@@ -1,6 +1,6 @@
 en-US:
   join:
-    err_blocked: 'You are banned from this club'
+    err_blocked: You are banned from this club
 
   leave:
-    err_last_owner: "You can't leave this club if you're the last leader, transfer leadership first"
+    err_last_owner: "You can't leave this club if you're the last leader, appoint someone else as a leader first"

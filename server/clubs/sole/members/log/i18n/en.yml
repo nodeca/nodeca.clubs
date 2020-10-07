@@ -1,13 +1,13 @@
 en-US:
   user_blocked: |
-    #{date}: <a href="#{user_link}">#{user_nick}</a> blocked <a href="#{target_link}">#{target_nick}</a>
+    #{date}: <a href="#{user_link}">#{user_nick}</a> banned <a href="#{target_link}">#{target_nick}</a>
   user_unblocked: |
-    #{date}: <a href="#{user_link}">#{user_nick}</a> unblocked <a href="#{target_link}">#{target_nick}</a>
+    #{date}: <a href="#{user_link}">#{user_nick}</a> unbanned <a href="#{target_link}">#{target_nick}</a>
   leader_invited: |
-    #{date}: <a href="#{user_link}">#{user_nick}</a> invited <a href="#{target_link}">#{target_nick}</a> to leaders
+    #{date}: <a href="#{user_link}">#{user_nick}</a> invited <a href="#{target_link}">#{target_nick}</a> to be a leader
   leader_confirmed: |
     #{date}: <a href="#{user_link}">#{user_nick}</a> accepted leadership position
   leader_removed: |
-    #{date}: <a href="#{user_link}">#{user_nick}</a> removed <a href="#{target_link}">#{target_nick}</a> from leaders
+    #{date}: <a href="#{user_link}">#{user_nick}</a> revoked leadership from <a href="#{target_link}">#{target_nick}</a>
   leader_removed_self: |
-    #{date}: <a href="#{user_link}">#{user_nick}</a> removed themselves from leaders
+    #{date}: <a href="#{user_link}">#{user_nick}</a> resigned from leadership

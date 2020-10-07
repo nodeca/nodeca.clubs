@@ -1,0 +1,15 @@
+ru-RU:
+  add:
+    err_user_not_found: Пользователь с этим ником не найден
+    err_sender_is_ignored: You cannot invite this user because they are ignoring you
+
+    email_subject: '#{project_name}: Предложение прав управления'
+
+    email_text: |
+      [#{user_name}](#{user_link}) предложил вам быть управляющим клуба "[#{club_title}](#{club_link})".
+
+      Чтоб принять предложение, нажмите [сюда](#{confirm_link}).
+
+  remove:
+    err_user_not_found: Пользователь с этим ником не найден
+    err_last_owner: Вы не можете отказаться от прав управления, если вы последний управляющий. Сначала передайте кому-нибудь управление.

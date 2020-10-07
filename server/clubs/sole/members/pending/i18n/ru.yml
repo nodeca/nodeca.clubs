@@ -1,0 +1,6 @@
+ru-RU:
+  accept:
+    email_subject: "#{project_name}: Вы приняты в клуб"
+
+    email_text: |
+      Вы теперь участник клуба "[#{club_title}](#{club_link})".

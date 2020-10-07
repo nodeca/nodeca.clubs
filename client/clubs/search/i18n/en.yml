@@ -6,4 +6,4 @@ en-US:
     results: "Search results:"
     members: "#{count} ((member|members))"
     last_activity: Last activity
-    no_results: "No matching clubs found."
+    no_results: No matching clubs found.

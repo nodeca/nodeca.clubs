@@ -1,0 +1,6 @@
+ru-RU:
+  unblock: Отменить бан
+  block: Забанить
+  input_placeholder: Введите ник здесь
+  no_users: Никто в этом клубе не забанен
+  block_title: 'Забанил #{user}, #{date}'

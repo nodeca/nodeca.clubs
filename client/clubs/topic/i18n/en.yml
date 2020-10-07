@@ -17,19 +17,19 @@ en-US:
   many_delete_as_topic: First post is selected, delete the entire topic?
   many_posts_deleted: Selected posts have been deleted
   many_undelete_as_topic: First post is selected, restore the entire topic?
-  many_undelete_confirm: Are you sure you want to restore selected posts?
+  many_undelete_confirm: Are you sure you wish to restore selected posts?
   many_posts_undeleted: Undeleted selected posts
 
   abuse_reported: Your report has been sent
   infraction_added: Infraction has been added
 
   old_post_reply_confirm: |
-    md:**This post is very old!** It was created #{count} days ago, and is probably outdated.
+    md:**This post is very old!** It was created #{count} ((day|days)):count ago, and is probably outdated.
 
     Are you sure you wish to reply?
 
   old_topic_reply_confirm: |
-    md:**This topic is very old!** Last post here was created #{count} days ago.
+    md:**This topic is very old!** Last post here was created #{count} ((day|days)):count ago.
 
     Your reply would bump this topic to the top of its list. Are you sure you wish to continue?
 

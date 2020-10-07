@@ -1,0 +1,8 @@
+ru-RU:
+  create_topic: "Новая тема в клубе &quot;<a href='#{club_url}'>#{club_title}</a>&quot;"
+
+  options_btn:
+    options: Опции
+
+  title_input:
+    topic_title: Название темы
