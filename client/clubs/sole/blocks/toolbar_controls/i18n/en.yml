@@ -2,7 +2,7 @@ en-US:
   club_join: Join club
   club_leave: Leave club
   club_delete: Delete club
-  club_undelete: Undelete club
+  club_undelete: Restore club
   mark_read: Mark all read
   topic_create: New topic
   subscription: Subscription
@@ -14,6 +14,6 @@ en-US:
   many_header: "With #{count} ((topic|topics)):"
   many_unselect: Clear selection
   many_delete: Delete
-  many_undelete: Undelete
+  many_undelete: Restore
   many_close: Close
   many_open: Open
