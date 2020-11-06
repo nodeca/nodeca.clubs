@@ -40,7 +40,7 @@ N.wire.on('navigate.exit:' + module.apiPath, function exit_page() {
 function loadImage(file) {
   image_blob_reduce = image_blob_reduce || require('image-blob-reduce')();
 
-  image_blob_reduce.to_canvas(file).then(canvas => {
+  image_blob_reduce.toCanvas(file).then(canvas => {
     let width = canvas.width, height = canvas.height;
 
     if (width < avatarWidth || height < avatarHeight) {
