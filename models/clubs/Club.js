@@ -142,7 +142,7 @@ module.exports = function (N, collectionName) {
   // Resolve name for club location with 5 second delay used for deduplication
   //
   Club.statics.resolveLocation = async function resolveLocation(club_id, locale) {
-    await N.redis.zaddAsync('geo:club', Date.now(), String(club_id) + ':' + locale);
+    await N.redis.zadd('geo:club', Date.now(), String(club_id) + ':' + locale);
 
     N.queue.geo_club_location_process().postpone();
   };
