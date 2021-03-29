@@ -1,8 +1,0 @@
-en-US:
-  subject:
-    subject: "report from #{user} (club)"
-  body:
-    header: "Report from user #{url}:"
-    to: "About club post:"
-    message_sent_to: "This report was also sent to: "
-    report_topic: Topic with report.

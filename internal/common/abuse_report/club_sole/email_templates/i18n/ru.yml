@@ -1,8 +1,0 @@
-ru-RU:
-  subject:
-    subject: "жалоба от #{user} (клуб)"
-  body:
-    header: "Жалоба от пользователя #{url}:"
-    to: "На клуб:"
-    message_sent_to: "Эта жалоба также отправлена: "
-    report_topic: Тема с жалобой.
