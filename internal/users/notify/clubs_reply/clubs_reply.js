@@ -81,7 +81,7 @@ module.exports = function (N) {
 
       let subject = N.i18n.t(locale, 'users.notify.clubs_reply.subject', {
         project_name: general_project_name,
-        user_name: user ? user.name : N.i18n.t(locale, 'users.notify.clubs_reply.someone')
+        user: user ? user.nick : N.i18n.t(locale, 'users.notify.clubs_reply.someone')
       });
 
       let url = N.router.linkTo('clubs.topic', {
