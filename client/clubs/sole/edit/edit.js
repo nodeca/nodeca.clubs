@@ -85,9 +85,9 @@ function loadImage(file) {
     avatarCanvas.height = avatarHeight;
 
     return pica.resize(canvasCropped, avatarCanvas, {
-      unsharpAmount: 80,
+      unsharpAmount: 160,
       unsharpRadius: 0.6,
-      unsharpThreshold: 2
+      unsharpThreshold: 1
     })
     .then(() => pica.toBlob(avatarCanvas, 'image/jpeg', 90))
     .then(function (blob) {
