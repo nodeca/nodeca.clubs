@@ -4,4 +4,4 @@
       .modal-body!= self.club_closed ? self.t('msg_not_a_member_moderated') : self.t('msg_not_a_member')
       .modal-footer
         button.btn.btn-danger(type='button', tabindex='2', data-on-click='clubs.sole.suggest_join_dlg:confirm')= self.t('yes')
-        button.btn.btn-secondary(type='button', tabindex='1', data-dismiss='modal')= self.t('no')
+        button.btn.btn-secondary(type='button', tabindex='1', data-bs-dismiss='modal')= self.t('no')

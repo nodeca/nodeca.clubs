@@ -69,7 +69,7 @@ article#content.clubs-topic-root(
           );
 
       h1.clubs-topic-title.page-head__title(itemprop='name')
-        .float-right
+        .float-end
           != self.partial('@clubs.topic.blocks.toolbar_controls')
 
         span.clubs-topic__closed-mark.icon.icon-closed.icon-space-after(title=self.t('closed'))
@@ -115,7 +115,7 @@ article#content.clubs-topic-root(
     //- Topic Open/Close/... status clarified via CSS modifiers
     if self.is_club_member && self.settings.clubs_can_reply
       .clubs-topic__reply
-        button.btn.btn-block.btn-link.icon.icon-plus.icon-space-after(
+        button.btn.btn-link.w-100.icon.icon-plus.icon-space-after(
           type='button'
           data-on-click='clubs.topic:reply'
           title=self.t('post_add')
