@@ -35,9 +35,7 @@ article#content.clubs-sole-members-owners
 
           .input-group.clubs-sole-members__input-group
             input.form-control#clubs-sole-members-add-owner(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
-
-            span.input-group-append
-              button.btn.btn-secondary(type='submit')= self.t('add_owner')
+            button.btn.btn-secondary(type='submit')= self.t('add_owner')
 
       ul.clubs-sole-members__list
         if self.club_owner_ids.length > 0

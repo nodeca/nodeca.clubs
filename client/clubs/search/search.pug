@@ -17,8 +17,6 @@ article#content.clubs-search
     form.clubs-search__form(action=self.link_to('clubs.search'))
       .input-group
         input.form-control(type='text', name='query', value=self.query, minlength=2, required)
-
-        span.input-group-append
-          button.btn.btn-secondary.icon.icon-search(type='submit', title=self.t('search'))
+        button.btn.btn-secondary.icon.icon-search(type='submit', title=self.t('search'))
 
     .clubs-search__results

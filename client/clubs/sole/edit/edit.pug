@@ -32,8 +32,8 @@
               value=self.club._id
             )
 
-            .form-group
-              label= self.t('title_input_name')
+            .mb-3
+              label.form-label= self.t('title_input_name')
               input.form-control(
                 name='title'
                 id='club-edit__title'
@@ -44,15 +44,15 @@
                 required
               )
 
-            .form-group
-              label= self.t('description_input_name')
+            .mb-3
+              label.form-label= self.t('description_input_name')
               textarea.form-control(
                 name='description'
                 placeholder=self.t('description_input_desc')
               )= self.club.description
 
-            .form-group
-              label= self.t('avatar_input_name')
+            .mb-3
+              label.form-label= self.t('avatar_input_name')
 
               .club-avatar(
                 class=self.club.avatar_id ? 'club-avatar__m-exists' : ''
@@ -76,8 +76,8 @@
                   data-on-click='clubs.sole.edit:avatar_remove'
                 )
 
-            .form-group.club-edit-location
-              label= self.t('location_input_name')
+            .club-edit-location.mb-3
+              label.form-label= self.t('location_input_name')
               .form-control-plaintext.club-edit-location__content
                 a(
                   href=self.link_to('clubs.sole.edit.location', { club_hid: self.club.hid })
@@ -106,8 +106,8 @@
                 )
                   = self.t('location_set')
 
-            .form-group
-              label= self.t('membership_input_name')
+            .mb-3
+              label.form-label= self.t('membership_input_name')
 
               .form-check
                 input#club-membership-open.form-check-input(type='radio', name='membership', value='open', checked=!self.club.is_closed)

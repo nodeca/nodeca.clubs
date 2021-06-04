@@ -35,9 +35,7 @@ article#content.clubs-sole-members-blocked
 
           .input-group.clubs-sole-members__input-group
             input.form-control#clubs-sole-members-add-block(type='text', name='nick', placeholder=self.t('input_placeholder'), required)
-
-            span.input-group-append
-              button.btn.btn-secondary(type='submit')= self.t('block')
+            button.btn.btn-secondary(type='submit')= self.t('block')
 
       ul.clubs-sole-members__list
         //- sort users by nick
