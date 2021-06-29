@@ -15,7 +15,6 @@
 'use strict';
 
 
-const _        = require('lodash');
 const userInfo = require('nodeca.users/lib/user_info');
 
 
@@ -72,7 +71,7 @@ module.exports = function (N, apiPath) {
                                .select('_id')
                                .lean(true);
 
-    let user_infos = await userInfo(N, _.map(recipients, '_id'));
+    let user_infos = await userInfo(N, recipients.map(x => x._id));
 
     // double-check all permissions in case a user is disallowed from another
     // group with force=true
@@ -103,7 +102,7 @@ module.exports = function (N, apiPath) {
                                .sort('joined_ts')
                                .lean(true);
 
-    let userids = _.map(membership, 'user');
+    let userids = membership.map(x => x.user);
 
     // don't send to club owners if abuse was reported against one
     if (userids.some(u => String(u) === String(params.data.post.user))) return;
@@ -112,7 +111,7 @@ module.exports = function (N, apiPath) {
                                .where('_id').in(userids)
                                .lean(true);
 
-    let user_infos = await userInfo(N, _.map(recipients, '_id'));
+    let user_infos = await userInfo(N, recipients.map(x => x._id));
 
     for (let user_id of Object.keys(user_infos)) {
       params.recipients[user_id] = user_infos[user_id];

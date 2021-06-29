@@ -18,7 +18,7 @@ const CACHE_STEP_SIZE = 100;
 
 module.exports = function (N, collectionName) {
 
-  var PostCountCache = new Schema({
+  let PostCountCache = new Schema({
     // Source _id
     src: Schema.ObjectId,
 
@@ -40,10 +40,10 @@ module.exports = function (N, collectionName) {
   // We don't use `$in` because it is slow. Parallel requests with strict equality is faster.
   //
   async function countFn(src, hid, cut_from, with_hb) {
-    var Post = N.models.clubs.Post;
+    let Post = N.models.clubs.Post;
 
     // Posts with this statuses are counted on page (others are shown, but not counted)
-    var countable_statuses = [ Post.statuses.VISIBLE ];
+    let countable_statuses = [ Post.statuses.VISIBLE ];
 
     // For hellbanned users - count hellbanned posts too
     if (with_hb) {
@@ -75,7 +75,7 @@ module.exports = function (N, collectionName) {
   //
   PostCountCache.statics.getCount = async function (src, version, hid, hb) {
 
-    var cached_hid = hid - hid % CACHE_STEP_SIZE;
+    let cached_hid = hid - hid % CACHE_STEP_SIZE;
 
     // Use direct count for small numbers
     if (cached_hid === 0) {
@@ -111,7 +111,7 @@ module.exports = function (N, collectionName) {
     update.$set[path] = cached_hid_value;
 
     // Remove all previous version keys if exists
-    Object.keys((cache || {}).data || {}).forEach(cache_version => {
+    Object.keys(cache?.data || {}).forEach(cache_version => {
       if (cache_version < (version || 0)) {
         update.$unset = update.$unset || {};
         update.$unset['data.' + cache_version] = '';

@@ -3,7 +3,6 @@
 'use strict';
 
 
-const _         = require('lodash');
 const charlatan = require('charlatan');
 const ObjectId  = require('mongoose').Types.ObjectId;
 
@@ -143,7 +142,7 @@ async function createTopic(club, post_count) {
   let posts = [];
 
   for (let i = 0; i < post_count; i++) {
-    var post = await createPost(topic, posts);
+    let post = await createPost(topic, posts);
 
     if (!first_post) {
       first_post = post;
@@ -167,7 +166,7 @@ async function createTopic(club, post_count) {
   topic.cache.last_ts       = last_post.ts;
   topic.cache.last_user     = last_post.user;
 
-  _.assign(topic.cache_hb, topic.cache);
+  Object.assign(topic.cache_hb, topic.cache);
 
   // Update cache for this topic
   //
@@ -308,8 +307,8 @@ async function addBigTopic(club_id) {
 
 
 async function updateUserCounters() {
-  await models.clubs.UserTopicCount.recount(_.map(users, '_id'));
-  await models.clubs.UserPostCount.recount(_.map(users, '_id'));
+  await models.clubs.UserTopicCount.recount(users.map(x => x._id));
+  await models.clubs.UserPostCount.recount(users.map(x => x._id));
 }
 
 

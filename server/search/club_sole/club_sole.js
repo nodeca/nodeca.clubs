@@ -30,7 +30,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.before(apiPath, async function fetch_club(env) {
     let club = await N.models.clubs.Club
-                         .findOne({ hid: _.toFinite(env.params.$query.hid) })
+                         .findOne({ hid: Number(env.params.$query.hid) })
                          .lean(true);
 
     if (!club) throw N.io.NOT_FOUND;
@@ -67,7 +67,7 @@ module.exports = function (N, apiPath) {
     env.res.query  = env.params.$query.query;
     env.res.sort   = env.params.$query.sort;
     env.res.period = env.params.$query.period;
-    env.res.hid    = _.toFinite(env.params.$query.hid);
+    env.res.hid    = Number(env.params.$query.hid);
 
     env.res.type          = type;
     env.res.sort_types    = sort_types;

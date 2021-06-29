@@ -71,7 +71,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -193,7 +193,7 @@ module.exports = function (N, apiPath) {
       .lean(true);
 
     await N.models.users.Vote.updateMany(
-      { for: { $in: _.map(posts, '_id') } },
+      { for: { $in: posts.map(x => x._id) } },
       // Just move vote `value` field to `backup` field
       { $rename: { value: 'backup' } }
     );

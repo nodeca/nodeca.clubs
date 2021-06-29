@@ -31,7 +31,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 

@@ -4,7 +4,6 @@
 'use strict';
 
 
-const _             = require('lodash');
 const sanitize_club = require('nodeca.clubs/lib/sanitizers/club');
 
 
@@ -28,7 +27,7 @@ module.exports = function (N, apiPath) {
       let can_see_hellbanned = await env.extras.settings.fetch('can_see_hellbanned');
 
       clubs = await N.models.clubs.Club.find()
-                        .where('_id').in(_.map(membership, 'club'))
+                        .where('_id').in(membership.map(x => x.club))
                         .sort(env.user_info.hb || can_see_hellbanned ? '-cache_hb.last_ts' : '-cache.last_ts')
                         .lean(true);
 

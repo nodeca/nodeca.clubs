@@ -102,7 +102,7 @@ module.exports = function (N, apiPath) {
                                .sort('joined_ts')
                                .lean(true);
 
-    env.res.club_owner_ids = _.map(membership, 'user');
+    env.res.club_owner_ids = membership.map(x => x.user);
 
     env.data.users = (env.data.users || []).concat(env.res.club_owner_ids);
   });
@@ -177,7 +177,7 @@ module.exports = function (N, apiPath) {
                                 .findOne({ user: env.user_info.user_id, to: env.data.club._id })
                                 .lean(true);
 
-    env.res.subscription = subscription ? subscription.type : null;
+    env.res.subscription = subscription?.type;
   });
 
 

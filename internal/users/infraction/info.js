@@ -18,8 +18,8 @@ const _ = require('lodash');
 module.exports = function (N, apiPath) {
 
   N.wire.on(apiPath, async function club_posts_fetch_infraction_info(info_env) {
-    let posts_ids = _.map(info_env.infractions.filter(i => i.src_type === N.shared.content_type.CLUB_POST), 'src');
-
+    let posts_ids = info_env.infractions.filter(i => i.src_type === N.shared.content_type.CLUB_POST)
+                                        .map(x => x.src);
     if (!posts_ids.length) return;
 
 
@@ -32,13 +32,13 @@ module.exports = function (N, apiPath) {
     // Fetch topics
     //
     let topics = await N.models.clubs.Topic.find()
-                           .where('_id').in(_.map(posts, 'topic'))
+                           .where('_id').in(posts.map(x => x.topic))
                            .lean(true);
 
     // Fetch clubs
     //
     let clubs = await N.models.clubs.Club.find()
-                          .where('_id').in(_.map(topics, 'club'))
+                          .where('_id').in(topics.map(x => x.club))
                           .lean(true);
 
     // Check permissions to see posts

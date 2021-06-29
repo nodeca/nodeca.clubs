@@ -34,7 +34,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -95,8 +95,8 @@ module.exports = function (N, apiPath) {
       club: env.data.club._id
     }).sort('-_id').lean(true);
 
-    let last_update_time = last_entry ? last_entry.ts   : new Date(0);
-    let last_update_user = last_entry ? last_entry.user : null;
+    let last_update_time = last_entry?.ts   ?? new Date(0);
+    let last_update_user = last_entry?.user ?? null;
     let now = new Date();
 
     // if the same user edits the same club within grace period, history won't be changed

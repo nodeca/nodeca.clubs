@@ -14,7 +14,7 @@ module.exports = function (N, apiPath) {
 
 
   N.wire.on(apiPath, async function search_execute(env) {
-    let query = env.params.query && env.params.query.trim() ? env.params.query : '';
+    let query = (env.params.query || '').trim();
 
     env.res.query = query;
 

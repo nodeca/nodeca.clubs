@@ -58,7 +58,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -225,7 +225,7 @@ module.exports = function (N, apiPath) {
     topic.cache.last_post_hid = 1;
     topic.cache.last_user     = post.user;
 
-    _.assign(topic.cache_hb, topic.cache);
+    Object.assign(topic.cache_hb, topic.cache);
 
     await topic.save();
 
@@ -283,7 +283,7 @@ module.exports = function (N, apiPath) {
 
     if (!subscriptions.length) return;
 
-    let subscribed_users = _.map(subscriptions, 'user');
+    let subscribed_users = subscriptions.map(x => x.user);
 
     let ignore = _.keyBy(
       await N.models.users.Ignore.find()

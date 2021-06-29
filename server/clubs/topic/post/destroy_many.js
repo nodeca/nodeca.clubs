@@ -83,7 +83,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -188,7 +188,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.after(apiPath, async function remove_votes(env) {
     await N.models.users.Vote.updateMany(
-      { for: { $in: _.map(env.data.posts, '_id') } },
+      { for: { $in: env.data.posts.map(x => x._id) } },
       // Just move vote `value` field to `backup` field
       { $rename: { value: 'backup' } }
     );
@@ -220,7 +220,7 @@ module.exports = function (N, apiPath) {
   // Update user counters
   //
   N.wire.after(apiPath, async function update_user(env) {
-    let users = _.map(env.data.posts, 'user');
+    let users = env.data.posts.map(x => x.user);
 
     await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
   });

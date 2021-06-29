@@ -20,7 +20,7 @@ module.exports = function (N) {
 
     if (membership.length > 0) {
       clubs = await N.models.clubs.Club.find()
-                        .where('_id').in(_.map(membership, 'club'))
+                        .where('_id').in(membership.map(x => x.club))
                         // only show existing clubs in user profile
                         .where('exists').equals(true)
                         .lean(true);

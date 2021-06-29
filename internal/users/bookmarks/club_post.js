@@ -28,7 +28,7 @@ module.exports = function (N, apiPath) {
     locals.sandbox = {};
 
     locals.sandbox.posts = await N.models.clubs.Post.find()
-                                     .where('_id').in(_.map(locals.params.bookmarks, 'src'))
+                                     .where('_id').in(locals.params.bookmarks.map(x => x.src))
                                      .lean(true);
 
     locals.sandbox.topics = await N.models.clubs.Topic.find()

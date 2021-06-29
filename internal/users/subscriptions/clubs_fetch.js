@@ -13,14 +13,14 @@ module.exports = function (N) {
     let subs = _.filter(env.data.subscriptions, { to_type: N.shared.content_type.CLUB_SOLE });
 
     // Fetch clubs
-    let clubs = await N.models.clubs.Club.find().where('_id').in(_.map(subs, 'to')).lean(true);
+    let clubs = await N.models.clubs.Club.find().where('_id').in(subs.map(x => x.to)).lean(true);
 
 
     // Sanitize clubs
     clubs = await sanitize_club(N, clubs, env.user_info);
     clubs = _.keyBy(clubs, '_id');
 
-    env.res.clubs = _.assign(env.res.clubs || {}, clubs);
+    env.res.clubs = Object.assign(env.res.clubs || {}, clubs);
 
 
     // Fill missed subscriptions (for deleted clubs)

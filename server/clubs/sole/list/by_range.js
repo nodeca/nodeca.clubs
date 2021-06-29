@@ -33,8 +33,8 @@ module.exports = function (N, apiPath) {
     }
   });
 
-  var buildTopicIdsBefore = require('./_build_topic_ids_before.js')(N);
-  var buildTopicIdsAfter  = require('./_build_topic_ids_after.js')(N);
+  let buildTopicIdsBefore = require('./_build_topic_ids_before.js')(N);
+  let buildTopicIdsAfter  = require('./_build_topic_ids_after.js')(N);
 
   // Subcall clubs.topic_list
   //

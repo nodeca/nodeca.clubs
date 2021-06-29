@@ -44,7 +44,7 @@ module.exports = function (N, apiPath) {
   // Check if user can see this topic
   //
   N.wire.before(apiPath, async function check_access(env) {
-    var access_env = { params: { topics: env.data.topic, user_info: env.user_info } };
+    let access_env = { params: { topics: env.data.topic, user_info: env.user_info } };
 
     await N.wire.emit('internal:clubs.access.topic', access_env);
 

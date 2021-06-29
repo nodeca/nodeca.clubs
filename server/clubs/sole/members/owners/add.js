@@ -31,7 +31,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.is_club_member = env.data.is_club_member = !!membership;
-    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -110,7 +110,7 @@ module.exports = function (N, apiPath) {
   //
   N.wire.on(apiPath, async function add_ownership_request(env) {
     // already an owner, nothing to do here
-    if (env.data.target_membership && env.data.target_membership.is_owner) return;
+    if (env.data.target_membership?.is_owner) return;
 
     let secret_key = createToken();
 

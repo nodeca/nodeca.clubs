@@ -65,14 +65,14 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
   // Check if user can view this topic
   //
   N.wire.before(apiPath, async function check_access(env) {
-    var access_env = { params: { topics: env.data.topic, user_info: env.user_info } };
+    let access_env = { params: { topics: env.data.topic, user_info: env.user_info } };
 
     await N.wire.emit('internal:clubs.access.topic', access_env);
 

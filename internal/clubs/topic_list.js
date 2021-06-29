@@ -64,7 +64,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.is_club_member = env.data.is_club_member = !!membership;
-    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -140,7 +140,7 @@ module.exports = function (N, apiPath) {
                               .where('src').in(postIds)
                               .lean(true);
 
-    env.res.own_bookmarks = _.map(bookmarks, 'src');
+    env.res.own_bookmarks = bookmarks.map(x => x.src);
   });
 
 
@@ -158,7 +158,7 @@ module.exports = function (N, apiPath) {
                           .where('type').in(N.models.users.Subscription.types.LIST_SUBSCRIBED)
                           .lean(true);
 
-    env.res.subscriptions = _.map(subscriptions, 'to');
+    env.res.subscriptions = subscriptions.map(x => x.to);
   });
 
 

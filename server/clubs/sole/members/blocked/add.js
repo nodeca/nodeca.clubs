@@ -28,7 +28,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.is_club_member = env.data.is_club_member = !!membership;
-    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -83,7 +83,7 @@ module.exports = function (N, apiPath) {
                                .where('club').equals(env.data.club._id)
                                .lean(true);
 
-    if (membership && membership.is_owner) {
+    if (membership?.is_owner) {
       throw {
         code: N.io.CLIENT_ERROR,
         message: env.t('err_user_is_owner')

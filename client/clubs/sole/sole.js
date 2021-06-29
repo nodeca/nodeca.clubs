@@ -119,7 +119,7 @@ N.wire.on('navigate.done:' + module.apiPath, function page_setup(data) {
   //
   let el;
 
-  if (!scroll_done && data.state && typeof data.state.hid !== 'undefined' && typeof data.state.offset !== 'undefined') {
+  if (!scroll_done && typeof data.state?.hid !== 'undefined' && typeof data.state?.offset !== 'undefined') {
     el = $('#topic' + data.state.hid);
 
     if (el.length) {

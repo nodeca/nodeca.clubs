@@ -51,7 +51,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.is_club_member = env.data.is_club_member = !!membership;
-    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -135,8 +135,8 @@ module.exports = function (N, apiPath) {
                             .lean(true);
 
     let user_ids = _.uniq(
-      [].concat(_.map(records, 'user').filter(Boolean).map(String))
-        .concat(_.map(records, 'target_user').filter(Boolean).map(String))
+      [].concat(records.map(x => x.user).filter(Boolean).map(String))
+        .concat(records.map(x => x.target_user).filter(Boolean).map(String))
     );
 
     let can_see_deleted_users = await env.extras.settings.fetch('can_see_deleted_users');
@@ -151,13 +151,13 @@ module.exports = function (N, apiPath) {
     env.res.log_records = records.map(record => {
       let tpl_params = {
         date:        env.helpers.date(record.ts, 'datetime'),
-        user_nick:   (users_by_id[record.user] || {}).nick,
+        user_nick:   users_by_id[record.user]?.nick,
         user_link:   N.router.linkTo('users.member', {
-          user_hid: (users_by_id[record.user] || {}).hid
+          user_hid: users_by_id[record.user]?.hid
         }),
-        target_nick: (users_by_id[record.target_user] || {}).nick,
+        target_nick: users_by_id[record.target_user]?.nick,
         target_link: N.router.linkTo('users.member', {
-          user_hid: (users_by_id[record.target_user] || {}).hid
+          user_hid: users_by_id[record.target_user]?.hid
         })
       };
 

@@ -46,7 +46,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.data.is_club_member = !!membership;
-    env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -101,12 +101,12 @@ module.exports = function (N, apiPath) {
   // Save new avatar if it's uploaded
   //
   N.wire.before(apiPath, async function save_avatar(env) {
-    let fileInfo = env.req.files.avatar && env.req.files.avatar[0];
+    let fileInfo = env.req.files.avatar?.[0];
     if (!fileInfo) return;
 
     let config = resizeParse(N.config.users.avatars);
     let contentType = env.req.files.avatar[0].headers['content-type'];
-    let ext = mime.extensions[contentType] && mime.extensions[contentType][0];
+    let ext = mime.extensions[contentType]?.[0];
     let typeConfig = config.types[ext];
 
     if (!typeConfig) {
@@ -199,8 +199,8 @@ module.exports = function (N, apiPath) {
       club: env.data.club._id
     }).sort('-_id').lean(true);
 
-    let last_update_time = last_entry ? last_entry.ts   : new Date(0);
-    let last_update_user = last_entry ? last_entry.user : null;
+    let last_update_time = last_entry?.ts ?? new Date(0);
+    let last_update_user = last_entry?.user ?? null;
     let now = new Date();
 
     // if the same user edits the same club within grace period, history won't be changed

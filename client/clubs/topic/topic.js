@@ -159,7 +159,7 @@ N.wire.on('navigate.done:' + module.apiPath, function page_setup(data) {
 
   // Scroll to a post linked in params (if any)
   //
-  if (!scroll_done && data.state && typeof data.state.hid !== 'undefined' && typeof data.state.offset !== 'undefined') {
+  if (!scroll_done && typeof data.state?.hid !== 'undefined' && typeof data.state?.offset !== 'undefined') {
     let posts = $('.clubs-post');
     let i = _.sortedIndexBy(posts, null, post => {
       if (!post) return data.state.hid;
@@ -419,7 +419,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
     return Promise.resolve()
       .then(() => N.io.rpc('clubs.topic.list.by_ids', { topic_hid: pageState.topic_hid, posts_ids: [ postId ] }))
       .then(res => {
-        let $result = $(N.runtime.render('clubs.blocks.posts_list', _.assign(res, { expand: true })));
+        let $result = $(N.runtime.render('clubs.blocks.posts_list', Object.assign(res, { expand: true })));
 
         if (pageState.selected_posts.indexOf(postId) !== -1) {
           $result

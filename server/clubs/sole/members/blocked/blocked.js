@@ -4,7 +4,6 @@
 'use strict';
 
 
-const _             = require('lodash');
 const sanitize_club = require('nodeca.clubs/lib/sanitizers/club');
 
 
@@ -51,7 +50,7 @@ module.exports = function (N, apiPath) {
                                .lean(true);
 
     env.res.is_club_member = env.data.is_club_member = !!membership;
-    env.res.is_club_owner  = env.data.is_club_owner  = !!membership && membership.is_owner;
+    env.res.is_club_owner  = env.data.is_club_owner  = !!membership?.is_owner;
   });
 
 
@@ -136,8 +135,8 @@ module.exports = function (N, apiPath) {
     env.res.blocked = blocked;
 
     env.data.users = (env.data.users || [])
-                       .concat(_.map(blocked, 'user'))
-                       .concat(_.map(blocked, 'from'));
+                       .concat(blocked.map(x => x.user))
+                       .concat(blocked.map(x => x.from));
   });
 
 

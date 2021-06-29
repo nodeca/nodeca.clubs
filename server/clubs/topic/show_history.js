@@ -62,7 +62,7 @@ module.exports = function (N, apiPath) {
       delete topic.ste;
     }
 
-    if (topic.prev_st && topic.prev_st.st === N.models.clubs.Topic.statuses.HB) {
+    if (topic.prev_st?.st === N.models.clubs.Topic.statuses.HB) {
       topic.prev_st = Object.assign({}, topic.prev_st);
       topic.prev_st.st = topic.prev_st.ste;
       delete topic.prev_st.ste;
@@ -92,16 +92,16 @@ module.exports = function (N, apiPath) {
       ts:   env.data.topic.cache.first_ts,
       role: N.models.clubs.TopicHistory.roles.USER
     } ].concat(
-      _.map(history, i => ({ user: i.user, ts: i.ts, role: i.role }))
+      history.map(i => ({ user: i.user, ts: i.ts, role: i.role }))
     );
 
-    let history_topics = _.map(history, 'topic_data')
+    let history_topics = history.map(x => x.topic_data)
                           .concat([ env.data.topic ])
                           .map(sanitize_topic);
 
     env.res.history = _.zip(history_meta, history_topics)
                        .map(([ meta, topic ]) => ({ meta, topic }));
 
-    env.data.users = (env.data.users || []).concat(_.map(env.res.history, 'meta.user'));
+    env.data.users = (env.data.users || []).concat(env.res.history.map(x => x.meta.user));
   });
 };

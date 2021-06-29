@@ -14,10 +14,10 @@ module.exports = function (N) {
     let subs = _.filter(env.data.subscriptions, { to_type: N.shared.content_type.CLUB_TOPIC });
 
     // Fetch topics
-    let topics = await N.models.clubs.Topic.find().where('_id').in(_.map(subs, 'to')).lean(true);
+    let topics = await N.models.clubs.Topic.find().where('_id').in(subs.map(x => x.to)).lean(true);
 
     // Fetch clubs
-    let clubs = await N.models.clubs.Club.find().where('_id').in(_.map(topics, 'club')).lean(true);
+    let clubs = await N.models.clubs.Club.find().where('_id').in(topics.map(x => x.club)).lean(true);
 
     // Check permissions subcall
     //
@@ -48,7 +48,7 @@ module.exports = function (N) {
     clubs = _.keyBy(clubs, '_id');
 
     env.res.club_topics = topics;
-    env.res.clubs = _.assign(env.res.clubs || {}, clubs);
+    env.res.clubs = Object.assign(env.res.clubs || {}, clubs);
 
 
     // Fill missed subscriptions (for deleted topic)

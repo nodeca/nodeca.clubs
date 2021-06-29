@@ -8,7 +8,7 @@
 'use strict';
 
 
-var validate = require('is-my-json-valid')({
+const validate = require('is-my-json-valid')({
   properties: {
     content_id:  /^[0-9a-f]{24}$/,
     category_id: /^[0-9a-f]{24}$/,

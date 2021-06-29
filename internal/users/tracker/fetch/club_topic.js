@@ -49,7 +49,7 @@ module.exports = function (N, apiPath) {
 
     if (topic_subs.length !== 0) {
       topics = await N.models.clubs.Topic.find()
-                        .where('_id').in(_.map(topic_subs, 'to'))
+                        .where('_id').in(topic_subs.map(x => x.to))
                         .where(cache + '.last_ts').gt(min_cut)
                         .lean(true);
     }
@@ -58,7 +58,7 @@ module.exports = function (N, apiPath) {
     // Fetch topics by club subscriptions
     //
     if (club_subs.length !== 0) {
-      let cuts = await N.models.users.Marker.cuts(locals.params.user_info.user_id, _.map(club_subs, 'to'));
+      let cuts = await N.models.users.Marker.cuts(locals.params.user_info.user_id, club_subs.map(x => x.to));
       let queryParts = [];
 
       _.forEach(cuts, (cutTs, id) => {
@@ -182,8 +182,8 @@ module.exports = function (N, apiPath) {
       // Collect user ids
       //
       locals.users = locals.users || [];
-      locals.users = locals.users.concat(_.map(topics, 'cache.last_user'));
-      locals.users = locals.users.concat(_.map(topics, 'cache.first_user'));
+      locals.users = locals.users.concat(topics.map(x => x.cache?.last_user));
+      locals.users = locals.users.concat(topics.map(x => x.cache?.first_user));
 
       locals.res.read_marks = {};
       for (let id of topic_ids) locals.res.read_marks[id] = read_marks[id];

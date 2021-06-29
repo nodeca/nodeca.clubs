@@ -128,7 +128,7 @@ module.exports = function (N, collectionName) {
     // (this fetches large numbers of smaller documents, index only)
     //
     let history_ids = await N.models.clubs.PostHistory.find()
-                                .where('post').in(_.map(changes, 'new_post._id'))
+                                .where('post').in(changes.map(x => x.new_post?._id))
                                 .select('post _id')
                                 .sort('_id')
                                 .lean(true);
@@ -154,7 +154,7 @@ module.exports = function (N, collectionName) {
     //
     let last_history_entry = _.keyBy(
       await N.models.clubs.PostHistory.find()
-                .where('_id').in(_.map(Object.values(history), 'last').filter(Boolean))
+                .where('_id').in(Object.values(history).map(x => x.last).filter(Boolean))
                 .lean(true),
       'post'
     );

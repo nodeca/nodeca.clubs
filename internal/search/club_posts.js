@@ -83,7 +83,7 @@ module.exports = function (N, apiPath) {
 
       let posts = _.keyBy(
         await N.models.clubs.Post.find()
-                  .where('_id').in(_.map(results, 'object_id'))
+                  .where('_id').in(results.map(x => x.object_id))
                   .lean(true),
         '_id'
       );
