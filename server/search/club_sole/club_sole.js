@@ -4,7 +4,6 @@
 
 'use strict';
 
-const _  = require('lodash');
 
 const sort_types   = [ 'date', 'rel' ];
 const period_types = [ '0', '7', '30', '365' ];
@@ -51,9 +50,9 @@ module.exports = function (N, apiPath) {
 
 
   N.wire.on(apiPath, function search_club(env) {
-    let menu = _.get(N.config, 'search.club_sole.menu', {});
+    let menu = N.config.search?.club_sole?.menu || {};
     let content_types = Object.keys(menu)
-                         .sort((a, b) => (menu[a].priority || 100) - (menu[b].priority || 100));
+                         .sort((a, b) => (menu[a].priority ?? 100) - (menu[b].priority ?? 100));
     let type = env.params.$query.type || content_types[0];
 
     env.res.head.title = env.t('title');

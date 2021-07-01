@@ -11,7 +11,7 @@ const sanitize_club  = require('nodeca.clubs/lib/sanitizers/club');
 module.exports = function (N) {
 
   N.wire.on('internal:users.subscriptions.fetch', async function subscriptions_fetch_topics(env) {
-    let subs = _.filter(env.data.subscriptions, { to_type: N.shared.content_type.CLUB_TOPIC });
+    let subs = env.data.subscriptions.filter(s => s.to_type === N.shared.content_type.CLUB_TOPIC);
 
     // Fetch topics
     let topics = await N.models.clubs.Topic.find().where('_id').in(subs.map(x => x.to)).lean(true);
@@ -53,7 +53,7 @@ module.exports = function (N) {
 
     // Fill missed subscriptions (for deleted topic)
     //
-    let missed = _.filter(subs, s => !topics[s.to] || !clubs[topics[s.to].club]);
+    let missed = subs.filter(s => !topics[s.to] || !clubs[topics[s.to].club]);
 
     env.data.missed_subscriptions = env.data.missed_subscriptions || [];
     env.data.missed_subscriptions = env.data.missed_subscriptions.concat(missed);

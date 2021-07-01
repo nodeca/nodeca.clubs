@@ -7,9 +7,6 @@
 'use strict';
 
 
-const _  = require('lodash');
-
-
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
@@ -30,7 +27,7 @@ module.exports = function (N, apiPath) {
     env.res.head = env.res.head || {};
     env.res.head.title = env.t('title');
 
-    env.res.query = _.get(env.params, '$query.query', '');
+    env.res.query = env.params.$query?.query || '';
   });
 
 

@@ -30,8 +30,8 @@ module.exports = function (N, apiPath) {
   N.wire.on(apiPath, async function tracker_fetch_topics(locals) {
     locals.res = {};
 
-    let topic_subs = _.filter(locals.params.subscriptions, { to_type: N.shared.content_type.CLUB_TOPIC });
-    let club_subs = _.filter(locals.params.subscriptions, { to_type: N.shared.content_type.CLUB_SOLE });
+    let topic_subs = locals.params.subscriptions.filter(s => s.to_type === N.shared.content_type.CLUB_TOPIC);
+    let club_subs  = locals.params.subscriptions.filter(s => s.to_type === N.shared.content_type.CLUB_SOLE);
 
     let content_read_marks_expire = await N.settings.get('content_read_marks_expire');
     let min_cut = new Date(Date.now() - (content_read_marks_expire * 24 * 60 * 60 * 1000));
