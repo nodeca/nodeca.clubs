@@ -259,13 +259,13 @@ function updateTopicState() {
 
   let $topicRoot = $('.clubs-topic-root');
 
-  _.forEach(modifiers, (state, modifier) => {
+  for (let [ modifier, state ] of Object.entries(modifiers)) {
     if (N.runtime.page_data.topic.st === state || N.runtime.page_data.topic.ste === state) {
       $topicRoot.addClass(modifier);
     } else {
       $topicRoot.removeClass(modifier);
     }
-  });
+  }
 }
 
 
@@ -820,14 +820,14 @@ let scrollPositionsKey;
 function uploadScrollPositionsImmediate() {
   bag.get(scrollPositionsKey).then(positions => {
     if (positions) {
-      _.forEach(positions, function (data, id) {
+      for (let [ id, data ] of Object.entries(positions)) {
         N.live.emit('private.clubs.marker_set_pos', {
           content_id: id,
           position: data.pos,
           max: data.max,
           category_id: data.category_id
         });
-      });
+      }
 
       return bag.remove(scrollPositionsKey);
     }

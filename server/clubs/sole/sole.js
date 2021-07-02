@@ -132,7 +132,7 @@ module.exports = function (N, apiPath) {
                                .where('st').equals(N.models.clubs.Topic.statuses.PINNED)
                                .countDocuments();
 
-    let topic_count = _.sum(counters_by_status) + pinned_count;
+    let topic_count = counters_by_status.reduce((a, b) => a + b, 0) + pinned_count;
 
     //
     // Count an amount of visible topics before the first one
@@ -154,7 +154,7 @@ module.exports = function (N, apiPath) {
         )
       );
 
-      topic_offset = _.sum(counters_by_status) + pinned_count;
+      topic_offset = counters_by_status.reduce((a, b) => a + b, 0) + pinned_count;
     }
 
     env.res.pagination = {

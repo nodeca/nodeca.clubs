@@ -167,7 +167,7 @@ module.exports = function (N, apiPath) {
       return false;
     });
 
-    locals.sandbox.clubs = _.values(clubs_used);
+    locals.sandbox.clubs = Object.values(clubs_used);
   });
 
 

@@ -182,8 +182,8 @@ module.exports = function (N, apiPath) {
       return false;
     });
 
-    locals.sandbox.topics = _.values(topics_used);
-    locals.sandbox.clubs  = _.values(clubs_used);
+    locals.sandbox.topics = Object.values(topics_used);
+    locals.sandbox.clubs  = Object.values(clubs_used);
   });
 
 

@@ -26,7 +26,6 @@
 'use strict';
 
 
-const _              = require('lodash');
 const sanitize_club  = require('nodeca.clubs/lib/sanitizers/club');
 const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 
@@ -120,13 +119,13 @@ module.exports = function (N, apiPath) {
 
     // Sort in `env.data.topics_ids` order.
     // May be slow on large topics volumes
-    env.data.topics_ids.forEach(id => {
-      let topic = _.find(topics, t => t._id.equals(id));
+    for (let id of env.data.topics_ids) {
+      let topic = topics.find(t => t._id.equals(id));
 
       if (topic) {
         env.data.topics.push(topic);
       }
-    });
+    }
   });
 
 

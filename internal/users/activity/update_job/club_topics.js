@@ -13,9 +13,6 @@
 'use strict';
 
 
-const _ = require('lodash');
-
-
 module.exports = function (N, apiPath) {
 
   N.wire.on(apiPath, async function activity_fetch_club_topics({ user_id }) {
@@ -32,7 +29,7 @@ module.exports = function (N, apiPath) {
       )
     );
 
-    let results = _.sum(counters_by_status);
+    let results = counters_by_status.reduce((a, b) => a + b, 0);
 
     let results_hb = await N.models.clubs.Topic
                                .where('cache.first_user').equals(user._id)
