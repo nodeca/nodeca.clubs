@@ -33,7 +33,7 @@ module.exports = function (N, apiPath) {
     let query  = 'SELECT object_id FROM club_sole WHERE MATCH(?) AND public=1';
     let params = [ sphinx_escape(locals.params.query) ];
 
-    if (!_.isNil(locals.params.limit)) {
+    if (Number.isFinite(locals.params.limit)) {
       query += ' LIMIT ?,?';
       params.push(locals.params.skip);
 
@@ -49,7 +49,7 @@ module.exports = function (N, apiPath) {
     ]);
 
     if (locals.params.limit !== 0) {
-      if (!_.isNil(locals.params.limit) && results.length > locals.params.limit) {
+      if (Number.isFinite(locals.params.limit) && results.length > locals.params.limit) {
         results.pop();
       } else {
         reached_end = true;
