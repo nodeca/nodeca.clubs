@@ -3,9 +3,6 @@
 'use strict';
 
 
-const _ = require('lodash');
-
-
 // apply $set and $unset operations on an object
 function mongo_apply(object, ops) {
   let result = Object.assign({}, object);
@@ -189,22 +186,21 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_user_topics(env) {
     let users = env.data.topics.map(x => x.cache?.first_user);
 
-    await N.models.clubs.UserTopicCount.recount(_.uniq(users.map(String)));
+    await N.models.clubs.UserTopicCount.recount([ ...new Set(users.map(String)) ]);
   });
 
 
   // Update user post counters
   //
   N.wire.after(apiPath, async function update_user_topics(env) {
-    let users = _.map(
+    let users = (
       await N.models.clubs.Post.find()
                 .where('topic').in(env.data.topics.map(x => x._id))
                 .select('user')
-                .lean(true),
-      'user'
-    );
+                .lean(true)
+    ).map(x => x.user);
 
-    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
+    await N.models.clubs.UserPostCount.recount([ ...new Set(users.map(String)) ]);
   });
 
 

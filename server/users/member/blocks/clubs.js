@@ -41,18 +41,17 @@ module.exports = function (N) {
 
     if (env.user_info.user_hid !== env.data.user.hid && clubs.length === 0) return;
 
-    env.res.blocks = env.res.blocks || {};
-
     let is_owner = {};
 
     for (let m of membership) {
       if (m.is_owner) is_owner[m.club] = true;
     }
 
-    _.set(env.res, 'blocks.clubs', {
+    env.res.blocks = env.res.blocks || {};
+    env.res.blocks.clubs = {
       list:  clubs,
       count: clubs.length,
       is_owner
-    });
+    };
   });
 };

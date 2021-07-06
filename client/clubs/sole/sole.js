@@ -498,7 +498,7 @@ N.wire.once('navigate.done:' + module.apiPath, function clubs_topics_selection_i
       // Unselect
       //
       data.$this.closest('.clubs-topicline').removeClass('clubs-topicline__m-selected');
-      pageState.selected_topics = _.without(pageState.selected_topics, topicHid);
+      pageState.selected_topics = pageState.selected_topics.filter(x => x !== topicHid);
     }
 
     save_selected_topics();

@@ -1103,7 +1103,7 @@ N.wire.once('navigate.done:' + module.apiPath, function topic_post_selection_ini
       // Unselect
       //
       data.$this.closest('.clubs-post').removeClass('clubs-post__m-selected');
-      pageState.selected_posts = _.without(pageState.selected_posts, postId);
+      pageState.selected_posts = pageState.selected_posts.filter(x => x !== postId);
     }
 
     save_selected_posts();

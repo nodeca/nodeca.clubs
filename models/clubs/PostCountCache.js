@@ -3,7 +3,6 @@
 'use strict';
 
 
-const _        = require('lodash');
 const Mongoose = require('mongoose');
 const Schema   = Mongoose.Schema;
 
@@ -87,20 +86,20 @@ module.exports = function (N, collectionName) {
                           .findOne({ src })
                           .lean(true);
 
-    let path = [ 'data', (version || 0), (hb ? 'hb' : 'normal'), cached_hid ].join('.');
-
     // Has cache - use it
-    if (_.has(cache, path)) {
+    let existing_cache = cache?.data?.[version || 0]?.[hb ? 'hb' : 'normal'] || {};
+
+    if (existing_cache.hasOwnProperty(cached_hid)) {
 
       // If required hid equals to cached one - return cached value
       if (hid === cached_hid) {
-        return _.get(cache, path);
+        return existing_cache[cached_hid];
       }
 
       // Get count between cached hid and required one
       let cnt = await countFn(src, hid, cached_hid, hb);
 
-      return cnt + _.get(cache, path);
+      return cnt + existing_cache[cached_hid];
     }
 
     // If cache does not exists - use direct count and rebuild cache mark
@@ -108,6 +107,7 @@ module.exports = function (N, collectionName) {
 
     let update = { $set: { src } };
 
+    let path = [ 'data', (version || 0), (hb ? 'hb' : 'normal'), cached_hid ].join('.');
     update.$set[path] = cached_hid_value;
 
     // Remove all previous version keys if exists

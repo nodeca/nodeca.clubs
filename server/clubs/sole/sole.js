@@ -4,9 +4,6 @@
 'use strict';
 
 
-const _  = require('lodash');
-
-
 module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
@@ -37,7 +34,7 @@ module.exports = function (N, apiPath) {
       next = typeof query.next !== 'undefined';
     }
 
-    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
+    let statuses = env.data.topics_visible_statuses.filter(x => x !== N.models.clubs.Topic.statuses.PINNED);
     let limit_direction = prev || next;
     let current_topic;
 
@@ -111,7 +108,7 @@ module.exports = function (N, apiPath) {
   // Fetch pagination
   //
   N.wire.after(apiPath, async function fetch_pagination(env) {
-    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
+    let statuses = env.data.topics_visible_statuses.filter(x => x !== N.models.clubs.Topic.statuses.PINNED);
 
     //
     // Count total amount of visible topics in the club
@@ -213,7 +210,7 @@ module.exports = function (N, apiPath) {
     env.res.head = env.res.head || {};
 
     let cache    = env.user_info.hb ? 'cache_hb' : 'cache';
-    let statuses = _.without(env.data.topics_visible_statuses, N.models.clubs.Topic.statuses.PINNED);
+    let statuses = env.data.topics_visible_statuses.filter(x => x !== N.models.clubs.Topic.statuses.PINNED);
 
     //
     // Fetch topic after last one, turn it into a link to the next page

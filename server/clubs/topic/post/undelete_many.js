@@ -3,9 +3,6 @@
 'use strict';
 
 
-const _ = require('lodash');
-
-
 // apply $set and $unset operations on an object
 function mongo_apply(object, ops) {
   let result = Object.assign({}, object);
@@ -173,6 +170,6 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_user(env) {
     let users = env.data.posts.map(x => x.user);
 
-    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
+    await N.models.clubs.UserPostCount.recount([ ...new Set(users.map(String)) ]);
   });
 };

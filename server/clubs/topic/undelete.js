@@ -3,7 +3,6 @@
 'use strict';
 
 
-const _ = require('lodash');
 const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 
 
@@ -162,15 +161,14 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function update_user(env) {
     await N.models.clubs.UserTopicCount.recount(env.data.topic.cache.first_user);
 
-    let users = _.map(
+    let users = (
       await N.models.clubs.Post.find()
                 .where('topic').equals(env.data.topic._id)
                 .select('user')
-                .lean(true),
-      'user'
-    );
+                .lean(true)
+    ).map(x => x.user);
 
-    await N.models.clubs.UserPostCount.recount(_.uniq(users.map(String)));
+    await N.models.clubs.UserPostCount.recount([ ...new Set(users.map(String)) ]);
   });
 
 
