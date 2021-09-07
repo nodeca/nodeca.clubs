@@ -3,10 +3,10 @@ i18n:
     search:
       general:
         menu:
-          club_topics: Темы в клубах
-          club_posts: Сообщения в клубах
+          club_topics: 'Клубы: темы'
+          club_posts: 'Клубы: сообщения'
 
       club_sole:
         menu:
-          club_topics: Темы в клубах
-          club_posts: Сообщения в клубах
+          club_topics: 'Клубы: темы'
+          club_posts: 'Клубы: сообщения'

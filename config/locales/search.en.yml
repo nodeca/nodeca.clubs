@@ -3,10 +3,10 @@ i18n:
     search:
       general:
         menu:
-          club_topics: Club topics
-          club_posts: Club posts
+          club_topics: 'Clubs: topics'
+          club_posts: 'Clubs: posts'
 
       club_sole:
         menu:
-          club_topics: Club topics
-          club_posts: Club posts
+          club_topics: 'Clubs: topics'
+          club_posts: 'Clubs: posts'
