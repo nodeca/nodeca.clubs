@@ -3,5 +3,5 @@ i18n:
     users:
       activity:
         menu:
-          club_topics: Club topics
-          club_posts: Club posts
+          club_topics: 'Clubs: topics'
+          club_posts: 'Clubs: posts'

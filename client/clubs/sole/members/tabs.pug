@@ -1,42 +1,42 @@
-.clubs-sole-members__tabs.nav.nav-tabs-underlined
-  a.nav-link(
-    href=self.link_to('clubs.sole.members', { club_hid: self.club.hid })
-    class=self.active_tab === 'index' ? 'active' : ''
-  )
-    = self.t('index')
-    span.clubs-sole-members__tab-counter
-      = '(' + String(self.stats.members) + ')'
+ul.content-tabs.clubs-sole-members__tabs
+  li.content-tabs-item
+    a.content-tabs-link(
+      href=self.link_to('clubs.sole.members', { club_hid: self.club.hid })
+      class=self.active_tab === 'index' ? 'active' : ''
+    )
+      = self.t('index')
+      span.content-tabs-counter= self.stats.members
 
-  a.nav-link(
-    href=self.link_to('clubs.sole.members.blocked', { club_hid: self.club.hid })
-    class=self.active_tab === 'blocked' ? 'active' : ''
-  )
-    = self.t('blocked')
-    span.clubs-sole-members__tab-counter
-      = '(' + String(self.stats.blocked) + ')'
+  li.content-tabs-item
+    a.content-tabs-link(
+      href=self.link_to('clubs.sole.members.blocked', { club_hid: self.club.hid })
+      class=self.active_tab === 'blocked' ? 'active' : ''
+    )
+      = self.t('blocked')
+      span.content-tabs-counter= self.stats.blocked
 
   if self.club.is_closed
-    a.nav-link(
-      href=self.link_to('clubs.sole.members.pending', { club_hid: self.club.hid })
-      class=self.active_tab === 'pending' ? 'active' : ''
-    )
-      = self.t('pending')
-      span.clubs-sole-members__tab-counter
-        = '(' + String(self.stats.pending_members) + ')'
+    li.content-tabs-item
+      a.content-tabs-link(
+        href=self.link_to('clubs.sole.members.pending', { club_hid: self.club.hid })
+        class=self.active_tab === 'pending' ? 'active' : ''
+      )
+        = self.t('pending')
+        span.content-tabs-counter= self.stats.pending_members
 
-  a.nav-link(
-    href=self.link_to('clubs.sole.members.owners', { club_hid: self.club.hid })
-    class=self.active_tab === 'owners' ? 'active' : ''
-  )
-    = self.t('owners')
-    span.clubs-sole-members__tab-counter
-      = '(' + String(self.stats.owners + self.stats.pending_owners) + ')'
+  li.content-tabs-item
+    a.content-tabs-link(
+      href=self.link_to('clubs.sole.members.owners', { club_hid: self.club.hid })
+      class=self.active_tab === 'owners' ? 'active' : ''
+    )
+      = self.t('owners')
+      span.content-tabs-counter= self.stats.owners + self.stats.pending_owners
 
   if self.can_see_log
-    a.nav-link(
-      href=self.link_to('clubs.sole.members.log', { club_hid: self.club.hid })
-      class=self.active_tab === 'log' ? 'active' : ''
-    )
-      = self.t('log')
-      span.clubs-sole-members__tab-counter
-        = '(' + String(self.stats.log_records) + ')'
+    li.content-tabs-item
+      a.content-tabs-link(
+        href=self.link_to('clubs.sole.members.log', { club_hid: self.club.hid })
+        class=self.active_tab === 'log' ? 'active' : ''
+      )
+        = self.t('log')
+        span.content-tabs-counter= self.stats.log_records

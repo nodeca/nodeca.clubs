@@ -3,5 +3,5 @@ i18n:
     users:
       activity:
         menu:
-          club_topics: Темы в клубах
-          club_posts: Сообщения в клубах
+          club_topics: 'Клубы: темы'
+          club_posts: 'Клубы: сообщения'

@@ -6,5 +6,5 @@ i18n:
           club_topic: Клубы
 
       subscriptions:
-        club_topic: Темы в клубах
-        club_sole: Клубы
+        club_topic: 'Клубы: темы'
+        club_sole: 'Клубы'
