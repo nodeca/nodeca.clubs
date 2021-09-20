@@ -34,7 +34,7 @@ each topic, idx in self.topics
     class=(topic.st === topicStatuses.DELETED) ? 'clubs-topicline__m-deleted' : ''
     class=(topic.st === topicStatuses.DELETED_HARD) ? 'clubs-topicline__m-deleted-hard' : ''
     class=(self.own_bookmarks.indexOf(topic.cache.first_post) !== -1) ? 'clubs-topicline__m-bookmarked' : ''
-    class=(self.read_marks[topic._id].next !== -1 && self.subscriptions.indexOf(topic._id) !== -1) ? 'clubs-topicline__m-unread' : ''
+    class=(self.read_marks[topic._id].next !== -1) ? 'clubs-topicline__m-unread' : ''
     class=(self.read_marks[topic._id].isNew) ? 'clubs-topicline__m-new' : ''
     class=(self.ignored_users[topic.cache.first_user] ? 'clubs-topicline__m-ignored' : '')
     data-topic-hid=topic.hid
@@ -44,8 +44,8 @@ each topic, idx in self.topics
     .clubs-topicline__summary.clubs-topicline__cell
       - var href;
 
-      if (self.read_marks[topic._id].next !== -1 && self.subscriptions.indexOf(topic._id) !== -1)
-        //- If user subscribed and unread messages in topic - go to first unread
+      if (self.read_marks[topic._id].next !== -1)
+        //- If there are unread messages in topic - go to first unread
         - href = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: topic.hid, post_hid: self.read_marks[topic._id].next });
 
       else if (self.read_marks[topic._id].position !== -1)
