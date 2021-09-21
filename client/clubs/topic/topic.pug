@@ -122,6 +122,14 @@ article#content.clubs-topic-root(
         )
           = self.t('post_add')
 
+    if self.runtime.is_member
+      .clubs-topic__tracker-link
+        a.btn.btn-link.w-100(
+          href=self.link_to('users.tracker')
+          title=self.t('tracker_link')
+        )
+          = self.t('tracker_link')
+
     nav.clubs-topic__footer-pagination.js-hide
       - var link_params  = { club_hid: self.club.hid, topic_hid: self.topic.hid }
       - var page_current = Math.floor(self.pagination.chunk_offset / self.pagination.per_page) + 1;
