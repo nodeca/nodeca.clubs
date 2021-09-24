@@ -1,5 +1,17 @@
 // Fetch topics for subscriptions
 //
+// In:
+//
+//  - env.user_info
+//  - env.subscriptions
+//
+// Out:
+//
+//  - env.data.missed_subscriptions - list of subscriptions for deleted topics
+//                                    (those subscriptions will be deleted later)
+//  - env.res.read_marks
+//  - env.res.club_topics, env.res.clubs - template-specific data
+//
 'use strict';
 
 
@@ -43,6 +55,18 @@ module.exports = function (N) {
 
     // Sanitize clubs
     clubs = await sanitize_club(N, clubs, env.user_info);
+
+    // Fetch read marks
+    //
+    let data = topics.map(topic => ({
+      categoryId: topic.section,
+      contentId: topic._id,
+      lastPostNumber: topic.cache.last_post_hid,
+      lastPostTs: topic.cache.last_ts
+    }));
+
+    let read_marks = await N.models.users.Marker.info(env.user_info.user_id, data);
+    env.res.read_marks = Object.assign(env.res.read_marks || {}, read_marks);
 
     topics = _.keyBy(topics, '_id');
     clubs = _.keyBy(clubs, '_id');
