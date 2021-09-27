@@ -10,6 +10,8 @@ if self.runtime.is_member
   if self.is_club_member && self.settings.clubs_can_start_topics
     - items.push('topic_create')
 
+- items.push('search')
+
 if self.runtime.is_member
   - items.push('mark_read')
   - items.push('subscription')
@@ -152,6 +154,11 @@ if items.length > 0 && items[items.length - 1] === 'header'
                 data-on-click='clubs.sole:mark_read'
                 data-club-hid=self.club.hid
               )= self.t('mark_read')
+
+            when 'search'
+              a.dropdown-item(
+                href=self.link_to('search.club_sole', { $query: { hid: self.club.hid } })
+              )= self.t('search')
 
             when 'subscription'
               button.dropdown-item(
