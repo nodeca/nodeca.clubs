@@ -599,7 +599,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
     return Promise.resolve()
       .then(() => N.wire.emit('clubs.topic.topic_subscription', params))
-      .then(() => N.io.rpc('clubs.topic.subscribe', { topic_hid: hid, type: params.subscription }))
+      .then(() => N.io.rpc('clubs.topic.change_subscription', { topic_hid: hid, type: params.subscription }))
       .then(() => {
         N.runtime.page_data.subscription = params.subscription;
       })

@@ -1,6 +1,6 @@
-- var to_type = '$$ N.models.users.Subscription.types.NORMAL $$'
+- var to_type = '$$ N.models.users.Subscription.types.MUTED $$'
 
-#content.clubs-sole-unsubscribe(data-type=to_type, data-club-hid=self.club.hid)
+#content.clubs-topic-mute(data-type=to_type, data-topic-hid=self.topic.hid)
   != self.partial('@common.blocks.navbar.logo_apps')
 
   .layout__container.container-fluid
@@ -10,6 +10,6 @@
       h1.page-head__title.page-loading__content(itemprop='name')= self.t('title')
       .icon.icon-loading-placeholder.page-loading__progress
 
-    - var url = self.link_to('clubs.sole', { club_hid: self.club.hid });
-    - var link = '<a href="' + pug.escape(url) + '">' + pug.escape(self.club.title) + '</a>';
+    - var url = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid });
+    - var link = '<a href="' + pug.escape(url) + '">' + pug.escape(self.topic.title) + '</a>';
     .page-loading__content!= self.t('message', { link: link })

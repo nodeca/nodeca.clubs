@@ -1,14 +1,15 @@
-#content.clubs-topic-unsubscribe
+- var to_type = '$$ N.models.users.Subscription.types.NORMAL $$'
+
+#content.clubs-topic-unsubscribe(data-type=to_type, data-topic-hid=self.topic.hid)
   != self.partial('@common.blocks.navbar.logo_apps')
 
   .layout__container.container-fluid
     != self.partial('@users.blocks.announces')
 
     header.page-head
-      h1.page-head__title(itemprop='name')= self.t('title')
+      h1.page-head__title.page-loading__content(itemprop='name')= self.t('title')
+      .icon.icon-loading-placeholder.page-loading__progress
 
     - var url = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid });
     - var link = '<a href="' + pug.escape(url) + '">' + pug.escape(self.topic.title) + '</a>';
-    != self.partial('button')
-    = ' '
-    != self.t('message', { link: link })
+    .page-loading__content!= self.t('message', { link: link })

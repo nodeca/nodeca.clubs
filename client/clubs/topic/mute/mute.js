@@ -2,7 +2,7 @@
 
 
 N.wire.on('navigate.done:' + module.apiPath, function unsubscribe() {
-  let selector = '.clubs-topic-unsubscribe';
+  let selector = '.clubs-topic-mute';
   let type = $(selector).data('type');
   let topic_hid = $(selector).data('topic-hid');
 

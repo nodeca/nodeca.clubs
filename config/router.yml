@@ -67,7 +67,7 @@ router:
           type: string
 
     clubs.sole.unsubscribe:
-      "/unsubscribe/clubs/c{club_hid}":
+      "/clubs/c{club_hid}/unsubscribe":
         club_hid:
           match: /\d+/
           type: integer
@@ -98,7 +98,16 @@ router:
           default: 1
 
     clubs.topic.unsubscribe:
-      "/unsubscribe/clubs/c{club_hid}/topic{topic_hid}":
+      "/clubs/c{club_hid}/topic{topic_hid}/unsubscribe":
+        club_hid:
+          match: /\d+/
+          type: integer
+        topic_hid:
+          match: /\d+/
+          type: integer
+
+    clubs.topic.mute:
+      "/clubs/c{club_hid}/topic{topic_hid}/mute":
         club_hid:
           match: /\d+/
           type: integer
