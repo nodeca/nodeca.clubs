@@ -306,13 +306,7 @@ module.exports = function (N, apiPath) {
   // Add new post notification for subscribers
   //
   N.wire.after(apiPath, async function add_notifications(env) {
-    let subscriptions = await N.models.users.Subscription.find()
-                                  .where('to').equals(env.data.topic._id)
-                                  .where('type').equals(N.models.users.Subscription.types.WATCHING)
-                                  .where('to_type').equals(N.shared.content_type.CLUB_TOPIC)
-                                  .lean(true);
-
-    let subscribed_users = subscriptions.map(x => x.user);
+    let ignore = [];
 
     if (env.data.new_post.to) {
       let reply_notify = await N.settings.get('reply_notify', { user_id: env.data.new_post.to });
@@ -325,17 +319,14 @@ module.exports = function (N, apiPath) {
         });
 
         // avoid sending both reply and new_comment notification to the same user
-        subscribed_users = subscribed_users.filter(user_id => String(user_id) !== String(env.data.new_post.to));
+        ignore.push(String(env.data.new_post.to));
       }
     }
 
-    if (subscribed_users.length) {
-      await N.wire.emit('internal:users.notify', {
-        src: env.data.new_post._id,
-        to: subscribed_users,
-        type: 'CLUBS_NEW_POST'
-      });
-    }
+    await N.wire.emit('internal:users.notify', {
+      src: env.data.new_post._id,
+      type: 'CLUBS_NEW_POST'
+    });
   });
 
 

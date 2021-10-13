@@ -275,20 +275,8 @@ module.exports = function (N, apiPath) {
   // Add new topic notification for subscribers
   //
   N.wire.after(apiPath, async function add_new_post_notification(env) {
-    let subscriptions = await N.models.users.Subscription.find()
-      .where('to').equals(env.data.club._id)
-      .where('type').equals(N.models.users.Subscription.types.WATCHING)
-      .lean(true);
-
-    if (!subscriptions.length) return;
-
-    let subscribed_users = subscriptions.map(x => x.user);
-
-    if (!subscribed_users.length) return;
-
     await N.wire.emit('internal:users.notify', {
       src: env.data.new_topic._id,
-      to: subscribed_users,
       type: 'CLUBS_NEW_TOPIC'
     });
   });
