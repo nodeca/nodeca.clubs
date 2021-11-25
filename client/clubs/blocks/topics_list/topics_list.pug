@@ -18,9 +18,6 @@
   }
 
 each topic, idx in self.topics
-  //- skip topics created by ignored users
-  - if (self.ignored_users[topic.cache.first_user] && !self.settings.clubs_show_ignored) { continue; }
-
   - var fp_user = self.users[topic.cache.first_user] || {}
   - var lp_user = self.users[topic.cache.last_user] || {}
   - var fp_ts   = topic.cache.first_ts

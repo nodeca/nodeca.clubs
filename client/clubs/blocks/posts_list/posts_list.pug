@@ -16,15 +16,14 @@
 each post, post_idx in self.posts
   - var user = self.users[post.user];
   - var visible = [ postStatuses.DELETED, postStatuses.DELETED_HARD, postStatuses.HB ].indexOf(post.st) === -1;
-  - var collapsed = !self.expand && !visible;
+  - var show_as_deleted_or_hb = !self.expand && !visible;
+  - var show_as_ignored = !self.expand && self.ignored_users[post.user] && !self.settings.clubs_show_ignored;
 
   each block in self.posts_list_before_post || []
     != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })
 
-  if (self.ignored_users[post.user] && !self.settings.clubs_show_ignored && self.current_post_hid !== post.hid)
-    //- skip posts created by ignored users (current post is always visible)
-
-  else if !collapsed
+  if !show_as_deleted_or_hb && !show_as_ignored
+    //- show normal club posts (not deleted, hb, or ignored)
 
     article.clubs-post.clearfix(
       id='post' + post._id
@@ -281,9 +280,10 @@ each post, post_idx in self.posts
                     )= self.t('undelete')
 
 
-  else
+  if show_as_deleted_or_hb
+    //- show deleted or hellbanned posts to moderators (collapsed form)
 
-    article.clubs-post.clubs-post__m-collapsed.clearfix(
+    article.clubs-post.clubs-post__m-show-as-deleted.clearfix(
       id='post' + post._id
       class=(post.st === postStatuses.DELETED) ? 'clubs-post__m-deleted' : ''
       class=(post.st === postStatuses.DELETED_HARD) ? 'clubs-post__m-deleted-hard' : ''
@@ -399,6 +399,92 @@ each post, post_idx in self.posts
               data-post-id=post._id
             )
               span.icon.icon-expand
+
+
+  if show_as_ignored
+    //- show ignored posts to regular users (collapsed form),
+    //- moderators will see those posts in normal form
+
+    article.clubs-post.clubs-post__m-show-as-ignored.clearfix(
+      id='post' + post._id
+      class=(post.st === postStatuses.DELETED) ? 'clubs-post__m-deleted' : ''
+      class=(post.st === postStatuses.DELETED_HARD) ? 'clubs-post__m-deleted-hard' : ''
+      class=(post.st === postStatuses.HB) ? 'clubs-post__m-hb' : ''
+      class=(self.ignored_users[post.user]) ? 'clubs-post__m-ignored' : ''
+      data-post-id=post._id
+      data-post-hid=post.hid
+      data-user-hid=user ? user.hid : ''
+      itemscope
+      itemtype='http://schema.org/WebPageElement'
+    )
+      footer.clubs-post__meta
+
+        //- avatar copy for small screens
+        .clubs-post__meta-avatar
+          if user
+            a.clubs-post__userpic(href=self.link_to('users.member', { user_hid: user.hid }))
+              img.clubs-post__userpic-img-sm(alt=user.name)&attributes(self.avatar(user, 'md'))
+          else if post.legacy_nick
+            span.clubs-post__userpic
+              img.clubs-post__userpic-img-sm(alt=post.legacy_nick)&attributes(self.avatar(post.legacy_nick, 'md'))
+          else
+            .clubs-post__userpic-img-sm
+
+        .clubs-post__meta-flex
+          .clubs-post__meta-author
+            if user
+              a.clubs-post__author._ucard-popover(
+                href=self.link_to('users.member', { user_hid: user.hid })
+                data-user-id=post.user
+                data-user-ref='club_post:'+post._id
+                class=user.css
+              ) #{user.name}
+            else if post.legacy_nick
+              span.clubs-post__author=post.legacy_nick
+
+          .clubs-post__meta-info
+            if post.to && post.to_user && self.users[post.to_user]
+              if !post_idx || self.posts[post_idx - 1]._id !== post.to
+                - var _reply_to_params = {};
+                - _reply_to_params.club_hid  = self.club.hid;
+                - _reply_to_params.topic_hid = post.to_thid || self.topic.hid;
+                - _reply_to_params.post_hid  = post.to_phid;
+
+                - var _reply_to_anchor = self.link_to('clubs.topic', _reply_to_params);
+                - var _reply_to_user = self.users[post.to_user]
+
+                a.clubs-post__reply-to-link(href=_reply_to_anchor)
+                  span.icon.icon-reply-for.icon-space-after
+                  img.clubs-post__reply-to-avatar(alt=_reply_to_user.name)&attributes(self.avatar(_reply_to_user, 'sm'))
+                  = _reply_to_user.nick
+
+            if post.edit_count
+              a.clubs-post__history.icon.icon-history.icon-space-after(
+                href='#'
+                title=self.t('last_edited', { date: self.date(post.last_edit_ts, 'datetime') })
+                data-on-click='clubs.topic:post_history'
+                data-post-id=post._id
+                data-post-hid=post.hid
+              )= post.edit_count
+
+            - var _post_anchor = self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: post.hid });
+            a.clubs-post__link(href=_post_anchor)
+              != self.timetag(post.ts, 'relative')
+
+        if multiselect_allowed
+          label.form-label.clubs-post__select(title=self.t('multiselect_hint'))
+            input.clubs-post__select-cb(
+              type='checkbox'
+              data-post-id=post._id
+              data-on-change='clubs.topic:post_check')
+
+      .clubs-post__content-ignored
+        .clubs-post__ignored.icon.icon-ignore.icon-space-after= self.t('ignored_post_text')
+
+        a.clubs-post__show-ignored(
+          data-on-click='clubs.topic:post_expand'
+          data-post-id=post._id
+        )= self.t('expand')
 
   each block in self.posts_list_after_post || []
     != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })

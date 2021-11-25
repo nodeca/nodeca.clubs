@@ -137,7 +137,14 @@ $aside-size-md = 80px
 
 
 .clubs-post__content-collapsed
-  margin 0 1rem
+  padding 0 1rem
+  font-size $font-size-sm
+  color $body-color-secondary
+
+.clubs-post__content-ignored
+  display flex
+  justify-content space-between
+  padding 0 1rem 1rem 1rem
   font-size $font-size-sm
   color $body-color-secondary
 
@@ -172,6 +179,10 @@ $aside-size-md = 80px
 //
 // content column
 //
+
+.clubs-post__show-ignored
+  color inherit
+  cursor pointer
 
 .clubs-post__controls
   text-align right
