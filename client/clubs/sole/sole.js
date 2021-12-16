@@ -30,8 +30,17 @@ function load(start, direction) {
     return N.wire.emit('common.blocks.navbar.blocks.page_progress:update', {
       max: pageState.topic_count
     }).then(() => {
+      // data needed to display separator on the border between pages
+      if (direction === 'top')    res.next_last_ts = $('.clubs-topicline:first').data('last-ts');
+      if (direction === 'bottom') res.prev_last_ts = $('.clubs-topicline:last').data('last-ts');
+
+      let $html = $(N.runtime.render('clubs.blocks.topics_list', res));
+
+      // if separator already exists, leave its position as is
+      if ($('.clubs-topiclist__separator').length) $html = $html.not('.clubs-topiclist__separator');
+
       return {
-        $html: $(N.runtime.render('clubs.blocks.topics_list', res)),
+        $html,
         locals: res,
         offset: res.pagination.chunk_offset,
         reached_end: res.topics.length !== N.runtime.page_data.pagination.per_page
@@ -302,6 +311,7 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
         $('.clubs-topicline.clubs-topicline__m-new, .clubs-topicline.clubs-topicline__m-unread')
           .removeClass('clubs-topicline__m-new')
           .removeClass('clubs-topicline__m-unread');
+        $('.clubs-topiclist__separator').remove();
       });
   });
 

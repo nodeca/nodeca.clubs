@@ -220,5 +220,10 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, async function topics_sanitize_and_fill(env) {
     env.res.topics = await sanitize_topic(N, env.data.topics, env.user_info);
     env.res.club   = await sanitize_club(N, env.data.club, env.user_info);
+
+    // data used to render separator between unread and old topics
+    env.res.club_cut = (await N.models.users.Marker.cuts(
+      env.user_info.user_id, [ env.data.club._id ]
+    ))[env.data.club._id];
   });
 };
