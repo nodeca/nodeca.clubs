@@ -24,6 +24,12 @@ each topic, idx in self.topics
   - var lp_ts   = topic.cache.last_ts
   - var replies = topic.cache.post_count - 1;
   - var views   = topic.views_count;
+  -
+    var is_unread = false;
+    if (self.read_marks[topic._id].next !== -1) is_unread = true;
+    if (self.read_marks[topic._id].isNew) is_unread = true;
+    if (!self.settings.highlight_all_unread && self.subscriptions.indexOf(topic._id) === -1) is_unread = false;
+
   .clubs-topicline(
     class=(topic.st === topicStatuses.HB) ? 'clubs-topicline__m-hellbanned' : ''
     class=([ topic.st, topic.ste ].indexOf(topicStatuses.PINNED) !== -1) ? 'clubs-topicline__m-pinned' : ''
@@ -31,7 +37,7 @@ each topic, idx in self.topics
     class=(topic.st === topicStatuses.DELETED) ? 'clubs-topicline__m-deleted' : ''
     class=(topic.st === topicStatuses.DELETED_HARD) ? 'clubs-topicline__m-deleted-hard' : ''
     class=(self.own_bookmarks.indexOf(topic.cache.first_post) !== -1) ? 'clubs-topicline__m-bookmarked' : ''
-    class=(self.read_marks[topic._id].next !== -1) ? 'clubs-topicline__m-unread' : ''
+    class=is_unread ? 'clubs-topicline__m-unread' : ''
     class=(self.read_marks[topic._id].isNew) ? 'clubs-topicline__m-new' : ''
     class=(self.ignored_users[topic.cache.first_user] ? 'clubs-topicline__m-ignored' : '')
     data-topic-hid=topic.hid

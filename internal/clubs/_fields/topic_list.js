@@ -16,6 +16,7 @@ module.exports = {
     'clubs_mod_can_hard_delete_topics',
     'clubs_mod_can_see_hard_deleted_topics',
     'clubs_show_ignored',
+    'highlight_all_unread',
     'posts_per_page'
   ]
 };
