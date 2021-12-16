@@ -225,5 +225,8 @@ module.exports = function (N, apiPath) {
     env.res.club_cut = (await N.models.users.Marker.cuts(
       env.user_info.user_id, [ env.data.club._id ]
     ))[env.data.club._id];
+
+    // last time topic list was updated on the client, this is required for "mark all" button
+    env.res.topic_list_update_ts = Date.now();
   });
 };

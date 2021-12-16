@@ -7,7 +7,8 @@ module.exports = function (N, apiPath) {
 
   N.validate(apiPath, {
     // club hid
-    hid: { type: 'integer', required: true }
+    hid: { type: 'integer', required: true },
+    ts:  { type: 'integer', required: true }
   });
 
 
@@ -43,6 +44,11 @@ module.exports = function (N, apiPath) {
   // Mark topics as read
   //
   N.wire.on(apiPath, async function mark_topics_read(env) {
-    await N.models.users.Marker.markAll(env.user_info.user_id, env.data.club._id);
+    let cuts = await N.models.users.Marker.cuts(env.user_info.user_id, [ env.data.club._id ]);
+    let now = Date.now();
+
+    if (now > env.params.ts && env.params.ts > cuts[env.data.club._id]) {
+      await N.models.users.Marker.markAll(env.user_info.user_id, env.data.club._id, env.params.ts);
+    }
   });
 };
