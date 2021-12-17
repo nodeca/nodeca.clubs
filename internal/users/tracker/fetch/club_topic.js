@@ -64,7 +64,8 @@ module.exports = function (N, apiPath) {
     // Fetch topics by club subscriptions
     //
     if (club_subs.length !== 0) {
-      let cuts = await N.models.users.Marker.cuts(locals.params.user_info.user_id, club_subs.map(x => x.to));
+      let cuts = await N.models.users.Marker.cuts(
+        locals.params.user_info.user_id, club_subs.map(x => x.to), 'club_topic');
       let queryParts = [];
 
       for (let [ id, cutTs ] of Object.entries(cuts)) {
@@ -85,7 +86,7 @@ module.exports = function (N, apiPath) {
       lastPostTs: topic[cache].last_ts
     }));
 
-    let read_marks = await N.models.users.Marker.info(locals.params.user_info.user_id, data);
+    let read_marks = await N.models.users.Marker.info(locals.params.user_info.user_id, data, 'club_topic');
 
 
     // Filter new and unread topics
