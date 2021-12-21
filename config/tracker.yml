@@ -2,15 +2,12 @@ users:
   tracker:
     menu:
       club_topic:
-        marker_type: club_topic
         priority: 10
 
   subscriptions:
     club_topic:
       to_type: CLUB_TOPIC
-      marker_type: club_topic
       priority: 50
     club_sole:
       to_type: CLUB_SOLE
-      marker_type: club_topic
       priority: 60

@@ -24,6 +24,8 @@ module.exports = function (N, collectionName) {
 
   set_content_type('CLUB_TOPIC', 10);
 
+  N.shared.marker_types = (N.shared.marker_types || []).concat([ 'club_topic' ]);
+
   // Topic statuses are optimized for paged fetches & indexes
   // Some statises can have extended info in additionsl field:
   //
