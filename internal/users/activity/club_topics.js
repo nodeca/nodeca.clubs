@@ -57,7 +57,7 @@ module.exports = function (N, apiPath) {
     }
 
     let query = N.models.clubs.Topic.findOne()
-                    .where('cache.last_user').equals(locals.params.user_id)
+                    .where('cache.first_user').equals(locals.params.user_id)
                     .where('st').in(locals.sandbox.countable_statuses)
                     .skip(locals.params.before)
                     .sort('_id')
@@ -87,7 +87,7 @@ module.exports = function (N, apiPath) {
     }
 
     let query = N.models.clubs.Topic.findOne()
-                    .where('cache.last_user').equals(locals.params.user_id)
+                    .where('cache.first_user').equals(locals.params.user_id)
                     .where('st').in(locals.sandbox.countable_statuses)
                     .skip(locals.params.after)
                     .sort('-_id')
