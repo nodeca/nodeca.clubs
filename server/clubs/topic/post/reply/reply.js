@@ -319,13 +319,14 @@ module.exports = function (N, apiPath) {
         });
 
         // avoid sending both reply and new_comment notification to the same user
-        ignore.push(String(env.data.new_post.to));
+        ignore.push(String(env.data.new_post.to_user));
       }
     }
 
     await N.wire.emit('internal:users.notify', {
       src: env.data.new_post._id,
-      type: 'CLUBS_NEW_POST'
+      type: 'CLUBS_NEW_POST',
+      ignore
     });
   });
 
