@@ -49,39 +49,14 @@ module.exports = function (N, apiPath) {
   //
   N.wire.before(apiPath, async function check_access(env) {
     let access_env = { params: {
-      topics: env.data.topic,
-      user_info: env.user_info
+      posts: env.data.post,
+      user_info: env.user_info,
+      preload: [ env.data.topic ]
     } };
 
-    await N.wire.emit('internal:clubs.access.topic', access_env);
+    await N.wire.emit('internal:clubs.access.post', access_env);
 
     if (!access_env.data.access_read) throw N.io.NOT_FOUND;
-
-    // Check permissions manually here instead of calling `clubs.access.post`
-    // to account for deleted posts (history should still be shown to
-    // moderators).
-    //
-    env.data.settings = await env.extras.settings.fetch([
-      'can_see_hellbanned',
-      'clubs_mod_can_delete_topics',
-      'clubs_mod_can_hard_delete_topics'
-    ]);
-
-    let postVisibleSt = [ N.models.clubs.Post.statuses.VISIBLE ];
-
-    if (env.data.settings.can_see_hellbanned || env.user_info.hb) {
-      postVisibleSt.push(N.models.clubs.Post.statuses.HB);
-    }
-
-    if (env.data.settings.clubs_mod_can_delete_topics) {
-      postVisibleSt.push(N.models.clubs.Post.statuses.DELETED);
-    }
-
-    if (env.data.settings.clubs_mod_can_see_hard_deleted_topics) {
-      postVisibleSt.push(N.models.clubs.Post.statuses.DELETED_HARD);
-    }
-
-    if (postVisibleSt.indexOf(env.data.post.st) === -1) throw N.io.NOT_FOUND;
   });
 
 
