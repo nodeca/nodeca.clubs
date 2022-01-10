@@ -18,12 +18,18 @@ module.exports = function (N) {
   N.wire.on('internal:users.notify.deliver', async function notify_deliver_clubs_topic(local_env) {
     if (local_env.type !== 'CLUBS_NEW_TOPIC') return;
 
+    // Fetch topic
+    //
     let topic = await N.models.clubs.Topic.findById(local_env.src).lean(true);
     if (!topic) return;
 
+    // Fetch post
+    //
     let post = await N.models.clubs.Post.findById(topic.cache.first_post).lean(true);
     if (!post) return;
 
+    // Fetch club
+    //
     let club = await N.models.clubs.Club.findById(topic.club).lean(true);
     if (!club) return;
 
@@ -86,25 +92,31 @@ module.exports = function (N) {
 
       helpers.t = (phrase, params) => N.i18n.t(locale, phrase, params);
       helpers.t.exists = phrase => N.i18n.hasPhrase(locale, phrase);
+      helpers.asset_body = path => N.assets.asset_body(path);
 
       let subject = N.i18n.t(locale, 'users.notify.clubs_new_topic.subject', {
         project_name: general_project_name,
-        club_title:   club.title
+        club_title: club.title
       });
 
       let url = N.router.linkTo('clubs.topic', {
-        club_hid:  club.hid,
+        club_hid: club.hid,
         topic_hid: topic.hid,
-        post_hid:  post.hid
+        post_hid: post.hid
       });
 
       let unsubscribe = N.router.linkTo('clubs.sole.unsubscribe', {
         club_hid: club.hid
       });
 
-      let text = render(N, 'users.notify.clubs_new_topic', { post_html: post.html, link: url }, helpers);
+      let text = render(N, 'users.notify.clubs_new_topic', {
+        title: topic.title,
+        post_html: post.html,
+        url,
+        unsubscribe
+      }, helpers);
 
-      local_env.messages[user_id] = { subject, text, url, unsubscribe };
+      local_env.messages[user_id] = { subject, text };
     }
   });
 };
