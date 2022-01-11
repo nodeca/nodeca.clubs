@@ -103,13 +103,22 @@ module.exports = function (N, apiPath) {
   // Fetch topics
   //
   N.wire.before(apiPath, async function fetch_topics(env) {
+    let deletable_st = env.params.method === 'hard' ?
+                       N.models.clubs.Topic.statuses.LIST_HARD_DELETABLE :
+                       N.models.clubs.Topic.statuses.LIST_DELETABLE;
+
     env.data.topics = await N.models.clubs.Topic.find()
                                 .where('hid').in(env.params.topics_hids)
                                 .where('club').equals(env.data.club._id)
-                                .where('st').in(N.models.clubs.Topic.statuses.LIST_DELETABLE)
+                                .where('st').in(deletable_st)
                                 .lean(true);
 
-    if (!env.data.topics.length) throw { code: N.io.CLIENT_ERROR, message: env.t('err_no_topics') };
+    if (!env.data.topics.length) {
+      throw {
+        code: N.io.CLIENT_ERROR,
+        message: env.t('err_no_topics_' + (env.params.method === 'hard' ? 'hard' : 'soft'))
+      };
+    }
   });
 
 
