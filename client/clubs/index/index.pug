@@ -13,7 +13,7 @@ article#content.clubs-index
     header.page-head.clubs-index__head
       h1.clubs-index__title.page-head__title(itemprop='name')= self.t('my_clubs')
 
-      != self.partial('@clubs.index.blocks.toolbar_controls')
+      != self.partial('@clubs.index.blocks.page_actions')
 
     .clubs-index__club-list
       each club in self.clubs
