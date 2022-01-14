@@ -28,7 +28,7 @@ article#content.clubs-topic-root(
     var navbar_args = {
       title:    self.topic.title,
       level_up: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.topic.hid }),
-      toolbar:  'clubs.topic.blocks.toolbar_controls',
+      toolbar:  'clubs.topic.blocks.page_actions.dropdown',
       on_jump:  'clubs.topic:nav_to_post',
       progress: {
         link_top:    self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: 1 }),
@@ -70,7 +70,7 @@ article#content.clubs-topic-root(
 
       h1.clubs-topic-title.page-head__title(itemprop='name')
         .float-end
-          != self.partial('@clubs.topic.blocks.toolbar_controls')
+          != self.partial('@clubs.topic.blocks.page_actions')
 
         span.clubs-topic__closed-mark.icon.icon-closed.icon-space-after(title=self.t('closed'))
 

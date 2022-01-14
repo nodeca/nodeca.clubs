@@ -1,0 +1,23 @@
+ru-RU:
+  club_join: Вступить в клуб
+  topic_create: Новая тема
+  subs_normal: Без подписки. Вы не будете получать уведомления о новых темах.
+  subs_tracking: Обычная. Вы будете видеть новые темы в трекере.
+  subs_watching: Срочная. Вы будете видеть новые темы в трекере и получите уведомления на email.
+
+  dropdown:
+    club_join: Вступить в клуб
+    club_leave: Выйти из клуба
+    club_delete: Удалить клуб
+    club_undelete: Восстановить клуб
+    mark_read: Пометить всё как прочитанное
+    topic_create: Новая тема
+    search: Поиск в клубе
+    subscription: Подписка
+    abuse_report: Пожаловаться
+    many_header: "С #{count} ((темой|темами|темами)):"
+    many_unselect: Снять выделение
+    many_delete: Удалить
+    many_undelete: Восстановить
+    many_close: Закрыть
+    many_open: Открыть

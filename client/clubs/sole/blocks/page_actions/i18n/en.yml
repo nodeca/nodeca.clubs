@@ -1,0 +1,23 @@
+en-US:
+  club_join: Join club
+  topic_create: New topic
+  subs_normal: No subscription. You will not receive notifications about new topics.
+  subs_tracking: Normal. You will see new topics in tracker.
+  subs_watching: Urgent. You will see new topics in tracker and receive email notifications.
+
+  dropdown:
+    club_join: Join club
+    club_leave: Leave club
+    club_delete: Delete club
+    club_undelete: Restore club
+    mark_read: Mark all read
+    topic_create: New topic
+    search: Search in club
+    subscription: Subscription
+    abuse_report: Report
+    many_header: "With #{count} ((topic|topics)):"
+    many_unselect: Clear selection
+    many_delete: Delete
+    many_undelete: Restore
+    many_close: Close
+    many_open: Open
