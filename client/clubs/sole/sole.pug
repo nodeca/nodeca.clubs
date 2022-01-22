@@ -37,7 +37,7 @@ article#content.clubs-sole-root(
     };
 
   != self.partial('@common.blocks.navbar.levelup_progress_apps', navbar_args)
-  != self.partial('@common.blocks.navbar.alt_levelup_progress_title_toolbar', navbar_args)
+  != self.partial('@common.blocks.navbar.alt_levelup_progress_title', navbar_args)
 
   nav.breadcrumbs-container
     .layout__container.container-fluid
@@ -77,7 +77,7 @@ article#content.clubs-sole-root(
           != self.partial('@clubs.sole.blocks.page_actions')
 
         .clubs-sole__description= self.club.description
-        .clubs-sole__members 
+        .clubs-sole__members
           if self.club.location
             a.clubs-sole__location.icon.icon-location(
               href='#'
