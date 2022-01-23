@@ -20,7 +20,7 @@ article#content.clubs-sole-root(
     var navbar_args = {
       title:    self.club.title,
       level_up: self.link_to('clubs.index'),
-      toolbar:  'clubs.sole.blocks.page_actions.dropdown',
+      extra_buttons: 'clubs.sole.blocks.page_actions.dropdown',
       progress: {
         link_top:    self.link_to('clubs.sole', { club_hid: self.club.hid }),
         link_bottom: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.last_topic_hid }),
