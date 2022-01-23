@@ -25,17 +25,18 @@ article#content.clubs-topic-root(
   class=(self.topic.st === topicStatuses.PINNED) ? 'clubs-topic-root__m-pinned' : ''
 )
   -
-    var navbar_args = {
-      title:    self.topic.title,
+    const navbar_base = {
       level_up: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.topic.hid }),
-      extra_buttons: 'clubs.topic.blocks.page_actions.dropdown',
       on_jump:  'clubs.topic:nav_to_post',
       progress: {
         link_top:    self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: 1 }),
         link_bottom: self.link_to('clubs.topic', { club_hid: self.club.hid, topic_hid: self.topic.hid, post_hid: self.topic.cache.last_post_hid }),
         current:     self.current_post_hid || 0,
         total:       self.topic.cache.last_post_hid
-      },
+      }
+    };
+
+    const navbar_primary = {
       search_areas: [
         {
           title: self.t('search_club'),
@@ -50,8 +51,13 @@ article#content.clubs-topic-root(
       ]
     };
 
-  != self.partial('@common.blocks.navbar.levelup_progress_apps', navbar_args)
-  != self.partial('@common.blocks.navbar.alt_levelup_progress_title', navbar_args)
+    const navbar_alt = {
+      title: self.topic.title,
+      extra_buttons: 'clubs.topic.blocks.page_actions.dropdown'
+    };
+
+  != self.partial('@common.blocks.navbar.levelup_progress_apps', { ...navbar_base, ...navbar_primary })
+  != self.partial('@common.blocks.navbar.alt_levelup_progress_title', { ...navbar_base, ...navbar_alt })
 
   nav.breadcrumbs-container
     .layout__container.container-fluid

@@ -1,7 +1,10 @@
 #content
   -
-    var navbar_args = {
-      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid }),
+    const navbar_base = {
+      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid })
+    };
+
+    const navbar_primary = {
       search_areas: [
         {
           title: self.t('@clubs.sole.search_club'),
@@ -10,7 +13,8 @@
         }
       ]
     };
-  != self.partial('@common.blocks.navbar.levelup_apps', navbar_args)
+
+  != self.partial('@common.blocks.navbar.levelup_apps', { ...navbar_base, ...navbar_primary })
 
   nav.breadcrumbs-container
     .layout__container.container-fluid

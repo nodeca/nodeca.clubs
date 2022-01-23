@@ -17,16 +17,17 @@ article#content.clubs-sole-root(
 )
 
   -
-    var navbar_args = {
-      title:    self.club.title,
+    const navbar_base = {
       level_up: self.link_to('clubs.index'),
-      extra_buttons: 'clubs.sole.blocks.page_actions.dropdown',
       progress: {
         link_top:    self.link_to('clubs.sole', { club_hid: self.club.hid }),
         link_bottom: self.link_to('clubs.sole', { club_hid: self.club.hid, topic_hid: self.last_topic_hid }),
         current:     self.pagination.chunk_offset,
         total:       self.pagination.total
-      },
+      }
+    };
+
+    const navbar_primary = {
       search_areas: [
         {
           title: self.t('search_club'),
@@ -36,8 +37,13 @@ article#content.clubs-sole-root(
       ]
     };
 
-  != self.partial('@common.blocks.navbar.levelup_progress_apps', navbar_args)
-  != self.partial('@common.blocks.navbar.alt_levelup_progress_title', navbar_args)
+    const navbar_alt = {
+      title: self.club.title,
+      extra_buttons: 'clubs.sole.blocks.page_actions.dropdown'
+    };
+
+  != self.partial('@common.blocks.navbar.levelup_progress_apps', { ...navbar_base, ...navbar_primary })
+  != self.partial('@common.blocks.navbar.alt_levelup_progress_title', { ...navbar_base, ...navbar_alt })
 
   nav.breadcrumbs-container
     .layout__container.container-fluid

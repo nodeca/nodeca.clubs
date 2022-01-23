@@ -2,8 +2,11 @@
 
 article#content.clubs-sole-members-pending
   -
-    var navbar_args = {
-      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid }),
+    const navbar_base = {
+      level_up: self.link_to('clubs.sole', { club_hid: self.club.hid })
+    };
+
+    const navbar_primary = {
       search_areas: [
         {
           title: self.t('search_club'),
@@ -13,7 +16,7 @@ article#content.clubs-sole-members-pending
       ]
     };
 
-  != self.partial('@common.blocks.navbar.levelup_apps', navbar_args)
+  != self.partial('@common.blocks.navbar.levelup_apps', { ...navbar_base, ...navbar_primary })
 
   nav.breadcrumbs-container
     .layout__container.container-fluid
