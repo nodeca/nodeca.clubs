@@ -1,7 +1,7 @@
 - self.add_raw_data('settings', self.settings)
 
 article#content.clubs-index
-  != self.partial('@common.blocks.navbar.logo_apps')
+  != self.partial('@common.blocks.navbar.logo_apps', { search_tab: 'club_topics' })
 
   nav.breadcrumbs-container
     .layout__container.container-fluid
