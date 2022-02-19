@@ -51,7 +51,7 @@ N.wire.before(module.apiPath + ':begin', function fetch_options() {
 //
 N.wire.on(module.apiPath + ':begin', function show_editor(data) {
   let $editor = N.MDEdit.show({
-    draftKey: [ 'clubs_topic_create', N.runtime.user_hid, data.club_hid ].join('_'),
+    draftKey: `clubs_topic_create_${N.runtime.user_hid}_${data.club_hid}`,
     draftCustomFields: {
       '.clubs-topic-create__title': 'input'
     }
