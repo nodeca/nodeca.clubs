@@ -59,7 +59,7 @@ module.exports = function (N, apiPath) {
           .select('club hid cache.post_count cache.last_ts')
           .sort('hid')
           .lean(true)
-          .stream(),
+          .cursor(),
 
       topic_stream,
       () => {}
