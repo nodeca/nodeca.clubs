@@ -75,7 +75,7 @@ module.exports = function (N, apiPath) {
 
     let update_result = await N.models.clubs.Club.updateOne({ _id: env.data.club._id }, update_data);
 
-    env.data.is_updated = update_result.nModified > 0;
+    env.data.is_updated = update_result.modifiedCount > 0;
 
     // trigger location name resolution with priority,
     // so user will see location they just set quicker than usual

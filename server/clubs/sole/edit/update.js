@@ -183,7 +183,7 @@ module.exports = function (N, apiPath) {
 
     let update_result = await N.models.clubs.Club.updateOne({ _id: env.data.club._id }, update_data);
 
-    env.data.is_updated = update_result.nModified > 0;
+    env.data.is_updated = update_result.modifiedCount > 0;
   });
 
 

@@ -121,7 +121,7 @@ module.exports = function (N, apiPath) {
       { upsert: true }
     );
 
-    if (result.upserted) {
+    if (result.upsertedCount) {
       // only if new ownership request was created
       env.data.secret_key = secret_key;
     }
