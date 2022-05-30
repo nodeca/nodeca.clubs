@@ -4,7 +4,6 @@
 
 
 const _              = require('lodash');
-const charcount      = require('charcount');
 const topicStatuses  = '$$ JSON.stringify(N.models.clubs.Topic.statuses) $$';
 const bkv            = require('bkv').shared();
 const ScrollableList = require('nodeca.core/lib/app/scrollable_list');
@@ -491,18 +490,11 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
   // Edit title handler
   //
   N.wire.on(module.apiPath + ':edit_title', function title_edit(data) {
-    let clubs_topic_title_min_length = N.runtime.page_data.settings.clubs_topic_title_min_length;
     let $title = $('.clubs-topic-title__text');
     let params = {
       selector: '.clubs-topic-title',
       value: $title.text(),
       update(value) {
-        value = value.trim();
-
-        if (charcount(value) < clubs_topic_title_min_length) {
-          return Promise.reject(t('err_title_too_short', clubs_topic_title_min_length));
-        }
-
         // If value is equals to old value - close `microedit` without request
         if (value === $title.text()) {
           return Promise.resolve();
@@ -522,6 +514,11 @@ N.wire.once('navigate.done:' + module.apiPath, function page_once() {
 
           // refresh edit counter
           return updateTopicState();
+        }).catch(err => {
+          // Non client error will be processed with default error handler
+          if (err.code !== N.io.CLIENT_ERROR) return N.wire.emit('error', err);
+
+          return Promise.reject(err.message);
         });
       }
     };
