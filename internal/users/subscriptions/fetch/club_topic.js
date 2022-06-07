@@ -2,15 +2,17 @@
 //
 // In:
 //
-//  - env.user_info
-//  - env.subscriptions
+//  - params.user_info
+//  - params.subscriptions
+//  - params.count_only
 //
 // Out:
 //
-//  - env.data.missed_subscriptions - list of subscriptions for deleted topics
-//                                    (those subscriptions will be deleted later)
-//  - env.res.read_marks
-//  - env.res.club_topics, env.res.clubs - template-specific data
+//  - count
+//  - items
+//  - missed_subscriptions - list of subscriptions for deleted topics
+//                           (those subscriptions will be deleted later)
+//  - res   - misc data (specific to template, merged with env.res)
 //
 'use strict';
 
@@ -20,10 +22,14 @@ const sanitize_topic = require('nodeca.clubs/lib/sanitizers/topic');
 const sanitize_club  = require('nodeca.clubs/lib/sanitizers/club');
 
 
-module.exports = function (N) {
+module.exports = function (N, apiPath) {
 
-  N.wire.on('internal:users.subscriptions.fetch', async function subscriptions_fetch_topics(env) {
-    let subs = env.data.subscriptions.filter(s => s.to_type === N.shared.content_type.CLUB_TOPIC);
+  N.wire.on(apiPath, async function subscriptions_fetch_topics(locals) {
+    let subs = locals.params.subscriptions.filter(s => s.to_type === N.shared.content_type.CLUB_TOPIC);
+
+    locals.count = subs.length;
+    locals.res = {};
+    if (!locals.count || locals.params.count_only) return;
 
     // Fetch topics
     let topics = await N.models.clubs.Topic.find().where('_id').in(subs.map(x => x.to)).lean(true);
@@ -35,7 +41,7 @@ module.exports = function (N) {
     //
     let access_env = { params: {
       topics,
-      user_info: env.user_info,
+      user_info: locals.params.user_info,
       preload: clubs
     } };
 
@@ -51,10 +57,10 @@ module.exports = function (N) {
 
 
     // Sanitize topics
-    topics = await sanitize_topic(N, topics, env.user_info);
+    topics = await sanitize_topic(N, topics, locals.params.user_info);
 
     // Sanitize clubs
-    clubs = await sanitize_club(N, clubs, env.user_info);
+    clubs = await sanitize_club(N, clubs, locals.params.user_info);
 
     // Fetch read marks
     //
@@ -65,21 +71,22 @@ module.exports = function (N) {
       lastPostTs: topic.cache.last_ts
     }));
 
-    let read_marks = await N.models.users.Marker.info(env.user_info.user_id, data);
-    env.res.read_marks = Object.assign(env.res.read_marks || {}, read_marks);
+    let read_marks = await N.models.users.Marker.info(locals.params.user_info.user_id, data);
+    locals.res.read_marks = Object.assign(locals.res.read_marks || {}, read_marks);
 
     topics = _.keyBy(topics, '_id');
     clubs = _.keyBy(clubs, '_id');
 
-    env.res.club_topics = topics;
-    env.res.clubs = Object.assign(env.res.clubs || {}, clubs);
+    locals.res.club_topics = topics;
+    locals.res.clubs = Object.assign(locals.res.clubs || {}, clubs);
+    locals.items = subs;
 
 
     // Fill missed subscriptions (for deleted topic)
     //
     let missed = subs.filter(s => !topics[s.to] || !clubs[topics[s.to].club]);
 
-    env.data.missed_subscriptions = env.data.missed_subscriptions || [];
-    env.data.missed_subscriptions = env.data.missed_subscriptions.concat(missed);
+    locals.missed_subscriptions = locals.missed_subscriptions || [];
+    locals.missed_subscriptions = locals.missed_subscriptions.concat(missed);
   });
 };
