@@ -486,6 +486,18 @@ each post, post_idx in self.posts
           data-post-id=post._id
         )= self.t('expand')
 
+  if post.hid < self.current_post_hid && self.posts[post_idx + 1].hid > self.current_post_hid
+    article.clubs-post.clubs-post__m-deleted.clubs-post__m-no-meta.clearfix(
+      id='post000000000000000000000000'
+      data-post-id='000000000000000000000000'
+      data-post-hid=self.current_post_hid
+      data-user-hid=''
+      itemscope
+      itemtype='http://schema.org/WebPageElement'
+    )
+      .clubs-post__content-collapsed
+        =self.t('del_post_text')
+
   each block in self.posts_list_after_post || []
     != self.partial('@clubs.blocks.posts_list.' + block, { post_idx: post_idx, post_counter: post_counter })
 
